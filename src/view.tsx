@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { createRoot, Root } from 'react-dom/client'
 import { StrictMode } from "react";
-import { ReactMainView } from "ReactMainView";
+import { AffinityDashboard } from "components/AffinityDashboard";
 
 export const VIEW_TYPE_MAIN = 'main-view'
 
@@ -24,7 +24,7 @@ export class MainView extends ItemView {
         this.root = createRoot(this.contentEl)
         this.root.render(
             <StrictMode>
-                <ReactMainView />
+                <AffinityDashboard />
             </StrictMode>
         )
     }

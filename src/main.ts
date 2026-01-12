@@ -1,6 +1,6 @@
 import {App, Editor, MarkdownView, Modal, Notice, Plugin, Workspace, WorkspaceLeaf} from 'obsidian';
 import {DEFAULT_SETTINGS, MyPluginSettings, SampleSettingTab} from "./settings";
-import { MainView, VIEW_TYPE_MAIN } from 'MainView';
+import { MainView, VIEW_TYPE_MAIN } from 'view';
 
 // Remember to rename these classes and interfaces!
 
