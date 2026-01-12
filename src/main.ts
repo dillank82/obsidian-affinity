@@ -1,5 +1,6 @@
-import {App, Editor, MarkdownView, Modal, Notice, Plugin} from 'obsidian';
+import {App, Editor, MarkdownView, Modal, Notice, Plugin, Workspace, WorkspaceLeaf} from 'obsidian';
 import {DEFAULT_SETTINGS, MyPluginSettings, SampleSettingTab} from "./settings";
+import { MainView, VIEW_TYPE_MAIN } from 'MainView';
 
 // Remember to rename these classes and interfaces!
 
@@ -9,8 +10,13 @@ export default class AffinityPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.addRibbonIcon('dice', 'Greet', (evt: MouseEvent) => {
-			new Notice('I am affinity!');
+		this.registerView(
+			VIEW_TYPE_MAIN,
+			(leaf) => new MainView(leaf)
+		)
+
+		this.addRibbonIcon('dice', 'Activate view', async (evt: MouseEvent) => {
+			await this.activateView(VIEW_TYPE_MAIN)
 		});
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
@@ -77,6 +83,19 @@ export default class AffinityPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	async activateView(viewType: string) {
+		const { workspace } = this.app
+		let leaf: WorkspaceLeaf | null = null
+		const leaves = workspace.getLeavesOfType(viewType)
+		if (leaves.length > 0) {
+			leaf = leaves[0] || null
+		} else {
+			leaf = workspace.getRightLeaf(false)
+			await leaf?.setViewState({ type: viewType, active: true })
+		}
+		if (leaf) await workspace.revealLeaf(leaf)
 	}
 }
 
