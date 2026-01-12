@@ -5,7 +5,7 @@ import { AffinityDashboard } from "components/AffinityDashboard";
 
 export const VIEW_TYPE_MAIN = 'main-view'
 
-export class MainView extends ItemView {
+export class AffinityView extends ItemView {
     root: Root | null = null
 
     constructor (leaf: WorkspaceLeaf) {
@@ -27,5 +27,9 @@ export class MainView extends ItemView {
                 <AffinityDashboard />
             </StrictMode>
         )
+    }
+
+    protected async onClose(): Promise<void> {
+        this.root?.unmount()
     }
 }

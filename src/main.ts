@@ -1,6 +1,6 @@
 import {App, Editor, MarkdownView, Modal, Notice, Plugin, Workspace, WorkspaceLeaf} from 'obsidian';
 import {DEFAULT_SETTINGS, MyPluginSettings, SampleSettingTab} from "./settings";
-import { MainView, VIEW_TYPE_MAIN } from 'view';
+import { AffinityView, VIEW_TYPE_MAIN } from 'view';
 
 // Remember to rename these classes and interfaces!
 
@@ -12,7 +12,7 @@ export default class AffinityPlugin extends Plugin {
 
 		this.registerView(
 			VIEW_TYPE_MAIN,
-			(leaf) => new MainView(leaf)
+			(leaf) => new AffinityView(leaf)
 		)
 
 		this.addRibbonIcon('dice', 'Activate view', async (evt: MouseEvent) => {
