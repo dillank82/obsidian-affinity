@@ -106,7 +106,7 @@ export default class AffinityPlugin extends Plugin {
 		const rel = this.settings.relationships.find(r =>
 			r.fromChar === direction.fromChar && r.toChar === direction.toChar
 		)
-		return rel?.stats
+		return rel ? rel.stats : null 
 	}
 
 	async activateView(viewType: string) {
