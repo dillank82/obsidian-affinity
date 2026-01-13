@@ -2,14 +2,17 @@ import { ItemView, WorkspaceLeaf } from "obsidian";
 import { createRoot, Root } from 'react-dom/client'
 import { StrictMode } from "react";
 import { AffinityDashboard } from "components/AffinityDashboard";
+import AffinityPlugin from "main";
 
 export const VIEW_TYPE_MAIN = 'main-view'
 
 export class AffinityView extends ItemView {
     root: Root | null = null
+    plugin: AffinityPlugin;
 
-    constructor (leaf: WorkspaceLeaf) {
+    constructor (leaf: WorkspaceLeaf, plugin: AffinityPlugin) {
         super(leaf)
+        this.plugin = plugin
     }
 
     getViewType(): string {
