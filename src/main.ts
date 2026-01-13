@@ -1,7 +1,7 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, WorkspaceLeaf } from 'obsidian'
 import { DEFAULT_SETTINGS, PluginSettings, SampleSettingTab } from "./settings"
 import { AffinityView, VIEW_TYPE_MAIN } from 'view'
-import { Direction } from 'interfaces/Realtionships'
+import { Direction, RelationshipsItem } from 'interfaces/Realtionships'
 import { Action } from 'interfaces/Actions'
 
 export default class AffinityPlugin extends Plugin {
@@ -106,7 +106,30 @@ export default class AffinityPlugin extends Plugin {
 		const rel = this.settings.relationships.find(r =>
 			r.fromChar === direction.fromChar && r.toChar === direction.toChar
 		)
-		return rel ? rel.stats : null 
+		return rel ? rel.stats : null
+	}
+
+	async createRelation(direction: Direction) {
+		try {
+			const rel = await this.getAffinity(direction)
+			if (rel) throw new Error('Связь уже существует')
+
+			const initialVlue = 10
+			const newRel: RelationshipsItem = {
+				fromChar: direction.fromChar,
+				toChar: direction.toChar,
+				stats: {
+					affection: initialVlue,
+					respect: initialVlue,
+					trust: initialVlue
+				}
+			}
+			this.settings.relationships.push(newRel)
+			await this.saveSettings()
+		} catch (error) {
+			console.error(error)
+		}
+
 	}
 
 	async activateView(viewType: string) {
