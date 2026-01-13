@@ -1,18 +1,18 @@
-import {App, Editor, MarkdownView, Modal, Notice, Plugin, Workspace, WorkspaceLeaf} from 'obsidian';
-import {DEFAULT_SETTINGS, MyPluginSettings, SampleSettingTab} from "./settings";
-import { AffinityView, VIEW_TYPE_MAIN } from 'view';
-
-// Remember to rename these classes and interfaces!
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, WorkspaceLeaf } from 'obsidian'
+import { DEFAULT_SETTINGS, PluginSettings, SampleSettingTab } from "./settings"
+import { AffinityView, VIEW_TYPE_MAIN } from 'view'
+import { Direction } from 'interfaces/Realtionships'
+import { Action } from 'interfaces/Actions'
 
 export default class AffinityPlugin extends Plugin {
-	settings: MyPluginSettings;
+	settings: PluginSettings
 
 	async onload() {
 		await this.loadSettings();
 
 		this.registerView(
 			VIEW_TYPE_MAIN,
-			(leaf) => new AffinityView(leaf)
+			(leaf) => new AffinityView(leaf, this)
 		)
 
 		this.addRibbonIcon('dice', 'Activate view', async (evt: MouseEvent) => {
@@ -68,21 +68,45 @@ export default class AffinityPlugin extends Plugin {
 		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
 			new Notice("Click");
 		});
-
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
-
 	}
 
 	onunload() {
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<MyPluginSettings>);
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<PluginSettings>);
 	}
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	async changeAffinity(action: Action) {
+		try {
+			const rel = this.settings.relationships.find(r =>
+				r.fromChar === action.fromChar && r.toChar === action.toChar
+			)
+			if (!rel) {
+				throw new Error('Отношения не найдены')
+			}
+
+			const stats = rel.stats
+			rel.stats = {
+				affection: stats.affection + (action.delta.affection ?? 0),
+				respect: stats.respect + (action.delta.respect ?? 0),
+				trust: stats.trust + (action.delta.trust ?? 0)
+			}
+			await this.saveSettings()
+		} catch (error) {
+			console.error(error)
+		}
+	}
+
+	async getAffinity(direction: Direction) {
+		const rel = this.settings.relationships.find(r =>
+			r.fromChar === direction.fromChar && r.toChar === direction.toChar
+		)
+		return rel?.stats
 	}
 
 	async activateView(viewType: string) {
@@ -105,12 +129,12 @@ class AffinityModal extends Modal {
 	}
 
 	onOpen() {
-		let {contentEl} = this;
+		let { contentEl } = this;
 		contentEl.setText('Woah!');
 	}
 
 	onClose() {
-		const {contentEl} = this;
+		const { contentEl } = this;
 		contentEl.empty();
 	}
 }
