@@ -33,7 +33,7 @@ export default tseslint.config(
 		"main.js",
 	]),
 	{
-		files: ['**/*.test.ts', '**/*.spec.ts'],
+		files: ['**/*.test.ts', '**/*.test.tsx'],
 		plugins: {
 			jest: jestPlugin
 		},
