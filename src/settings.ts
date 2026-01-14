@@ -9,6 +9,7 @@ export interface PluginSettings {
 
 export const DEFAULT_SETTINGS: PluginSettings = {
 	mySetting: 'default',
+	relationships: []
 }
 
 export class SampleSettingTab extends PluginSettingTab {
