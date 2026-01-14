@@ -81,57 +81,6 @@ export default class AffinityPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	async changeAffinity(action: Action) {
-		try {
-			const rel = this.settings.relationships.find(r =>
-				r.fromChar === action.fromChar && r.toChar === action.toChar
-			)
-			if (!rel) {
-				throw new Error('Отношения не найдены')
-			}
-
-			const stats = rel.stats
-			rel.stats = {
-				affection: stats.affection + (action.delta.affection ?? 0),
-				respect: stats.respect + (action.delta.respect ?? 0),
-				trust: stats.trust + (action.delta.trust ?? 0)
-			}
-			await this.saveSettings()
-		} catch (error) {
-			console.error(error)
-		}
-	}
-
-	async getAffinity(direction: Direction) {
-		const rel = this.settings.relationships.find(r =>
-			r.fromChar === direction.fromChar && r.toChar === direction.toChar
-		)
-		return rel ? rel.stats : null
-	}
-
-	async createRelation(direction: Direction) {
-		try {
-			const rel = await this.getAffinity(direction)
-			if (rel) throw new Error('Связь уже существует')
-
-			const initialVlue = 10
-			const newRel: RelationshipsItem = {
-				fromChar: direction.fromChar,
-				toChar: direction.toChar,
-				stats: {
-					affection: initialVlue,
-					respect: initialVlue,
-					trust: initialVlue
-				}
-			}
-			this.settings.relationships.push(newRel)
-			await this.saveSettings()
-		} catch (error) {
-			console.error(error)
-		}
-
-	}
-
 	async activateView(viewType: string) {
 		const { workspace } = this.app
 		let leaf: WorkspaceLeaf | null = null
