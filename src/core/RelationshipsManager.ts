@@ -8,7 +8,7 @@ export class RelationshipsManager {
 
     async createRelation(from: CharacterID, to: CharacterID) {
         const rel = this.getRelation(from, to)
-        if (rel) throw new Error('Связь уже существует')
+        if (rel) throw new Error('This relation already exists')
 
         const newRel: RelationshipsItem = {
             fromChar: from,
@@ -30,7 +30,7 @@ export class RelationshipsManager {
 
     updateAffinity(from: CharacterID, to: CharacterID, delta: Partial<Stats>) {
         const rel = this.getRelation(from, to)
-        if (!rel) { throw new Error('Отношения не найдены') }
+        if (!rel) { throw new Error('Relation not found') }
 
         (Object.entries(delta) as [keyof Stats, Stat][]).forEach(([key, value]) => {
             if (key in rel.stats) {
