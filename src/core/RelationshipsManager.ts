@@ -21,6 +21,7 @@ export class RelationshipsManager {
         }
         this.settings.relationships.push(newRel)
         await this.saveSettings()
+        return this.getRelation(from, to)
     }
 
     getRelation(from: CharacterID, to: CharacterID) {
@@ -31,11 +32,34 @@ export class RelationshipsManager {
     updateAffinity(from: CharacterID, to: CharacterID, delta: Partial<Stats>) {
         const rel = this.getRelation(from, to)
         if (!rel) { throw new Error('Relation not found') }
+        const statuses = {
+            affection: 'UNCHANGED',
+            respect: 'UNCHANGED',
+            trust: 'UNCHANGED'
+        };
 
         (Object.entries(delta) as [keyof Stats, Stat][]).forEach(([key, value]) => {
             if (key in rel.stats) {
                 rel.stats[key] += value
+                statuses[key] = 'CHANGED'
             }
         })
+        return {
+            affection: {
+                value: rel.stats.affection,
+                change: delta.affection || 0,
+                status: statuses.affection
+            },
+            respect: {
+                value: rel.stats.respect,
+                change: delta.respect || 0,
+                status: statuses.respect
+            },
+            trust: {
+                value: rel.stats.trust,
+                change: delta.trust || 0,
+                status: statuses.trust
+            },
+        }
     }
 }
