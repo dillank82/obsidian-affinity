@@ -48,7 +48,7 @@ describe('RelationshipsManager', () => {
         expect(rel).toEqual(sapmpleRel)
     })
 
-    test('should correctly udate relation in updateAffinity', () => {
+    test('should correctly udate relation in updateAffinity', async() => {
         const rel = createSampleRel()
         const startStats = rel.stats
         const settings = {
@@ -62,7 +62,7 @@ describe('RelationshipsManager', () => {
             respect: 1,
             trust: 4
         }
-        relManager.updateAffinity(rel.fromChar, rel.toChar, deltaStats)
+        await relManager.updateAffinity(rel.fromChar, rel.toChar, deltaStats)
 
         expect(rel.stats).toEqual({
             affection: startStats.affection + deltaStats.affection,
@@ -94,7 +94,7 @@ describe('RelationshipsManager', () => {
         expect(relManager.updateAffinity(from, to, {})).toThrow(error)
     })
 
-    test('stats must not beat min and max edges after updating', () => {
+    test('stats must not beat min and max edges after updating', async() => {
         const rel = createSampleRel({
             stats: {
                 affection: 20,
@@ -106,7 +106,7 @@ describe('RelationshipsManager', () => {
         } as unknown as PluginSettings
 
         const relManager = createRelManager(settings)
-        const res = relManager.updateAffinity(rel.fromChar, rel.toChar, { affection: 4, respect: -4 })
+        const res = await relManager.updateAffinity(rel.fromChar, rel.toChar, { affection: 4, respect: -4 })
         expect(res.affection).toEqual({
             value: 20,
             change: 0,
@@ -126,7 +126,7 @@ describe('RelationshipsManager', () => {
         expect(rel).toBeNull()
     })
 
-    test('updateAffinity should work correctly with delta === 0', () => {
+    test('updateAffinity should work correctly with delta === 0', async() => {
         const rel = createSampleRel()
         const startStats = rel.stats
         const settings = {
@@ -135,7 +135,7 @@ describe('RelationshipsManager', () => {
 
         const relManager = createRelManager(settings)
 
-        const res = relManager.updateAffinity(
+        const res = await relManager.updateAffinity(
             rel.fromChar, rel.toChar, {
             affection: 0,
             respect: 0,
@@ -158,7 +158,7 @@ describe('RelationshipsManager', () => {
         })
     })
 
-    test('updateAffinity should work correctly with partial set of stats', () => {
+    test('updateAffinity should work correctly with partial set of stats', async() => {
         const rel = createSampleRel()
         const startStats = rel.stats
         const settings = {
@@ -170,7 +170,7 @@ describe('RelationshipsManager', () => {
             respect: 1,
             trust: -2
         }
-        const res = relManager.updateAffinity(rel.fromChar, rel.toChar, delta)
+        const res = await relManager.updateAffinity(rel.fromChar, rel.toChar, delta)
 
         expect(res.affection).toEqual({
             value: startStats.affection,
@@ -189,7 +189,7 @@ describe('RelationshipsManager', () => {
         })
     })
 
-    test('updateAffinity should work correctly with empty set of stats', () => {
+    test('updateAffinity should work correctly with empty set of stats', async() => {
         const rel = createSampleRel()
         const startStats = rel.stats
         const settings = {
@@ -198,7 +198,7 @@ describe('RelationshipsManager', () => {
 
         const relManager = createRelManager(settings)
 
-        const res = relManager.updateAffinity(rel.fromChar, rel.toChar, {})
+        const res = await relManager.updateAffinity(rel.fromChar, rel.toChar, {})
         expect(res.affection).toEqual({
             value: startStats.affection,
             change: 0,

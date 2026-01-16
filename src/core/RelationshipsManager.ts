@@ -29,7 +29,7 @@ export class RelationshipsManager {
             || null
     }
 
-    updateAffinity(from: CharacterID, to: CharacterID, delta: Partial<Stats>) {
+    async updateAffinity(from: CharacterID, to: CharacterID, delta: Partial<Stats>) {
         const rel = this.getRelation(from, to)
         if (!rel) { throw new Error('Relation not found') }
         const statuses = {
@@ -44,6 +44,8 @@ export class RelationshipsManager {
                 statuses[key] = 'CHANGED'
             }
         })
+
+        await this.saveSettings()
         return {
             affection: {
                 value: rel.stats.affection,
