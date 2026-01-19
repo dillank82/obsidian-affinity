@@ -1,5 +1,5 @@
 import { CharacterID, RelationshipsItem } from "interfaces/Realtionships";
-import { Stat, Stats } from "interfaces/Stats";
+import { STAT_NAMES, StatKey, Stats } from "interfaces/Stats";
 import { PluginSettings } from "settings";
 
 export class RelationshipsManager {
@@ -32,36 +32,35 @@ export class RelationshipsManager {
     async updateAffinity(from: CharacterID, to: CharacterID, delta: Partial<Stats>) {
         const rel = this.getRelation(from, to)
         if (!rel) { throw new Error('Relation not found') }
-        const statuses = {
-            affection: 'UNCHANGED',
-            respect: 'UNCHANGED',
-            trust: 'UNCHANGED'
-        };
 
-        (Object.entries(delta) as [keyof Stats, Stat][]).forEach(([key, value]) => {
-            if (key in rel.stats) {
-                rel.stats[key] += value
-                statuses[key] = 'CHANGED'
+        const MAX_STAT_VALUE = 20
+        const MIN_STAT_VALUE = 1
+
+        const result = {} as Record<StatKey, { value: number, change: number, status: string }>
+
+        STAT_NAMES.forEach(key => {
+            const stat: number = rel.stats[key]
+            let change: number = delta[key] || 0
+
+            let newStat: number = Math.max(MIN_STAT_VALUE, Math.min(MAX_STAT_VALUE, stat + change))
+            
+            let status: 'CHANGED' | 'UNCHANGED' | 'MINED_OUT' | 'MAXED_OUT' = 'UNCHANGED'
+            if (change !== 0) {
+                if (stat + change > MAX_STAT_VALUE) status = 'MAXED_OUT'
+                else if (stat + change < MIN_STAT_VALUE) status = 'MINED_OUT'
+                else status = 'CHANGED'
+            }
+
+            rel.stats[key] = newStat
+
+            result[key] = {
+                value: newStat,
+                change: newStat - stat,
+                status
             }
         })
-
+        
         await this.saveSettings()
-        return {
-            affection: {
-                value: rel.stats.affection,
-                change: delta.affection || 0,
-                status: statuses.affection
-            },
-            respect: {
-                value: rel.stats.respect,
-                change: delta.respect || 0,
-                status: statuses.respect
-            },
-            trust: {
-                value: rel.stats.trust,
-                change: delta.trust || 0,
-                status: statuses.trust
-            },
-        }
+        return result
     }
 }
