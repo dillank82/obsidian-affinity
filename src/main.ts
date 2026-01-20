@@ -1,7 +1,7 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian'
 import { DEFAULT_SETTINGS, PluginSettings, SampleSettingTab } from "./settings"
 import { AffinityView, VIEW_TYPE_MAIN } from 'view'
-import { FrontmatterData } from 'interfaces/FrontmatterData';
+import { AffinityData } from 'interfaces/AffinityData';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings
@@ -95,17 +95,29 @@ export default class AffinityPlugin extends Plugin {
 
 	getMetadata(file: TFile) {
 		const cache = this.app.metadataCache.getFileCache(file)
-		return cache?.frontmatter
+		const data: unknown = cache?.frontmatter?.affinityPluginData
+		if (this.isAffinityData(data)) {
+			return data
+		} else {
+			return null
+		}
 	}
 
-	async updateMetadata(file: TFile, data: FrontmatterData) {
+	async updateMetadata(file: TFile, data: AffinityData) {
+		const affinityData = {
+			affinityPluginData: data
+		}
 		try {
 			await this.app.fileManager.processFrontMatter(file, (frontmatter) => {
-				Object.assign(frontmatter, data)
+				Object.assign(frontmatter, affinityData)
 			})
 		} catch (e) {
 			console.error("Ошибка при обновлении Frontmatter:", e)
 		}
+	}
+
+	private isAffinityData(data: unknown): data is AffinityData {
+		return typeof data === 'object' && data !== null
 	}
 }
 
