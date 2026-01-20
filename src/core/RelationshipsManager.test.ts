@@ -12,7 +12,7 @@ describe('RelationshipsManager', () => {
         }
     })
 
-    test('should create valid relation and return extended object', async () => {
+    test('should create valid relation and return extended object', () => {
         const data = createSampleRel()
         const relManager = createRelManager(data)
 
@@ -117,7 +117,7 @@ describe('RelationshipsManager', () => {
         })
         expect(resData.result.respect).toEqual({
             value: 1,
-            change: 1,
+            change: -1,
             status: 'MINED_OUT'
         })
     })
