@@ -72,7 +72,7 @@ describe('RelationshipsManager', () => {
         const charName = '222'
         const data = createSampleRel(charName)
         const relManager = createRelManager(data)
-        expect(relManager.createRelation(charName)).toThrow('This relation already exists')
+        expect(() => { relManager.createRelation(charName) }).toThrow('This relation already exists')
     })
 
     test('updateAffinity should work correctly with partial set of stats', () => {
@@ -178,6 +178,6 @@ describe('RelationshipsManager', () => {
     test('should throw error when trying to update non-existing relation', () => {
         const data = {}
         const relManager = createRelManager(data)
-        expect(relManager.updateAffinity('toCharId', {})).toThrow('Relation not found')
+        expect(() => { relManager.updateAffinity('toCharId', {}) }).toThrow('Relation not found')
     })
 })
