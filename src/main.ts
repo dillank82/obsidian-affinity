@@ -1,8 +1,7 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, WorkspaceLeaf } from 'obsidian'
+import { App, Editor, MarkdownView, Modal, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian'
 import { DEFAULT_SETTINGS, PluginSettings, SampleSettingTab } from "./settings"
 import { AffinityView, VIEW_TYPE_MAIN } from 'view'
-import { Direction, RelationshipsItem } from 'interfaces/Realtionships'
-import { Action } from 'interfaces/Actions'
+import { FrontmatterData } from 'interfaces/FrontmatterData';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings
@@ -92,6 +91,21 @@ export default class AffinityPlugin extends Plugin {
 			await leaf?.setViewState({ type: viewType, active: true })
 		}
 		if (leaf) await workspace.revealLeaf(leaf)
+	}
+
+	getMetadata(file: TFile) {
+		const cache = this.app.metadataCache.getFileCache(file)
+		return cache?.frontmatter
+	}
+
+	async updateMetadata(file: TFile, data: FrontmatterData) {
+		try {
+			await this.app.fileManager.processFrontMatter(file, (frontmatter) => {
+				Object.assign(frontmatter, data)
+			})
+		} catch (e) {
+			console.error("Ошибка при обновлении Frontmatter:", e)
+		}
 	}
 }
 
