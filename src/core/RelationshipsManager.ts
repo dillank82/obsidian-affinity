@@ -1,66 +1,79 @@
-import { CharacterID, RelationshipsItem } from "interfaces/Realtionships";
-import { STAT_NAMES, StatKey, Stats } from "interfaces/Stats";
-import { PluginSettings } from "settings";
+import { AffinityData } from "interfaces/AffinityData";
+import { CharacterID } from "interfaces/Realtionships";
+import { StatKey, Stats } from "interfaces/Stats";
 
 export class RelationshipsManager {
-    initialStatsValue: 10
-    constructor(private settings: PluginSettings, private saveSettings: () => Promise<void>) { }
+    readonly initialStatsValue = 10
+    constructor( protected data: AffinityData) {
+        this.data = data
+    }
 
-    async createRelation(from: CharacterID, to: CharacterID) {
-        const rel = this.getRelation(from, to)
-        if (rel) throw new Error('This relation already exists')
-
-        const newRel: RelationshipsItem = {
-            fromChar: from,
-            toChar: to,
-            stats: {
-                affection: this.initialStatsValue,
-                respect: this.initialStatsValue,
-                trust: this.initialStatsValue,
-            }
+    createRelation(to: CharacterID) {
+        const rel = this.getRelation(to)
+        if (rel) throw new Error('This relation already exists');
+        
+        const newRel: Stats = {
+            affection: this.initialStatsValue,
+            respect: this.initialStatsValue,
+            trust: this.initialStatsValue,
         }
-        this.settings.relationships.push(newRel)
-        await this.saveSettings()
-        return this.getRelation(from, to)
+        const newData: AffinityData = {
+            ...this.data,
+            [to]: newRel
+        }
+        return newData
     }
 
-    getRelation(from: CharacterID, to: CharacterID) {
-        return this.settings.relationships.find(r => r.fromChar === from && r.toChar === to)
-            || null
-    }
-
-    async updateAffinity(from: CharacterID, to: CharacterID, delta: Partial<Stats>) {
-        const rel = this.getRelation(from, to)
+    updateAffinity(to: CharacterID, delta: Partial<Stats>) {
+        const rel = this.getRelation(to)
         if (!rel) { throw new Error('Relation not found') }
 
         const MAX_STAT_VALUE = 20
         const MIN_STAT_VALUE = 1
 
-        const result = {} as Record<StatKey, { value: number, change: number, status: string }>
-
-        STAT_NAMES.forEach(key => {
-            const stat: number = rel.stats[key]
-            let change: number = delta[key] || 0
-
-            let newStat: number = Math.max(MIN_STAT_VALUE, Math.min(MAX_STAT_VALUE, stat + change))
-            
-            let status: 'CHANGED' | 'UNCHANGED' | 'MINED_OUT' | 'MAXED_OUT' = 'UNCHANGED'
-            if (change !== 0) {
-                if (stat + change > MAX_STAT_VALUE) status = 'MAXED_OUT'
-                else if (stat + change < MIN_STAT_VALUE) status = 'MINED_OUT'
-                else status = 'CHANGED'
+        const result: Record<StatKey, { value: number, change: number, status: string }> = {
+            affection: {
+                value: rel.affection,
+                change: 0,
+                status: "UNCHANGED"
+            },
+            respect: {
+                value: rel.respect,
+                change: 0,
+                status: "UNCHANGED"
+            },
+            trust: {
+                value: rel.trust,
+                change: 0,
+                status: "UNCHANGED"
             }
+        }
 
-            rel.stats[key] = newStat
+        for (const [key, change] of Object.entries(delta) as [StatKey, number][]) {
+            if (change === 0) continue
+            const newValue = result[key].value + change
 
-            result[key] = {
-                value: newStat,
-                change: newStat - stat,
-                status
+            if (newValue > MAX_STAT_VALUE) result[key].status = 'MAXED_OUT'
+            else if (newValue < MIN_STAT_VALUE) result[key].status = 'MINED_OUT'
+            else result[key].status = 'CHANGED'
+
+            result[key].value = Math.max(MIN_STAT_VALUE, Math.min(MAX_STAT_VALUE, newValue))
+
+            result[key].change = newValue - result[key].value
+        }
+
+        const newData: AffinityData = {
+            ...this.data,
+            [to]: {
+                affection: result.affection.value,
+                respect: result.respect.value,
+                trust: result.trust.value,
             }
-        })
-        
-        await this.saveSettings()
-        return result
+        }
+        return { newData, result }
+    }
+
+    private getRelation(to: CharacterID) {
+        return this.data[to] || null
     }
 }
