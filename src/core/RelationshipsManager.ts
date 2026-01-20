@@ -57,9 +57,9 @@ export class RelationshipsManager {
             else if (newValue < MIN_STAT_VALUE) result[key].status = 'MINED_OUT'
             else result[key].status = 'CHANGED'
 
-            result[key].value = Math.max(MIN_STAT_VALUE, Math.min(MAX_STAT_VALUE, newValue))
-
-            result[key].change = newValue - result[key].value
+            const clampedNewValue = Math.max(MIN_STAT_VALUE, Math.min(MAX_STAT_VALUE, newValue))
+            result[key].change = clampedNewValue - result[key].value
+            result[key].value = clampedNewValue
         }
 
         const newData: AffinityData = {
