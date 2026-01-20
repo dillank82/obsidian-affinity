@@ -1,224 +1,183 @@
-import { PluginSettings } from "settings"
 import { RelationshipsManager } from "./RelationshipsManager"
+import { AffinityData } from "interfaces/AffinityData"
 
 describe('RelationshipsManager', () => {
-    const mockedSave = () => new Promise<void>((resolve) => { resolve() })
-    const createRelManager = (settings: PluginSettings) => new RelationshipsManager(settings, mockedSave)
-    const createSampleRel = (overrides = {}) => ({
-        fromChar: 'Char_A',
-        toChar: 'Char_B',
-        stats: {
-            affection: 18,
-            respect: 4,
-            trust: 8
-        },
-        ...overrides
+    const createRelManager = (data: AffinityData) => new RelationshipsManager(data)
+    const createSampleRel = (charName: string = 'testChar', overrides = {}): AffinityData => ({
+        [charName]: {
+            affection: 10,
+            respect: 10,
+            trust: 10,
+            ...overrides
+        }
     })
 
-    test('should create valid relation', async () => {
-        const fromCharId = 'fromchar'
+    test('should create valid relation and return extended object', async () => {
+        const data = createSampleRel()
+        const relManager = createRelManager(data)
+
         const toCharId = 'tochar'
-        const settings = {
-            relationships: []
-        } as unknown as PluginSettings
-        const relManager = createRelManager(settings)
+        const rel = relManager.createRelation(toCharId)
 
-        await relManager.createRelation(fromCharId, toCharId)
-        expect(settings.relationships.length).toBe(1)
-
-        const rel = settings.relationships[0]!
-
-        expect(rel.fromChar).toBe(fromCharId)
-        expect(rel.toChar).toBe(toCharId)
-        expect(rel.stats).toEqual({
-            affection: relManager.initialStatsValue,
-            respect: relManager.initialStatsValue,
-            trust: relManager.initialStatsValue,
+        expect(rel).toEqual({
+            ...data,
+            [toCharId]: {
+                affection: relManager.initialStatsValue,
+                respect: relManager.initialStatsValue,
+                trust: relManager.initialStatsValue,
+            }
         })
     })
 
-    test('should return a relation item in getRelation', () => {
-        const sapmpleRel = createSampleRel()
-        const settings = {
-            relationships: [sapmpleRel]
-        } as unknown as PluginSettings
-
-        const relManager = createRelManager(settings)
-        const rel = relManager.getRelation(sapmpleRel.fromChar, sapmpleRel.toChar)
-        expect(rel).toEqual(sapmpleRel)
-    })
-
-    test('should correctly udate relation in updateAffinity', async() => {
-        const rel = createSampleRel()
-        const startStats = rel.stats
-        const settings = {
-            relationships: [rel]
-        } as unknown as PluginSettings
-
-        const relManager = createRelManager(settings)
+    test('should correctly update relation in updateAffinity', () => {
+        const charName = 'test'
+        const data = createSampleRel(charName)
+        const startStats = data[charName]!
+        const relManager = createRelManager(data)
 
         const deltaStats = {
             affection: -1,
             respect: 1,
             trust: 4
         }
-        await relManager.updateAffinity(rel.fromChar, rel.toChar, deltaStats)
+        const updateData = relManager.updateAffinity(charName, deltaStats)
 
-        expect(rel.stats).toEqual({
-            affection: startStats.affection + deltaStats.affection,
-            respect: startStats.respect + deltaStats.respect,
-            trust: startStats.trust + deltaStats.trust,
-        })
-    })
-
-    test('should throw error when try to create realtion with existing direction', async () => {
-        const rel = createSampleRel()
-        const settings = {
-            relationships: [rel]
-        } as unknown as PluginSettings
-
-        const relManager = createRelManager(settings)
-        expect(await relManager.createRelation(rel.fromChar, rel.toChar)).toThrow('This relation already exists')
-    })
-    
-    test('should throw error when from and char ID are same', () => {
-        const from = 'A'
-        const to = from
-        const settings = {} as unknown as PluginSettings
-
-        const relManager = createRelManager(settings)
-        const error = '2 different characters must be specified'
-
-        expect(relManager.createRelation(from, to)).toThrow(error)
-        expect(relManager.getRelation(from, to)).toThrow(error)
-        expect(relManager.updateAffinity(from, to, {})).toThrow(error)
-    })
-
-    test('stats must not beat min and max edges after updating', async() => {
-        const rel = createSampleRel({
-            stats: {
-                affection: 20,
-                respect: 1
+        expect(updateData.newData).toEqual({
+            [charName]: {
+                affection: startStats.affection + deltaStats.affection,
+                respect: startStats.respect + deltaStats.respect,
+                trust: startStats.trust + deltaStats.trust,
             }
         })
-        const settings = {
-            relationships: [rel]
-        } as unknown as PluginSettings
-
-        const relManager = createRelManager(settings)
-        const res = await relManager.updateAffinity(rel.fromChar, rel.toChar, { affection: 4, respect: -4 })
-        expect(res.affection).toEqual({
-            value: 20,
-            change: 0,
-            status: 'MAXED_OUT'
-        })
-        expect(res.respect).toEqual({
-            value: 1,
-            change: 0,
-            status: 'MINED_OUT'
-        })
-    })
-
-    test('should return null when trying get non-existing relation', () => {
-        const settings = {} as unknown as PluginSettings
-        const relManager = createRelManager(settings)
-        const rel = relManager.getRelation('fromCharId', 'toCharId')
-        expect(rel).toBeNull()
-    })
-
-    test('updateAffinity should work correctly with delta === 0', async() => {
-        const rel = createSampleRel()
-        const startStats = rel.stats
-        const settings = {
-            relationships: [rel]
-        } as unknown as PluginSettings
-
-        const relManager = createRelManager(settings)
-
-        const res = await relManager.updateAffinity(
-            rel.fromChar, rel.toChar, {
-            affection: 0,
-            respect: 0,
-            trust: 0
-        })
-        expect(res.affection).toEqual({
-            value: startStats.affection,
-            change: 0,
-            status: 'UNCHANGED'
-        })
-        expect(res.respect).toEqual({
-            value: startStats.respect,
-            change: 0,
-            status: 'UNCHANGED'
-        })
-        expect(res.trust).toEqual({
-            value: startStats.trust,
-            change: 0,
-            status: 'UNCHANGED'
+        expect(updateData.result).toMatchObject({
+            affection: {
+                value: updateData.newData[charName]?.affection,
+                change: deltaStats.affection,
+                status: 'CHANGED'
+            },
+            respect: {
+                value: updateData.newData[charName]?.respect,
+                change: deltaStats.respect,
+                status: 'CHANGED'
+            },
+            trust: {
+                value: updateData.newData[charName]?.trust,
+                change: deltaStats.trust,
+                status: 'CHANGED'
+            },
         })
     })
 
-    test('updateAffinity should work correctly with partial set of stats', async() => {
-        const rel = createSampleRel()
-        const startStats = rel.stats
-        const settings = {
-            relationships: [rel]
-        } as unknown as PluginSettings
+    test('should throw error when try to create realtion with existing direction', () => {
+        const charName = '222'
+        const data = createSampleRel(charName)
+        const relManager = createRelManager(data)
+        expect(relManager.createRelation(charName)).toThrow('This relation already exists')
+    })
 
-        const relManager = createRelManager(settings)
+    test('updateAffinity should work correctly with partial set of stats', () => {
+        const charName = 'Otto'
+        const data = createSampleRel(charName)
+        const startStats = data[charName]!
+        const relManager = createRelManager(data)
+
         const delta = {
             respect: 1,
             trust: -2
         }
-        const res = await relManager.updateAffinity(rel.fromChar, rel.toChar, delta)
+        const resData = relManager.updateAffinity(charName, delta)
 
-        expect(res.affection).toEqual({
+        expect(resData.result.affection).toEqual({
             value: startStats.affection,
             change: 0,
             status: 'UNCHANGED'
         })
-        expect(res.respect).toEqual({
+        expect(resData.result.respect).toEqual({
             value: startStats.respect + delta.respect,
             change: delta.respect,
             status: 'CHANGED'
         })
-        expect(res.trust).toEqual({
+        expect(resData.result.trust).toEqual({
             value: startStats.trust + delta.trust,
             change: delta.trust,
             status: 'CHANGED'
         })
     })
 
-    test('updateAffinity should work correctly with empty set of stats', async() => {
-        const rel = createSampleRel()
-        const startStats = rel.stats
-        const settings = {
-            relationships: [rel]
-        } as unknown as PluginSettings
+    test('stats must not beat min and max edges after updating', () => {
+        const charName = 'Alex'
+        const data = createSampleRel(charName, { affection: 19, respect: 2 })
+        const relManager = createRelManager(data)
 
-        const relManager = createRelManager(settings)
+        const resData = relManager.updateAffinity(charName, { affection: 20, respect: -20 })
+        expect(resData.result.affection).toEqual({
+            value: 20,
+            change: 1,
+            status: 'MAXED_OUT'
+        })
+        expect(resData.result.respect).toEqual({
+            value: 1,
+            change: 1,
+            status: 'MINED_OUT'
+        })
+    })
 
-        const res = await relManager.updateAffinity(rel.fromChar, rel.toChar, {})
-        expect(res.affection).toEqual({
+    test('updateAffinity should work correctly with delta === 0', () => {
+        const charName = 'K9'
+        const data = createSampleRel(charName)
+        const startStats = data[charName]!
+        const relManager = createRelManager(data)
+
+        const resData = relManager.updateAffinity(
+            charName, {
+            affection: 0,
+            respect: 0,
+            trust: 0
+        })
+        expect(resData.result.affection).toEqual({
             value: startStats.affection,
             change: 0,
             status: 'UNCHANGED'
         })
-        expect(res.respect).toEqual({
+        expect(resData.result.respect).toEqual({
             value: startStats.respect,
             change: 0,
             status: 'UNCHANGED'
         })
-        expect(res.trust).toEqual({
+        expect(resData.result.trust).toEqual({
             value: startStats.trust,
             change: 0,
             status: 'UNCHANGED'
         })
     })
-    
+
+    test('updateAffinity should work correctly with empty set of stats', () => {
+        const charName = 'Shiney'
+        const data = createSampleRel(charName)
+        const startStats = data[charName]!
+        const relManager = createRelManager(data)
+
+        const resData = relManager.updateAffinity(charName, {})
+        expect(resData.result.affection).toEqual({
+            value: startStats.affection,
+            change: 0,
+            status: 'UNCHANGED'
+        })
+        expect(resData.result.respect).toEqual({
+            value: startStats.respect,
+            change: 0,
+            status: 'UNCHANGED'
+        })
+        expect(resData.result.trust).toEqual({
+            value: startStats.trust,
+            change: 0,
+            status: 'UNCHANGED'
+        })
+    })
+
     test('should throw error when trying to update non-existing relation', () => {
-        const settings = {} as unknown as PluginSettings
-        const relManager = createRelManager(settings)
-        expect(relManager.updateAffinity('fromCharId', 'toCharId', {})).toThrow('Relation not found')
+        const data = {}
+        const relManager = createRelManager(data)
+        expect(relManager.updateAffinity('toCharId', {})).toThrow('Relation not found')
     })
 })
