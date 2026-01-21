@@ -2,6 +2,7 @@ import { App, Editor, MarkdownView, Modal, Notice, Plugin, TFile, WorkspaceLeaf 
 import { DEFAULT_SETTINGS, PluginSettings, SampleSettingTab } from "./settings"
 import { AffinityView, VIEW_TYPE_MAIN } from 'view'
 import { AffinityData } from 'interfaces/AffinityData';
+import { parseAffinityData } from 'validation';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings
@@ -93,14 +94,9 @@ export default class AffinityPlugin extends Plugin {
 		if (leaf) await workspace.revealLeaf(leaf)
 	}
 
-	getMetadata(file: TFile) {
-		const cache = this.app.metadataCache.getFileCache(file)
-		const data: unknown = cache?.frontmatter?.affinityPluginData
-		if (this.isAffinityData(data)) {
-			return data
-		} else {
-			return null
-		}
+	getMetadata(file: TFile): AffinityData | null {
+		const cache = this.app.metadataCache.getFileCache(file)?.frontmatter || null
+		return parseAffinityData(cache)
 	}
 
 	async updateMetadata(file: TFile, data: AffinityData) {
@@ -114,10 +110,6 @@ export default class AffinityPlugin extends Plugin {
 		} catch (e) {
 			console.error("Ошибка при обновлении Frontmatter:", e)
 		}
-	}
-
-	private isAffinityData(data: unknown): data is AffinityData {
-		return typeof data === 'object' && data !== null
 	}
 }
 
