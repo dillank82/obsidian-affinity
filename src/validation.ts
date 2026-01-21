@@ -1,5 +1,5 @@
-import { AffinityData } from "interfaces/AffinityData"
-import { STAT_NAMES, StatKey, Stats } from "interfaces/Stats"
+import { AffinityData } from "./interfaces/AffinityData"
+import { STAT_NAMES, StatKey, Stats } from "./interfaces/Stats"
 import { FrontMatterCache } from "obsidian"
 
 export const isStatKey = (key: string): key is StatKey => {
