@@ -23,11 +23,18 @@ export class AffinityView extends ItemView {
         return 'Main view'
     }
 
+    private getComponentData() {
+        const activeFile = this.app.workspace.getActiveFile();
+        if (!activeFile) return null; 
+        return this.plugin.getMetadata(activeFile);
+    }
+
     protected async onOpen(): Promise<void> {
+        const data = this.getComponentData()
         this.root = createRoot(this.contentEl)
         this.root.render(
             <StrictMode>
-                <AffinityDashboard />
+                <AffinityDashboard rawData={data}/>
             </StrictMode>
         )
     }
