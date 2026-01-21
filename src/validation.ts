@@ -14,7 +14,7 @@ const isAffinityData = (data: unknown): data is AffinityData => {
     return entries.every(([_, value]) => {
         if (typeof value !== 'object' || value === null || Array.isArray(value)) return false
 
-        const isValueValid = Object.entries(value as Stats).every(([statName, statValue]) => (
+        const isValueValid = Object.entries(value as object).length === 3 && Object.entries(value as Stats).every(([statName, statValue]) => (
             isStatKey(statName) && typeof statValue === 'number'
         ))
         return isValueValid
