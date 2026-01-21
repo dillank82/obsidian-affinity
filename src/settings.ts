@@ -1,12 +1,15 @@
 import {App, PluginSettingTab, Setting} from "obsidian";
 import MyPlugin from "./main";
+import { Relationships } from "interfaces/Realtionships";
 
-export interface MyPluginSettings {
+export interface PluginSettings {
 	mySetting: string;
+	relationships: Relationships
 }
 
-export const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
+export const DEFAULT_SETTINGS: PluginSettings = {
+	mySetting: 'default',
+	relationships: []
 }
 
 export class SampleSettingTab extends PluginSettingTab {

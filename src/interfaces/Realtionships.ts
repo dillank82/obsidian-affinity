@@ -1,5 +1,7 @@
 import { Stats } from "./Stats"
 
+export type CharacterID = string
+
 export interface Direction {
     fromChar: string
     toChar: string
