@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { createRoot, Root } from 'react-dom/client'
 import { StrictMode } from "react";
-import { AffinityDashboard } from "components/AffinityDashboard";
+import { AffinityDashboard } from "components/AffinityDashboard/AffinityDashboard";
 import AffinityPlugin from "main";
 
 export const VIEW_TYPE_MAIN = 'main-view'
