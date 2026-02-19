@@ -5,7 +5,8 @@ interface StatScaleProps {
 }
 
 export const StatScale: FC<StatScaleProps> = ({ value }) => {
-    const percentage = (value / 20) * 100
+    const clampedValue = Math.min(20, Math.max(1, value))
+    const percentage = (clampedValue / 20) * 100
     return (
         <div
             className={styles.container}
