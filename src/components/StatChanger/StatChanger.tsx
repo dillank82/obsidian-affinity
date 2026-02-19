@@ -1,4 +1,5 @@
 import { FC, useState } from "react"
+import styles from './StatChanger.module.css'
 
 interface StatChangerProps {
     label: string
@@ -18,7 +19,7 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name }) => {
 
                 <button 
                     type="button" 
-                    className={selectedValue === "1" ? "active" : ""}
+                    className={`${styles.button} ${selectedValue === "1" ? styles.active : ""}`}
                     onClick={() => handleToggle("1")}
                 >
                     +1
@@ -26,7 +27,7 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name }) => {
                 
                 <button 
                     type="button" 
-                    className={selectedValue === "1d4" ? "active" : ""}
+                    className={`${styles.button} ${selectedValue === "1d4" ? styles.active : ""}`}
                     onClick={() => handleToggle("1d4")}
                 >
                     1d4
