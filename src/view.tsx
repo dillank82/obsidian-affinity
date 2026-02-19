@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf } from "obsidian";
 import { createRoot, Root } from 'react-dom/client'
 import { StrictMode } from "react";
-import { AffinityDashboard } from "components/AffinityDashboard";
+import { AffinityDashboard } from "components/AffinityDashboard/AffinityDashboard";
 import AffinityPlugin from "main";
 
 export const VIEW_TYPE_MAIN = 'main-view'
@@ -23,11 +23,18 @@ export class AffinityView extends ItemView {
         return 'Main view'
     }
 
+    private getComponentData() {
+        const activeFile = this.app.workspace.getActiveFile();
+        if (!activeFile) return null; 
+        return this.plugin.getMetadata(activeFile);
+    }
+
     protected async onOpen(): Promise<void> {
+        const data = this.getComponentData()
         this.root = createRoot(this.contentEl)
         this.root.render(
             <StrictMode>
-                <AffinityDashboard />
+                <AffinityDashboard rawData={data}/>
             </StrictMode>
         )
     }

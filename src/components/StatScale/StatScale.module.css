@@ -1,0 +1,19 @@
+.container {
+    width: 25px;
+    height: 150px;
+    background-color: var(--background-modifier-border);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+}
+.bar {
+    height: 100%;
+    background-color: var(--color-purple);
+    transition: height 0.3s ease-in-out;
+}
+.container:focus-within {
+    outline: 2px solid var(--color-purple);
+    outline-offset: 2px;
+}
