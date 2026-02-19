@@ -1,7 +1,8 @@
-import { StatChanger } from "components/StatChanger/StatChanger";
-import { Stats } from "interfaces/Stats";
-import { FC, FormEvent } from "react";
-import { rollDice } from "utils/rollDice";
+import { StatChanger } from "components/StatChanger/StatChanger"
+import { Stats } from "interfaces/Stats"
+import { FC, FormEvent } from "react"
+import { rollDice } from "utils/rollDice"
+import styles from './ChangeAffinityForm.module.css'
 
 interface ChangeAffinityFormProps {
     updateAffinity: (delta: Partial<Stats>) => void
@@ -27,13 +28,14 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
     return (
         <form
             id="change-affinity-form"
-            onSubmit={handleSubmit}    
+            onSubmit={handleSubmit}
+            className={styles.formContainer}  
         >
             <label htmlFor="change-affinity-form">Choose affinity changes</label>
             <StatChanger label="Affection" name="affection" />
             <StatChanger label="Respect" name="respect" />
             <StatChanger label="Trust" name="trust" />
-            <button type="submit">Submit</button>
+            <button type="submit" className={styles.button}>Submit</button>
         </form>
     )
 }
