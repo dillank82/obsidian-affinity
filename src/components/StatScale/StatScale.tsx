@@ -12,7 +12,7 @@ export const StatScale: FC<StatScaleProps> = ({ value }) => {
             className={styles.container}
             role="progressbar"
             aria-valuenow={value}
-            aria-valuemin={0}
+            aria-valuemin={1}
             aria-valuemax={20}
             aria-orientation="vertical"
         >
