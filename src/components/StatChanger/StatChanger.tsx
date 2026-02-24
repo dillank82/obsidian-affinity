@@ -15,7 +15,7 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name }) => {
         <fieldset>
             <legend>{label}</legend>
             <div>
-                <input type="hidden" name={name} value={selectedValue || '0'}/>
+                <input type="hidden" name={name} value={selectedValue || '0'} data-testid={`hidden-input-${name}`}/>
 
                 <button 
                     type="button" 
@@ -30,7 +30,7 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name }) => {
                     className={`${styles.button} ${selectedValue === "1d4" ? styles.active : ""}`}
                     onClick={() => handleToggle("1d4")}
                 >
-                    1d4
+                    +1d4
                 </button>
             </div>
         </fieldset>
