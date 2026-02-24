@@ -1,25 +1,25 @@
-import { FC, useState } from "react"
+import { FC } from "react"
 import styles from './StatChanger.module.css'
+import { AffinityFormValue } from "interfaces/ChangeAffinityForm"
 
 interface StatChangerProps {
     label: string
     name: string
+    onChange: (name: string, value: AffinityFormValue) => void
+    currentValue: AffinityFormValue 
 }
 
-export const StatChanger: FC<StatChangerProps> = ({ label, name }) => {
-    const [selectedValue, setSelectedValue] = useState<string | null>(null)
+export const StatChanger: FC<StatChangerProps> = ({ label, name, onChange, currentValue }) => {
     const handleToggle = (value: string) => {
-        setSelectedValue(prev => prev === value ? null : value)
+        onChange(name, currentValue === value ? undefined : value)
     }
     return (
         <fieldset>
             <legend>{label}</legend>
             <div>
-                <input type="hidden" name={name} value={selectedValue || '0'} data-testid={`hidden-input-${name}`}/>
-
                 <button 
                     type="button" 
-                    className={`${styles.button} ${selectedValue === "1" ? styles.active : ""}`}
+                    className={`${styles.button} ${currentValue === "1" ? styles.active : ""}`}
                     onClick={() => handleToggle("1")}
                 >
                     +1
@@ -27,7 +27,7 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name }) => {
                 
                 <button 
                     type="button" 
-                    className={`${styles.button} ${selectedValue === "1d4" ? styles.active : ""}`}
+                    className={`${styles.button} ${currentValue === "1d4" ? styles.active : ""}`}
                     onClick={() => handleToggle("1d4")}
                 >
                     +1d4
