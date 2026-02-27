@@ -4,6 +4,7 @@ import { STAT_MAPS, StatRange, Stats, StatsLabels } from "interfaces/Stats"
 import { useState, useMemo } from "react"
 import { StatScale } from "../StatScale/StatScale"
 import styles from './AffinityDashboard.module.css'
+import { ChangeAffinityForm } from "components/ChangeAffinityForm/ChangeAffinityForm"
 
 interface AffinityDashboardProps {
     rawData: AffinityData | null
@@ -35,6 +36,10 @@ export const AffinityDashboard = ({ rawData }: AffinityDashboardProps) => {
         return mapStats(stats)
     },[stats])
 
+    const updateAffinity = (delta: Partial<Stats>) => {
+        relManager.updateAffinity(toChar, delta)
+    }
+
     if (!labels) {
         return <div>No data found for {toChar}...</div>
     }
@@ -65,6 +70,7 @@ export const AffinityDashboard = ({ rawData }: AffinityDashboardProps) => {
                     <StatScale value={stats?.trust || 0}/>
                 </li>
             </ul>
+            <ChangeAffinityForm updateAffinity={updateAffinity}/>
         </>
     )
 }
