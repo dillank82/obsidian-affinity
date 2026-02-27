@@ -12,7 +12,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 	relationships: []
 }
 
-export class SampleSettingTab extends PluginSettingTab {
+export class AffinitySettingsTab extends PluginSettingTab {
 	plugin: MyPlugin;
 
 	constructor(app: App, plugin: MyPlugin) {
