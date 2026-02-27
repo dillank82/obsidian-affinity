@@ -2,7 +2,7 @@ import { FC } from "react"
 import styles from './StatChanger.module.css'
 import { AffinityFormValue } from "interfaces/ChangeAffinityForm"
 
-interface StatChangerProps {
+export interface StatChangerProps {
     label: string
     name: string
     onChange: (name: string, value: AffinityFormValue) => void
