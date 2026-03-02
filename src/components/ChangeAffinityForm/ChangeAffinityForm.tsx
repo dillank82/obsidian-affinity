@@ -37,10 +37,12 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
             onSubmit={handleSubmit}
             className={styles.formContainer}  
         >
-            <label htmlFor="change-affinity-form">Choose affinity changes</label>
-            <StatChanger label="Affection" name="affection" currentValue={formValues.affection} onChange={handleChange}/>
-            <StatChanger label="Respect" name="respect" currentValue={formValues.respect} onChange={handleChange}/>
-            <StatChanger label="Trust" name="trust" currentValue={formValues.trust} onChange={handleChange}/>
+            {/* <label htmlFor="change-affinity-form">Choose affinity changes</label> */}
+            <div className={styles.statChangersContainer}>
+                <StatChanger label="Affection" name="affection" currentValue={formValues.affection} onChange={handleChange}/>
+                <StatChanger label="Respect" name="respect" currentValue={formValues.respect} onChange={handleChange}/>
+                <StatChanger label="Trust" name="trust" currentValue={formValues.trust} onChange={handleChange}/>
+            </div>
             <button type="submit" className={styles.button}>Submit</button>
         </form>
     )
