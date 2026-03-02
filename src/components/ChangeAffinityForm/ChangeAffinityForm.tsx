@@ -35,9 +35,9 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
         <form
             id="change-affinity-form"
             onSubmit={handleSubmit}
-            className={styles.formContainer}  
+            className={styles.formContainer}
+            aria-label="Choose affinity changes"  
         >
-            {/* <label htmlFor="change-affinity-form">Choose affinity changes</label> */}
             <div className={styles.statChangersContainer}>
                 <StatChanger label="Affection" name="affection" currentValue={formValues.affection} onChange={handleChange}/>
                 <StatChanger label="Respect" name="respect" currentValue={formValues.respect} onChange={handleChange}/>

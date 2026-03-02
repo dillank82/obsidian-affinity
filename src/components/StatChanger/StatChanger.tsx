@@ -15,7 +15,8 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name, onChange, curre
     }
     return (
         <fieldset className={styles.container}>
-            {/* <legend>{label}</legend> */}
+            <legend className={styles.visuallyHidden}>{label}</legend>
+            
             <div>
                 <button 
                     type="button" 
