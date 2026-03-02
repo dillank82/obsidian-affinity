@@ -5,6 +5,7 @@ import { useState, useMemo } from "react"
 import { StatScale } from "../StatScale/StatScale"
 import styles from './AffinityDashboard.module.css'
 import { ChangeAffinityForm } from "components/ChangeAffinityForm/ChangeAffinityForm"
+import { VerticalDivider } from "components/VerticalDivider/VerticalDivider"
 
 interface AffinityDashboardProps {
     rawData: AffinityData | null
@@ -45,7 +46,7 @@ export const AffinityDashboard = ({ rawData }: AffinityDashboardProps) => {
     }
 
     return (
-        <>
+        <div className={styles.dashboardContainer}>
             <h1>Relation to {toChar}:</h1>
             <ul className={styles.statsBlock}>
                 <li className={styles.scaleContainer}>
@@ -55,6 +56,7 @@ export const AffinityDashboard = ({ rawData }: AffinityDashboardProps) => {
                     </div>
                     <StatScale value={stats?.affection || 0}/>
                 </li>
+                <VerticalDivider />
                 <li className={styles.scaleContainer}>
                     <div className={styles.statLabel}>
                         <span className={styles.statKey}>Respect:</span>
@@ -62,6 +64,7 @@ export const AffinityDashboard = ({ rawData }: AffinityDashboardProps) => {
                     </div>
                     <StatScale value={stats?.respect || 0}/>
                 </li>
+                <VerticalDivider />
                 <li className={styles.scaleContainer}>
                     <div className={styles.statLabel}>
                         <span className={styles.statKey}>Trust:</span>
@@ -71,6 +74,6 @@ export const AffinityDashboard = ({ rawData }: AffinityDashboardProps) => {
                 </li>
             </ul>
             <ChangeAffinityForm updateAffinity={updateAffinity}/>
-        </>
+        </div>
     )
 }
