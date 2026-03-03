@@ -4,6 +4,12 @@
     justify-content: center;
     text-align: center;
 }
+
 .button {
-    margin: 1rem;
+    margin: 0.25rem 1rem;
+}
+
+.statChangersContainer {
+    display: flex;
+    gap: 4rem;
 }

@@ -1,8 +1,8 @@
 import { App, Editor, MarkdownView, Modal, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian'
 import { AffinitySettingsTab, DEFAULT_SETTINGS, PluginSettings } from "./settings"
-import { AffinityView, VIEW_TYPE_MAIN } from 'view'
 import { AffinityData } from 'interfaces/AffinityData';
 import { parseAffinityData } from 'validation';
+import { AffinityProcessor } from 'processors/AffinityProcessor';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings
@@ -10,14 +10,13 @@ export default class AffinityPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 
-		this.registerView(
-			VIEW_TYPE_MAIN,
-			(leaf) => new AffinityView(leaf, this)
-		)
+		const data = this.getMetadata(this.app.workspace.getActiveFile())
+		const processor = new AffinityProcessor()
+		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
+			await processor.process(source, el, ctx, data)
+		})
 
-		this.addRibbonIcon('dice', 'Activate view', async (evt: MouseEvent) => {
-			await this.activateView(VIEW_TYPE_MAIN)
-		});
+		this.addRibbonIcon('dice', 'Activate view', async (evt: MouseEvent) => {})
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
@@ -94,7 +93,8 @@ export default class AffinityPlugin extends Plugin {
 		if (leaf) await workspace.revealLeaf(leaf)
 	}
 
-	getMetadata(file: TFile): AffinityData | null {
+	getMetadata(file: TFile | null): AffinityData | null {
+		if (!file) return null
 		const cache = this.app.metadataCache.getFileCache(file)?.frontmatter || null
 		return parseAffinityData(cache)
 	}
