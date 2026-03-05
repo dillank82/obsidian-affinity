@@ -6,6 +6,7 @@ import { StatScale } from "../StatScale/StatScale"
 import styles from './AffinityDashboard.module.css'
 import { ChangeAffinityForm } from "components/ChangeAffinityForm/ChangeAffinityForm"
 import { VerticalDivider } from "components/VerticalDivider/VerticalDivider"
+import { CharacterSwitcher } from "components/CharacterSwitcher/CharacterSwitcher"
 
 interface AffinityDashboardProps {
     rawData: AffinityData | null
@@ -47,33 +48,38 @@ export const AffinityDashboard = ({ rawData }: AffinityDashboardProps) => {
 
     return (
         <div className={styles.dashboardContainer}>
-            <h1>Relation to {toChar}:</h1>
-            <ul className={styles.statsBlock}>
-                <li className={styles.scaleContainer}>
-                    <div className={styles.statLabel}>
-                        <span className={styles.statKey}>Affection:</span>
-                        <span className={styles.statValue}>{labels.affection}</span>
-                    </div>
-                    <StatScale value={stats?.affection || 0}/>
-                </li>
-                <VerticalDivider />
-                <li className={styles.scaleContainer}>
-                    <div className={styles.statLabel}>
-                        <span className={styles.statKey}>Respect:</span>
-                        <span className={styles.statValue}>{labels.respect}</span>
-                    </div>
-                    <StatScale value={stats?.respect || 0}/>
-                </li>
-                <VerticalDivider />
-                <li className={styles.scaleContainer}>
-                    <div className={styles.statLabel}>
-                        <span className={styles.statKey}>Trust:</span>
-                        <span className={styles.statValue}>{labels.trust}</span>
-                    </div>
-                    <StatScale value={stats?.trust || 0}/>
-                </li>
-            </ul>
-            <ChangeAffinityForm updateAffinity={updateAffinity}/>
+            <header className={styles.header}>
+                <h1>Relation to {toChar}</h1>
+                <CharacterSwitcher currentChar={toChar} onChange={setToChar} options={Object.keys(rawData || {})}/>
+            </header>
+            <main>
+                <ul className={styles.statsBlock}>
+                    <li className={styles.scaleContainer}>
+                        <div className={styles.statLabel}>
+                            <span className={styles.statKey}>Affection:</span>
+                            <span className={styles.statValue}>{labels.affection}</span>
+                        </div>
+                        <StatScale value={stats?.affection || 0}/>
+                    </li>
+                    <VerticalDivider />
+                    <li className={styles.scaleContainer}>
+                        <div className={styles.statLabel}>
+                            <span className={styles.statKey}>Respect:</span>
+                            <span className={styles.statValue}>{labels.respect}</span>
+                        </div>
+                        <StatScale value={stats?.respect || 0}/>
+                    </li>
+                    <VerticalDivider />
+                    <li className={styles.scaleContainer}>
+                        <div className={styles.statLabel}>
+                            <span className={styles.statKey}>Trust:</span>
+                            <span className={styles.statValue}>{labels.trust}</span>
+                        </div>
+                        <StatScale value={stats?.trust || 0}/>
+                    </li>
+                </ul>
+                <ChangeAffinityForm updateAffinity={updateAffinity}/>
+            </main>
         </div>
     )
 }
