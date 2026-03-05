@@ -1,5 +1,4 @@
 import { RelationshipsManager } from "core/RelationshipsManager"
-import { AffinityData } from "interfaces/AffinityData"
 import { STAT_MAPS, StatRange, Stats, StatsLabels } from "interfaces/Stats"
 import { useState, useMemo } from "react"
 import { StatScale } from "../StatScale/StatScale"
@@ -7,19 +6,19 @@ import styles from './AffinityDashboard.module.css'
 import { ChangeAffinityForm } from "components/ChangeAffinityForm/ChangeAffinityForm"
 import { VerticalDivider } from "components/VerticalDivider/VerticalDivider"
 import { CharacterSwitcher } from "components/CharacterSwitcher/CharacterSwitcher"
+import { CharacterID } from "interfaces/Realtionships"
+import { Store } from "store"
 
 interface AffinityDashboardProps {
-    rawData: AffinityData | null
+    relManager: RelationshipsManager
+    fromChar: CharacterID
+    store: Store
 }
 
-export const AffinityDashboard = ({ rawData }: AffinityDashboardProps) => {
+export const AffinityDashboard = ({ relManager, fromChar, store }: AffinityDashboardProps) => {
     const [toChar, setToChar] = useState('Tuy Nyao')
 
-    const relManager = useMemo(() => new RelationshipsManager(rawData || {}), [rawData])
-
-    const stats = useMemo(() => {
-        return rawData?.[toChar] || relManager.createRelation(toChar)[toChar] || null
-    }, [rawData, toChar, relManager])
+    const stats = relManager.getRelation(fromChar, toChar)
     
     //move to a separate file
     const mapStats = (stats: Stats): StatsLabels => {
@@ -39,7 +38,7 @@ export const AffinityDashboard = ({ rawData }: AffinityDashboardProps) => {
     },[stats])
 
     const updateAffinity = (delta: Partial<Stats>) => {
-        relManager.updateAffinity(toChar, delta)
+        relManager.updateAffinity(fromChar, toChar, delta)
     }
 
     if (!labels) {
@@ -50,7 +49,7 @@ export const AffinityDashboard = ({ rawData }: AffinityDashboardProps) => {
         <div className={styles.dashboardContainer}>
             <header className={styles.header}>
                 <h1>Relation to {toChar}</h1>
-                <CharacterSwitcher currentChar={toChar} onChange={setToChar} options={Object.keys(rawData || {})}/>
+                <CharacterSwitcher currentChar={toChar} onChange={setToChar} options={Object.keys(store.relationships[fromChar] || {})}/>
             </header>
             <main>
                 <ul className={styles.statsBlock}>

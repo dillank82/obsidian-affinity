@@ -1,22 +1,35 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian'
+import { App, debounce, Editor, FrontMatterCache, MarkdownView, Modal, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian'
 import { AffinitySettingsTab, DEFAULT_SETTINGS, PluginSettings } from "./settings"
-import { AffinityData } from 'interfaces/AffinityData';
-import { parseAffinityData } from 'validation';
 import { AffinityProcessor } from 'processors/AffinityProcessor';
+import { CharacterID } from 'interfaces/Realtionships';
+import { storeApi, useStore } from 'store';
+import { RelationshipsManager } from 'core/RelationshipsManager';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings
+	private relManager: RelationshipsManager
+  	private processor: AffinityProcessor
 
 	async onload() {
 		await this.loadSettings();
 
-		const data = this.getMetadata(this.app.workspace.getActiveFile())
-		const processor = new AffinityProcessor()
+		const debouncedSave = debounce(async() => { await this.saveSettings() }, 1000)
+		useStore.setState({ relationships: this.settings.relationships })
+		useStore.subscribe((state) => {
+			this.settings = {
+				...this.settings,
+				relationships: state.relationships
+			}
+			debouncedSave()
+		})
+		this.relManager = new RelationshipsManager(storeApi)
+		this.processor = new AffinityProcessor()
 		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
-			await processor.process(source, el, ctx, data)
+			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
+			await this.processor.process(source, el, ctx, this.relManager, id, storeApi)
 		})
 
-		this.addRibbonIcon('dice', 'Activate view', async (evt: MouseEvent) => {})
+		this.addRibbonIcon('dice', 'Activate view', async (evt: MouseEvent) => { })
 
 		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
 		const statusBarItemEl = this.addStatusBarItem();
@@ -93,22 +106,40 @@ export default class AffinityPlugin extends Plugin {
 		if (leaf) await workspace.revealLeaf(leaf)
 	}
 
-	getMetadata(file: TFile | null): AffinityData | null {
+	private getFrontmatter(file: TFile | null): FrontMatterCache | null {
 		if (!file) return null
-		const cache = this.app.metadataCache.getFileCache(file)?.frontmatter || null
-		return parseAffinityData(cache)
+		const cache = this.app.metadataCache.getFileCache(file)?.frontmatter
+		return cache || null
 	}
 
-	async updateMetadata(file: TFile, data: AffinityData) {
-		const affinityData = {
-			affinityPluginData: data
+	async getAffinityId(file: TFile | null): Promise<CharacterID> {
+		if (!file) throw new Error ('No file is active')
+		const cache = this.getFrontmatter(file)
+		let id: unknown = cache?.AffinityPluginId
+		if (!cache || !id) {
+			id = await this.giveAffinityId(file)
 		}
+		if (typeof id !== 'string') throw new Error('Frontmatter data is corrupted')
+		return id
+	}
+
+	private async giveAffinityId(file: TFile): Promise<CharacterID> {
+		const id = this.generateId()
+		await this.updateMetadata(file, id)
+		return id
+	}
+
+	private generateId() {
+		return crypto.randomUUID()
+	}
+
+	private async updateMetadata(file: TFile, data: unknown) {
 		try {
 			await this.app.fileManager.processFrontMatter(file, (frontmatter) => {
-				Object.assign(frontmatter, affinityData)
+				Object.assign(frontmatter, data)
 			})
 		} catch (e) {
-			console.error("Ошибка при обновлении Frontmatter:", e)
+			console.error("Frontmatter update error:", e)
 		}
 	}
 }

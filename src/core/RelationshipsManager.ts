@@ -1,31 +1,32 @@
-import { AffinityData } from "interfaces/AffinityData";
 import { CharacterID } from "interfaces/Realtionships";
 import { StatKey, Stats } from "interfaces/Stats";
+import { Store } from "store";
 
 export class RelationshipsManager {
     readonly initialStatsValue = 10
-    constructor( protected data: AffinityData) {
-        this.data = data
+    store: Store;
+    
+    constructor(store: Store) {
+        this.store = store
     }
 
-    createRelation(to: CharacterID) {
-        const rel = this.getRelation(to)
-        if (rel) throw new Error('This relation already exists');
-        
+    createRelation(from: CharacterID, to: CharacterID) {
+        const rel = this.getRelation(from, to)
+        if (rel) throw new Error('This relation already exists')
+
         const newRel: Stats = {
             affection: this.initialStatsValue,
             respect: this.initialStatsValue,
             trust: this.initialStatsValue,
         }
-        const newData: AffinityData = {
-            ...this.data,
-            [to]: newRel
-        }
-        return newData
+
+        this.store.setRelation(from, to, newRel)
+
+        return newRel
     }
 
-    updateAffinity(to: CharacterID, delta: Partial<Stats>) {
-        const rel = this.getRelation(to)
+    updateAffinity(from: CharacterID, to: CharacterID, delta: Partial<Stats>) {
+        const rel = this.getRelation(from, to)
         if (!rel) { throw new Error('Relation not found') }
 
         const MAX_STAT_VALUE = 20
@@ -62,18 +63,18 @@ export class RelationshipsManager {
             result[key].value = clampedNewValue
         }
 
-        const newData: AffinityData = {
-            ...this.data,
-            [to]: {
-                affection: result.affection.value,
-                respect: result.respect.value,
-                trust: result.trust.value,
-            }
+        const newRel = {
+            affection: result.affection.value,
+            respect: result.respect.value,
+            trust: result.trust.value,
         }
-        return { newData, result }
+
+        this.store.setRelation(from, to, newRel)
+        
+        return { newRel, result }
     }
 
-    private getRelation(to: CharacterID) {
-        return this.data[to] || null
+    getRelation(from: CharacterID, to: CharacterID) {
+        return (this.store.relationships[from]?.[to]) || null
     }
 }
