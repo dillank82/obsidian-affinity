@@ -2,7 +2,7 @@ import { App, debounce, Editor, FrontMatterCache, MarkdownView, Modal, Notice, P
 import { AffinitySettingsTab, DEFAULT_SETTINGS, PluginSettings } from "./settings"
 import { AffinityProcessor } from 'processors/AffinityProcessor';
 import { CharacterID } from 'interfaces/Realtionships';
-import { storeApi, useStore } from 'store';
+import { useStore } from 'store';
 import { RelationshipsManager } from 'core/RelationshipsManager';
 import { generateId } from 'utils/generateId';
 
@@ -23,7 +23,7 @@ export default class AffinityPlugin extends Plugin {
 			}
 			debouncedSave()
 		})
-		this.relManager = new RelationshipsManager(storeApi)
+		this.relManager = new RelationshipsManager(useStore.getState())
 		this.processor = new AffinityProcessor()
 		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
 			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
