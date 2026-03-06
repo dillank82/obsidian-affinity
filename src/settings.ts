@@ -9,7 +9,7 @@ export interface PluginSettings {
 
 export const DEFAULT_SETTINGS: PluginSettings = {
 	mySetting: 'default',
-	relationships: []
+	relationships: {}
 }
 
 export class AffinitySettingsTab extends PluginSettingTab {
