@@ -1,5 +1,5 @@
 import { RelationshipsManager } from "core/RelationshipsManager"
-import { STAT_MAPS, StatRange, Stats, StatsLabels } from "interfaces/Stats"
+import { Stats } from "interfaces/Stats"
 import { useState, useMemo } from "react"
 import { StatScale } from "../StatScale/StatScale"
 import styles from './AffinityDashboard.module.css'
@@ -7,6 +7,7 @@ import { ChangeAffinityForm } from "components/ChangeAffinityForm/ChangeAffinity
 import { VerticalDivider } from "components/VerticalDivider/VerticalDivider"
 import { CharacterSwitcher } from "components/CharacterSwitcher/CharacterSwitcher"
 import { CharacterID } from "interfaces/Realtionships"
+import { mapStats } from "utils/mapStats"
 
 interface AffinityDashboardProps {
     relManager: RelationshipsManager
@@ -18,18 +19,6 @@ export const AffinityDashboard = ({ relManager, fromChar }: AffinityDashboardPro
 
     const stats = relManager.getRelation(fromChar, toChar)
     
-    //move to a separate file
-    const mapStats = (stats: Stats): StatsLabels => {
-        const getLabel = (value: number, ranges: readonly StatRange[]): string => {
-            const found = ranges.find(r => value >= r.min && value <= r.max)
-            return found?.label ?? 'Unknown'
-        }
-        return {
-            affection: getLabel(stats.affection, STAT_MAPS.affection),
-            respect: getLabel(stats.respect, STAT_MAPS.respect),
-            trust: getLabel(stats.trust, STAT_MAPS.trust),
-        }
-    }
     const labels = useMemo(() => {
         if (!stats) return null
         return mapStats(stats)
