@@ -77,7 +77,7 @@ describe('RelationshipsManager', () => {
             },
         })
         expect(data.setRelation).toHaveBeenCalledTimes(1)
-        expect(data.setRelation).toHaveBeenCalledWith(from, to, deltaStats)
+        expect(data.setRelation).toHaveBeenCalledWith(from, to, updateData.newRel)
     })
 
     test('should throw error when try to create realtion with existing direction', () => {
