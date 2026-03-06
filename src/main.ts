@@ -4,6 +4,7 @@ import { AffinityProcessor } from 'processors/AffinityProcessor';
 import { CharacterID } from 'interfaces/Realtionships';
 import { storeApi, useStore } from 'store';
 import { RelationshipsManager } from 'core/RelationshipsManager';
+import { generateId } from 'utils/generateId';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings
@@ -124,13 +125,9 @@ export default class AffinityPlugin extends Plugin {
 	}
 
 	private async giveAffinityId(file: TFile): Promise<CharacterID> {
-		const id = this.generateId()
+		const id = generateId()
 		await this.updateMetadata(file, id)
 		return id
-	}
-
-	private generateId() {
-		return crypto.randomUUID()
 	}
 
 	private async updateMetadata(file: TFile, data: unknown) {
