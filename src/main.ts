@@ -26,7 +26,7 @@ export default class AffinityPlugin extends Plugin {
 		this.processor = new AffinityProcessor()
 		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
 			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
-			await this.processor.process(source, el, ctx, this.relManager, id, storeApi)
+			await this.processor.process(source, el, ctx, this.relManager, id)
 		})
 
 		this.addRibbonIcon('dice', 'Activate view', async (evt: MouseEvent) => { })

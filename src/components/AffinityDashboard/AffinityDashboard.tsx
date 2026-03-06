@@ -7,15 +7,13 @@ import { ChangeAffinityForm } from "components/ChangeAffinityForm/ChangeAffinity
 import { VerticalDivider } from "components/VerticalDivider/VerticalDivider"
 import { CharacterSwitcher } from "components/CharacterSwitcher/CharacterSwitcher"
 import { CharacterID } from "interfaces/Realtionships"
-import { Store } from "store"
 
 interface AffinityDashboardProps {
     relManager: RelationshipsManager
     fromChar: CharacterID
-    store: Store
 }
 
-export const AffinityDashboard = ({ relManager, fromChar, store }: AffinityDashboardProps) => {
+export const AffinityDashboard = ({ relManager, fromChar }: AffinityDashboardProps) => {
     const [toChar, setToChar] = useState('Tuy Nyao')
 
     const stats = relManager.getRelation(fromChar, toChar)
@@ -49,7 +47,7 @@ export const AffinityDashboard = ({ relManager, fromChar, store }: AffinityDashb
         <div className={styles.dashboardContainer}>
             <header className={styles.header}>
                 <h1>Relation to {toChar}</h1>
-                <CharacterSwitcher currentChar={toChar} onChange={setToChar} options={Object.keys(store.relationships[fromChar] || {})}/>
+                <CharacterSwitcher currentChar={toChar} onChange={setToChar} options={Object.keys(relManager.store.relationships[fromChar] || {})}/>
             </header>
             <main>
                 <ul className={styles.statsBlock}>
