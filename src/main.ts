@@ -116,7 +116,7 @@ export default class AffinityPlugin extends Plugin {
 	async getAffinityId(file: TFile | null): Promise<CharacterID> {
 		if (!file) throw new Error ('No file is active')
 		const cache = this.getFrontmatter(file)
-		let id: unknown = cache?.AffinityPluginId
+		let id: unknown = cache?.affinityPluginId
 		if (!cache || !id) {
 			id = await this.giveAffinityId(file)
 		}
@@ -126,7 +126,7 @@ export default class AffinityPlugin extends Plugin {
 
 	private async giveAffinityId(file: TFile): Promise<CharacterID> {
 		const id = generateId()
-		await this.updateMetadata(file, id)
+		await this.updateMetadata(file, { affinityPluginId: id })
 		return id
 	}
 
