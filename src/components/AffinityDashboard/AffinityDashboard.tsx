@@ -1,13 +1,11 @@
 import { RelationshipsManager } from "core/RelationshipsManager"
-import { Stats } from "interfaces/Stats"
-import { useState, useMemo } from "react"
-import { StatScale } from "../StatScale/StatScale"
 import styles from './AffinityDashboard.module.css'
 import { ChangeAffinityForm } from "components/ChangeAffinityForm/ChangeAffinityForm"
 import { VerticalDivider } from "components/VerticalDivider/VerticalDivider"
-import { CharacterSwitcher } from "components/CharacterSwitcher/CharacterSwitcher"
 import { CharacterID } from "interfaces/Realtionships"
-import { mapStats } from "utils/mapStats"
+import { Header } from "components/Header/Header"
+import { useAffinity } from "hooks/useAffinity"
+import { StatItem } from "components/StatItem/StatItem"
 
 interface AffinityDashboardProps {
     relManager: RelationshipsManager
@@ -15,18 +13,7 @@ interface AffinityDashboardProps {
 }
 
 export const AffinityDashboard = ({ relManager, fromChar }: AffinityDashboardProps) => {
-    const [toChar, setToChar] = useState('Tuy Nyao')
-
-    const stats = relManager.getRelation(fromChar, toChar)
-    
-    const labels = useMemo(() => {
-        if (!stats) return null
-        return mapStats(stats)
-    },[stats])
-
-    const updateAffinity = (delta: Partial<Stats>) => {
-        relManager.updateAffinity(fromChar, toChar, delta)
-    }
+    const { toChar, setToChar, stats, labels, updateAffinity } = useAffinity(relManager, fromChar)
 
     if (!labels) {
         return <div>No data found for {toChar}...</div>
@@ -34,35 +21,14 @@ export const AffinityDashboard = ({ relManager, fromChar }: AffinityDashboardPro
 
     return (
         <div className={styles.dashboardContainer}>
-            <header className={styles.header}>
-                <h1>Relation to {toChar}</h1>
-                <CharacterSwitcher currentChar={toChar} onChange={setToChar} options={Object.keys(relManager.store.relationships[fromChar] || {})}/>
-            </header>
+            <Header toChar={toChar} setToChar={setToChar} charOptions={Object.keys(relManager.store.relationships[fromChar] || {})}/>
             <main>
                 <ul className={styles.statsBlock}>
-                    <li className={styles.scaleContainer}>
-                        <div className={styles.statLabel}>
-                            <span className={styles.statKey}>Affection:</span>
-                            <span className={styles.statValue}>{labels.affection}</span>
-                        </div>
-                        <StatScale value={stats?.affection || 0}/>
-                    </li>
+                    <StatItem statValue={stats?.affection || 0} label={labels.affection} statKey="Affection" />
                     <VerticalDivider />
-                    <li className={styles.scaleContainer}>
-                        <div className={styles.statLabel}>
-                            <span className={styles.statKey}>Respect:</span>
-                            <span className={styles.statValue}>{labels.respect}</span>
-                        </div>
-                        <StatScale value={stats?.respect || 0}/>
-                    </li>
+                    <StatItem statValue={stats?.respect || 0} label={labels.respect} statKey="Respect" />
                     <VerticalDivider />
-                    <li className={styles.scaleContainer}>
-                        <div className={styles.statLabel}>
-                            <span className={styles.statKey}>Trust:</span>
-                            <span className={styles.statValue}>{labels.trust}</span>
-                        </div>
-                        <StatScale value={stats?.trust || 0}/>
-                    </li>
+                    <StatItem statValue={stats?.trust || 0} label={labels.trust} statKey="Trust" />
                 </ul>
                 <ChangeAffinityForm updateAffinity={updateAffinity}/>
             </main>

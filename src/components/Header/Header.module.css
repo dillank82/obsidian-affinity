@@ -1,0 +1,12 @@
+.header {
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--background-modifier-border);
+    border-radius: 1.5rem;
+    padding: 0 1rem;
+    background-color: var(--background-secondary);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+}
