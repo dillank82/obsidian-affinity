@@ -6,7 +6,7 @@ export interface StatChangerProps {
     label: string
     name: string
     onChange: (name: string, value: AffinityFormValue) => void
-    currentValue: AffinityFormValue 
+    currentValue: AffinityFormValue
 }
 
 export const StatChanger: FC<StatChangerProps> = ({ label, name, onChange, currentValue }) => {
@@ -16,23 +16,40 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name, onChange, curre
     return (
         <fieldset className={styles.container}>
             <legend className={styles.visuallyHidden}>{label}</legend>
-            
+
             <div>
-                <button 
-                    type="button" 
-                    className={`${styles.button} ${currentValue === "1" ? styles.active : ""}`}
-                    onClick={() => handleToggle("1")}
-                >
-                    +1
-                </button>
-                
-                <button 
-                    type="button" 
-                    className={`${styles.button} ${currentValue === "1d4" ? styles.active : ""}`}
-                    onClick={() => handleToggle("1d4")}
-                >
-                    +1d4
-                </button>
+                <div className={styles.buttonsGroup}>
+                    <button
+                        type="button"
+                        className={`${styles.button} ${currentValue === "-1" ? styles.active : ""}`}
+                        onClick={() => handleToggle("-1")}
+                    >
+                        -1
+                    </button>
+                    <button
+                        type="button"
+                        className={`${styles.button} ${currentValue === "1" ? styles.active : ""}`}
+                        onClick={() => handleToggle("1")}
+                    >
+                        +1
+                    </button>
+                </div>
+                <div className={styles.buttonsGroup}>
+                    <button
+                        type="button"
+                        className={`${styles.button} ${currentValue === "-1d4" ? styles.active : ""}`}
+                        onClick={() => handleToggle("-1d4")}
+                    >
+                        -1d4
+                    </button>
+                    <button
+                        type="button"
+                        className={`${styles.button} ${currentValue === "1d4" ? styles.active : ""}`}
+                        onClick={() => handleToggle("1d4")}
+                    >
+                        +1d4
+                    </button>
+                </div>
             </div>
         </fieldset>
     )

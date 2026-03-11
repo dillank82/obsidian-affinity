@@ -20,6 +20,7 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
 
         const resolveValue = (value: AffinityFormValue): number => {
             if (value === '1d4') return rollDice(4)
+            if (value === '-1d4') return -rollDice(4)
             return Number(value) || 0
         }
         const delta: Partial<Stats> = {
@@ -27,7 +28,6 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
             respect: resolveValue(formValues.respect),
             trust: resolveValue(formValues.trust)
         }
-
         updateAffinity(delta)
         setFormValues({})
     }

@@ -11,5 +11,6 @@
 
 .statChangersContainer {
     display: flex;
-    gap: 4rem;
+    justify-content: center;
+    gap: 2rem;
 }
