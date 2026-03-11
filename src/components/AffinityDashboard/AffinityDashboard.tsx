@@ -5,9 +5,9 @@ import { StatScale } from "../StatScale/StatScale"
 import styles from './AffinityDashboard.module.css'
 import { ChangeAffinityForm } from "components/ChangeAffinityForm/ChangeAffinityForm"
 import { VerticalDivider } from "components/VerticalDivider/VerticalDivider"
-import { CharacterSwitcher } from "components/CharacterSwitcher/CharacterSwitcher"
 import { CharacterID } from "interfaces/Realtionships"
 import { mapStats } from "utils/mapStats"
+import { Header } from "components/Header/Header"
 
 interface AffinityDashboardProps {
     relManager: RelationshipsManager
@@ -34,10 +34,7 @@ export const AffinityDashboard = ({ relManager, fromChar }: AffinityDashboardPro
 
     return (
         <div className={styles.dashboardContainer}>
-            <header className={styles.header}>
-                <h1>Relation to {toChar}</h1>
-                <CharacterSwitcher currentChar={toChar} onChange={setToChar} options={Object.keys(relManager.store.relationships[fromChar] || {})}/>
-            </header>
+            <Header toChar={toChar} setToChar={setToChar} charOptions={Object.keys(relManager.store.relationships[fromChar] || {})}/>
             <main>
                 <ul className={styles.statsBlock}>
                     <li className={styles.scaleContainer}>
