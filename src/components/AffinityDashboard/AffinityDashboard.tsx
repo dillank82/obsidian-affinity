@@ -1,13 +1,11 @@
 import { RelationshipsManager } from "core/RelationshipsManager"
-import { Stats } from "interfaces/Stats"
-import { useState, useMemo } from "react"
 import { StatScale } from "../StatScale/StatScale"
 import styles from './AffinityDashboard.module.css'
 import { ChangeAffinityForm } from "components/ChangeAffinityForm/ChangeAffinityForm"
 import { VerticalDivider } from "components/VerticalDivider/VerticalDivider"
 import { CharacterID } from "interfaces/Realtionships"
-import { mapStats } from "utils/mapStats"
 import { Header } from "components/Header/Header"
+import { useAffinity } from "hooks/useAffinity"
 
 interface AffinityDashboardProps {
     relManager: RelationshipsManager
@@ -15,18 +13,7 @@ interface AffinityDashboardProps {
 }
 
 export const AffinityDashboard = ({ relManager, fromChar }: AffinityDashboardProps) => {
-    const [toChar, setToChar] = useState('Tuy Nyao')
-
-    const stats = relManager.getRelation(fromChar, toChar)
-    
-    const labels = useMemo(() => {
-        if (!stats) return null
-        return mapStats(stats)
-    },[stats])
-
-    const updateAffinity = (delta: Partial<Stats>) => {
-        relManager.updateAffinity(fromChar, toChar, delta)
-    }
+    const { toChar, setToChar, stats, labels, updateAffinity } = useAffinity(relManager, fromChar)
 
     if (!labels) {
         return <div>No data found for {toChar}...</div>
