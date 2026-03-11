@@ -1,11 +1,11 @@
 import { RelationshipsManager } from "core/RelationshipsManager"
-import { StatScale } from "../StatScale/StatScale"
 import styles from './AffinityDashboard.module.css'
 import { ChangeAffinityForm } from "components/ChangeAffinityForm/ChangeAffinityForm"
 import { VerticalDivider } from "components/VerticalDivider/VerticalDivider"
 import { CharacterID } from "interfaces/Realtionships"
 import { Header } from "components/Header/Header"
 import { useAffinity } from "hooks/useAffinity"
+import { StatItem } from "components/StatItem/StatItem"
 
 interface AffinityDashboardProps {
     relManager: RelationshipsManager
@@ -24,29 +24,11 @@ export const AffinityDashboard = ({ relManager, fromChar }: AffinityDashboardPro
             <Header toChar={toChar} setToChar={setToChar} charOptions={Object.keys(relManager.store.relationships[fromChar] || {})}/>
             <main>
                 <ul className={styles.statsBlock}>
-                    <li className={styles.scaleContainer}>
-                        <div className={styles.statLabel}>
-                            <span className={styles.statKey}>Affection:</span>
-                            <span className={styles.statValue}>{labels.affection}</span>
-                        </div>
-                        <StatScale value={stats?.affection || 0}/>
-                    </li>
+                    <StatItem statValue={stats?.affection || 0} label={labels.affection} statKey="Affection" />
                     <VerticalDivider />
-                    <li className={styles.scaleContainer}>
-                        <div className={styles.statLabel}>
-                            <span className={styles.statKey}>Respect:</span>
-                            <span className={styles.statValue}>{labels.respect}</span>
-                        </div>
-                        <StatScale value={stats?.respect || 0}/>
-                    </li>
+                    <StatItem statValue={stats?.respect || 0} label={labels.respect} statKey="Respect" />
                     <VerticalDivider />
-                    <li className={styles.scaleContainer}>
-                        <div className={styles.statLabel}>
-                            <span className={styles.statKey}>Trust:</span>
-                            <span className={styles.statValue}>{labels.trust}</span>
-                        </div>
-                        <StatScale value={stats?.trust || 0}/>
-                    </li>
+                    <StatItem statValue={stats?.trust || 0} label={labels.trust} statKey="Trust" />
                 </ul>
                 <ChangeAffinityForm updateAffinity={updateAffinity}/>
             </main>

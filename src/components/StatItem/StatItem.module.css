@@ -1,0 +1,24 @@
+.container {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 3px;
+    margin-inline-start: 0 !important;
+    width: 4.2rem;
+}
+
+.label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.statKey {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+.statValue {
+    font-size: 0.75em;
+    color: var(--text-muted);
+}
