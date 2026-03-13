@@ -1,13 +1,16 @@
-import { RelationshipsManager } from "core/RelationshipsManager"
 import { CharacterID } from "interfaces/Realtionships"
 import { Stats } from "interfaces/Stats"
 import { useState, useMemo } from "react"
+import { Store } from "store"
 import { mapStats } from "utils/mapStats"
 
-export const useAffinity = (relManager: RelationshipsManager, fromChar: CharacterID) => {
+export const useAffinity = (store: Store, fromChar: CharacterID) => {
     const [toChar, setToChar] = useState('Tuy Nyao')
 
-    const stats = relManager.getRelation(fromChar, toChar)
+    const relations = store.relationships[fromChar]
+    const stats = relations?.[toChar]
+    
+    const relOptions = Object.keys(relations || {})
 
     const labels = useMemo(() => {
         if (!stats) return null
@@ -15,8 +18,8 @@ export const useAffinity = (relManager: RelationshipsManager, fromChar: Characte
     }, [stats])
 
     const updateAffinity = (delta: Partial<Stats>) => {
-        relManager.updateAffinity(fromChar, toChar, delta)
+        store.updateRelation(fromChar, toChar, delta)
     }
 
-    return { toChar, setToChar, stats, labels, updateAffinity }
+    return { toChar, setToChar, stats, labels, updateAffinity, relOptions }
 }

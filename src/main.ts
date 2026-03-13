@@ -3,12 +3,10 @@ import { DEFAULT_SETTINGS, PluginSettings } from "./settings"
 import { AffinityProcessor } from 'processors/AffinityProcessor';
 import { CharacterID } from 'interfaces/Realtionships';
 import { useStore } from 'store';
-import { RelationshipsManager } from 'core/RelationshipsManager';
 import { generateId } from 'utils/generateId';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings
-	private relManager: RelationshipsManager
   	private processor: AffinityProcessor
 
 	async onload() {
@@ -23,11 +21,10 @@ export default class AffinityPlugin extends Plugin {
 			}
 			debouncedSave()
 		})
-		this.relManager = new RelationshipsManager(useStore.getState())
 		this.processor = new AffinityProcessor()
 		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
 			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
-			await this.processor.process(source, el, ctx, this.relManager, id)
+			await this.processor.process(source, el, ctx, useStore, id)
 		})
 	}
 
