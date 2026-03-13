@@ -6,13 +6,15 @@ import { Header } from "components/Header/Header"
 import { useAffinity } from "hooks/useAffinity"
 import { StatItem } from "components/StatItem/StatItem"
 import { Store } from "store"
+import { UseBoundStore, StoreApi } from 'zustand'
 
 interface AffinityDashboardProps {
-    store: Store
+    useStore: UseBoundStore<StoreApi<Store>>
     fromChar: CharacterID
 }
 
-export const AffinityDashboard = ({ store, fromChar }: AffinityDashboardProps) => {
+export const AffinityDashboard = ({ useStore, fromChar }: AffinityDashboardProps) => {
+    const store = useStore()
     const { toChar, setToChar, stats, labels, updateAffinity, relOptions } = useAffinity(store, fromChar)
 
     if (!labels) {
