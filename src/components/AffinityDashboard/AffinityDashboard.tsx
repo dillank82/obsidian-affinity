@@ -5,15 +5,13 @@ import { CharacterID } from "interfaces/Realtionships"
 import { Header } from "components/Header/Header"
 import { useAffinity } from "hooks/useAffinity"
 import { StatItem } from "components/StatItem/StatItem"
-import { Store } from "store"
-import { UseBoundStore, StoreApi } from 'zustand'
+import { useStore } from "store"
 
 interface AffinityDashboardProps {
-    useStore: UseBoundStore<StoreApi<Store>>
     fromChar: CharacterID
 }
 
-export const AffinityDashboard = ({ useStore, fromChar }: AffinityDashboardProps) => {
+export const AffinityDashboard = ({ fromChar }: AffinityDashboardProps) => {
     const store = useStore()
     const { toChar, setToChar, stats, labels, updateAffinity, relOptions } = useAffinity(store, fromChar)
 
