@@ -5,10 +5,10 @@ import { Store } from "store"
 import { mapStats } from "utils/mapStats"
 
 export const useAffinity = (store: Store, fromChar: CharacterID) => {
-    const [toChar, setToChar] = useState('Tuy Nyao')
+    const [toChar, setToChar] = useState<string | null>(null)
 
     const relations = store.relationships[fromChar]
-    const stats = relations?.[toChar]
+    const stats = (toChar ? relations?.[toChar] : null) || null
     
     const relOptions = Object.keys(relations || {})
 
@@ -17,9 +17,9 @@ export const useAffinity = (store: Store, fromChar: CharacterID) => {
         return mapStats(stats)
     }, [stats])
 
-    const updateAffinity = (delta: Partial<Stats>) => {
+    const updateAffinity = toChar ? (delta: Partial<Stats>) => {
         store.updateRelation(fromChar, toChar, delta)
-    }
+    } : null
 
     return { toChar, setToChar, stats, labels, updateAffinity, relOptions }
 }
