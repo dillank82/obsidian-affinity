@@ -3,7 +3,7 @@ import { FC } from "react"
 import styles from './Header.module.css'
 
 interface HeaderProps {
-    toChar: string
+    toChar: string | null
     setToChar: (value: string) => void
     charOptions: string[]
 }
@@ -11,7 +11,7 @@ interface HeaderProps {
 export const Header: FC<HeaderProps> = ({ toChar, setToChar, charOptions }) => {
     return (
         <header className={styles.header}>
-            <h1>Relation to {toChar}</h1>
+            <h1>{ toChar ? `Relation to ${toChar}` : 'Affinity' }</h1>
             <CharacterSwitcher currentChar={toChar} onChange={setToChar} options={charOptions} />
         </header>
     )
