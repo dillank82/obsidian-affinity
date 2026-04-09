@@ -3,7 +3,7 @@ import { Menu } from "obsidian"
 import styles from './CharacterSwitcher.module.css'
 
 interface CharacterSwitcherProps {
-    currentChar: string
+    currentChar: string | null
     options: string[]
     onChange: (value: string) => void
 }
