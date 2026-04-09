@@ -17,7 +17,7 @@ export const AffinityDashboard = ({ fromChar }: AffinityDashboardProps) => {
     const renderContent = () => {
         if (!toChar) {
             return <EmptyState />
-        } else if (!labels) {
+        } else if (!(stats && labels)) {
             return <div>No data found for {toChar}...</div>
         } else {
             return <AffinityWorkspace stats={stats} labels={labels} updateAffinity={updateAffinity} />
