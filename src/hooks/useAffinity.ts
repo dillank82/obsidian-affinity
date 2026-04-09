@@ -4,28 +4,18 @@ import { useState, useMemo } from "react"
 import { Store } from "store"
 import { mapStats } from "utils/mapStats"
 
-interface UseAffinityItemsInitial {
-    stats: null
-    labels: null
-    updateAffinity: null
-}
-
-interface UseAffinityItemsChosen {
-    stats: Stats | null
-    labels: StatsLabels | null
-    updateAffinity: (delta: Partial<Stats>) => void 
-}
-
-type UseAffinityInitial = UseAffinityItemsInitial & UseAffinityStateInitial
-type UseAffinityChosen = UseAffinityItemsChosen & UseAffinityStateChosen
-type UseAffinity = UseAffinityInitial | UseAffinityChosen
-
 type UseAffinityStateInitial = { status: 'initial', toChar: null }
 type UseAffinityStateChosen = { status: 'chosen', toChar: string }
 
+type UseAffinityInitial = UseAffinityStateInitial & { updateAffinity: null }
+type UseAffinityChosen = UseAffinityStateChosen & { updateAffinity: (delta: Partial<Stats>) => void }
+
+type UseAffinity = UseAffinityInitial | UseAffinityChosen
 type UseAffinityState = UseAffinityStateChosen | UseAffinityStateInitial
 
 type UseAffinityReturn = UseAffinity & {
+    stats: Stats | null
+    labels: StatsLabels | null
     setToChar: (toChar: CharacterID) => void
     relOptions: string[]
 }
