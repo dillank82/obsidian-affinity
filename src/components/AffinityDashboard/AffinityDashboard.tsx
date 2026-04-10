@@ -8,7 +8,7 @@ import { EmptyState } from 'components/EmptyState/EmptyState'
 
 interface AffinityDashboardProps {
     fromChar: CharacterID
-    characters: CharacterID[]
+    characters: { name: string, id: CharacterID }[]
 }
 
 export const AffinityDashboard = ({ fromChar, characters }: AffinityDashboardProps) => {

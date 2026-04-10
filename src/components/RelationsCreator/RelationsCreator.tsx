@@ -1,9 +1,10 @@
 import { Menu } from "obsidian";
 import { FC, useRef } from "react";
 import styles from './RelationsCreator.module.css'
+import { CharacterID } from "interfaces/Realtionships";
 
 interface RelationsCreatorProps {
-    characters: string[]
+    characters: { name: string, id: CharacterID }[]
     existingRels: string[]
     onChange: (char: string) => void
 }
@@ -25,9 +26,9 @@ export const RelationsCreator: FC<RelationsCreatorProps> = ({ characters, existi
         characters.forEach((char) => {
             menu.addItem((item) =>
                 item
-                    .setTitle(char)
-                    .setChecked(existingRels.contains(char))
-                    .onClick(() => onChange(char))
+                    .setTitle(char.name)
+                    .setChecked(existingRels.contains(char.name))
+                    .onClick(() => onChange(char.id))
             )
         })
 

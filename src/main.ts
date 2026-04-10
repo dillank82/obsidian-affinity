@@ -24,7 +24,7 @@ export default class AffinityPlugin extends Plugin {
 		this.processor = new AffinityProcessor()
 		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
 			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
-			const charsList = this.getChars()
+			const charsList = await this.getChars()
 			await this.processor.process(source, el, ctx, id, charsList)
 		})
 	}
@@ -70,9 +70,12 @@ export default class AffinityPlugin extends Plugin {
 		}
 	}
 
-	private getChars() {
+	private async getChars() {
 		const allFiles = this.app.vault.getFiles()
-		const charNames = allFiles.map(file => file.basename)
-		return charNames
+		const charNames = allFiles.map(async file => ({
+			name: file.basename,
+			id: await this.getAffinityId(file)
+		}))
+		return await Promise.all(charNames)
 	}
 }

@@ -8,7 +8,7 @@ interface HeaderProps {
     toChar: string | null
     setToChar: (value: string) => void
     charOptions: string[]
-    characters: string[]
+    characters: { name: string, id: CharacterID }[]
     createRel: (charId: CharacterID) => void
 }
 
