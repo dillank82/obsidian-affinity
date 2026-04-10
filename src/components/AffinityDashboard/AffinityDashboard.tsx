@@ -8,9 +8,10 @@ import { EmptyState } from 'components/EmptyState/EmptyState'
 
 interface AffinityDashboardProps {
     fromChar: CharacterID
+    characters: CharacterID[]
 }
 
-export const AffinityDashboard = ({ fromChar }: AffinityDashboardProps) => {
+export const AffinityDashboard = ({ fromChar, characters }: AffinityDashboardProps) => {
     const store = useStore()
     const { toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar)
 
@@ -26,7 +27,7 @@ export const AffinityDashboard = ({ fromChar }: AffinityDashboardProps) => {
 
     return (
         <div className={styles.dashboardContainer}>
-            <Header toChar={toChar} setToChar={setToChar} charOptions={Object.keys(relOptions)} createRel={createRel} characters={['1234']}/>
+            <Header toChar={toChar} setToChar={setToChar} charOptions={Object.keys(relOptions)} createRel={createRel} characters={characters}/>
             <main>
                 {renderContent()}
             </main>

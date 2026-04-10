@@ -24,7 +24,8 @@ export default class AffinityPlugin extends Plugin {
 		this.processor = new AffinityProcessor()
 		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
 			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
-			await this.processor.process(source, el, ctx, id)
+			const charsList = this.getChars()
+			await this.processor.process(source, el, ctx, id, charsList)
 		})
 	}
 
@@ -67,5 +68,11 @@ export default class AffinityPlugin extends Plugin {
 		} catch (e) {
 			console.error("Frontmatter update error:", e)
 		}
+	}
+
+	private getChars() {
+		const allFiles = this.app.vault.getFiles()
+		const charNames = allFiles.map(file => file.basename)
+		return charNames
 	}
 }
