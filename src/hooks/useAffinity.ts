@@ -17,6 +17,7 @@ type UseAffinityReturn = UseAffinity & {
     stats: Stats | null
     labels: StatsLabels | null
     setToChar: (toChar: CharacterID) => void
+    createRel: (toChar: CharacterID) => void
     relOptions: string[]
 }
 
@@ -28,6 +29,9 @@ export const useAffinity = (store: Store, fromChar: CharacterID): UseAffinityRet
             toChar: toChar
         })
     }
+    const createRel = (toChar: CharacterID) => {
+        store.createRelation(fromChar, toChar)
+    }
 
     if (state.status === 'initial') {
         return {
@@ -37,6 +41,7 @@ export const useAffinity = (store: Store, fromChar: CharacterID): UseAffinityRet
             labels: null,
             updateAffinity: null,
             relOptions: [],
+            createRel,
             setToChar
         }
     }
@@ -45,16 +50,14 @@ export const useAffinity = (store: Store, fromChar: CharacterID): UseAffinityRet
     const relations = store.relationships[fromChar]
     const stats = relations?.[toChar] || null
 
+    const labels = stats ? mapStats(stats) : null
+
     const relOptions = Object.keys(relations || {})
 
-    const labels = useMemo(() => {
-        if (!stats) return null
-        return mapStats(stats)
-    }, [stats])
 
     const updateAffinity = (delta: Partial<Stats>) => {
         store.updateRelation(fromChar, toChar, delta)
     }
 
-    return { status: state.status, toChar, setToChar, stats, labels, updateAffinity, relOptions }
+    return { status: state.status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions }
 }

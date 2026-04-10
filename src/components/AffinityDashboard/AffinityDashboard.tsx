@@ -12,7 +12,7 @@ interface AffinityDashboardProps {
 
 export const AffinityDashboard = ({ fromChar }: AffinityDashboardProps) => {
     const store = useStore()
-    const { toChar, setToChar, stats, labels, updateAffinity, relOptions } = useAffinity(store, fromChar)
+    const { toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar)
 
     const renderContent = () => {
         if (!toChar) {
@@ -26,7 +26,7 @@ export const AffinityDashboard = ({ fromChar }: AffinityDashboardProps) => {
 
     return (
         <div className={styles.dashboardContainer}>
-            <Header toChar={toChar} setToChar={setToChar} charOptions={Object.keys(relOptions)}/>
+            <Header toChar={toChar} setToChar={setToChar} charOptions={Object.keys(relOptions)} createRel={createRel} characters={['1234']}/>
             <main>
                 {renderContent()}
             </main>
