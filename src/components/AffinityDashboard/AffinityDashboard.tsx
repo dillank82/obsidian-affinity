@@ -13,13 +13,13 @@ interface AffinityDashboardProps {
 
 export const AffinityDashboard = ({ fromChar, characters }: AffinityDashboardProps) => {
     const store = useStore()
-    const { toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar)
+    const { toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, characters)
 
     const renderContent = () => {
         if (!toChar) {
             return <EmptyState />
         } else if (!(stats && labels)) {
-            return <div>No data found for {toChar}...</div>
+            return <div>No data found for {toChar.name}...</div>
         } else {
             return <AffinityWorkspace stats={stats} labels={labels} updateAffinity={updateAffinity} />
         }
@@ -27,7 +27,7 @@ export const AffinityDashboard = ({ fromChar, characters }: AffinityDashboardPro
 
     return (
         <div className={styles.dashboardContainer}>
-            <Header toChar={toChar} setToChar={setToChar} charOptions={Object.keys(relOptions)} createRel={createRel} characters={characters}/>
+            <Header toChar={toChar} setToChar={setToChar} charOptions={relOptions} createRel={createRel} characters={characters}/>
             <main>
                 {renderContent()}
             </main>

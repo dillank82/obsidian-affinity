@@ -5,7 +5,7 @@ import { CharacterID } from "interfaces/Realtionships";
 
 interface RelationsCreatorProps {
     characters: { name: string, id: CharacterID }[]
-    existingRels: string[]
+    existingRels: { name: string, id: CharacterID }[]
     onChange: (char: string) => void
 }
 
@@ -27,7 +27,7 @@ export const RelationsCreator: FC<RelationsCreatorProps> = ({ characters, existi
             menu.addItem((item) =>
                 item
                     .setTitle(char.name)
-                    .setChecked(existingRels.contains(char.name))
+                    .setChecked(Boolean(existingRels.find(rel => rel.id === char.id)))
                     .onClick(() => onChange(char.id))
             )
         })
