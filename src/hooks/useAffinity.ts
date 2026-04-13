@@ -36,6 +36,12 @@ export const useAffinity = (store: Store, fromChar: CharacterID, characters: { n
         store.createRelation(fromChar, toChar)
     }
 
+    const relations = store.relationships[fromChar]
+    const relOptions = Object.keys(relations || {}).map(key => ({
+        id: key,
+        name: characters.find(char => char.id === key)!.name
+    }))
+
     if (state.status === 'initial') {
         return {
             status: state.status,
@@ -43,23 +49,16 @@ export const useAffinity = (store: Store, fromChar: CharacterID, characters: { n
             stats: null,
             labels: null,
             updateAffinity: null,
-            relOptions: [],
+            relOptions: relOptions,
             createRel,
             setToChar
         }
     }
 
     const toChar = state.toChar
-    const relations = store.relationships[fromChar]
     const stats = relations?.[toChar.id] || null
 
     const labels = stats ? mapStats(stats) : null
-
-    const relOptions = Object.keys(relations || {}).map(key => ({
-        id: key,
-        name: characters.find(char => char.id === key)!.name
-    }))
-
 
     const updateAffinity = (delta: Partial<Stats>) => {
         store.updateRelation(fromChar, toChar.id, delta)
