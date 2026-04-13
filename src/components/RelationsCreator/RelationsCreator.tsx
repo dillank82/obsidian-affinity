@@ -25,10 +25,11 @@ export const RelationsCreator: FC<RelationsCreatorProps> = ({ characters, existi
         }
 
         characters.filter(char => char.id !== fromCharId).forEach((char) => {
+            const created = Boolean(existingRels.find(rel => rel.id === char.id))
             menu.addItem((item) =>
                 item
                     .setTitle(char.name)
-                    .setChecked(Boolean(existingRels.find(rel => rel.id === char.id)))
+                    .setChecked(created).setDisabled(created)
                     .onClick(() => onChange(char.id))
             )
         })
