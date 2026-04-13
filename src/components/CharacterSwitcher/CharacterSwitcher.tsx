@@ -1,14 +1,15 @@
 import { FC, useRef } from "react"
 import { Menu } from "obsidian"
 import styles from './CharacterSwitcher.module.css'
+import { CharacterID } from "interfaces/Realtionships"
 
 interface CharacterSwitcherProps {
-    currentChar: string | null
-    options: string[]
+    currentCharId: CharacterID | null
+    options: { name: string, id: CharacterID }[]
     onChange: (value: string) => void
 }
 
-export const CharacterSwitcher: FC<CharacterSwitcherProps> = ({ currentChar, options, onChange }) => {
+export const CharacterSwitcher: FC<CharacterSwitcherProps> = ({ currentCharId, options, onChange }) => {
     const triggerRef = useRef<HTMLButtonElement>(null)
 
     const showMenu = () => {
@@ -25,9 +26,9 @@ export const CharacterSwitcher: FC<CharacterSwitcherProps> = ({ currentChar, opt
         options.forEach((option) => {
             menu.addItem((item) =>
                 item
-                    .setTitle(option)
-                    .setChecked(option === currentChar)
-                    .onClick(() => onChange(option))
+                    .setTitle(option.name)
+                    .setChecked(option.id === currentCharId)
+                    .onClick(() => onChange(option.id))
             )
         })
 

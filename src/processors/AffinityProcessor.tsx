@@ -7,14 +7,14 @@ import { createRoot, Root } from "react-dom/client";
 export class AffinityProcessor {
     private roots: Map<HTMLElement, Root> = new Map()
 
-    async process(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext, id: CharacterID) {
+    async process(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext, id: CharacterID, chars: { name: string, id: CharacterID }[]) {
         const rootContainer = el.createDiv({ cls: "affinity-container" })
         const root = createRoot(rootContainer)
         this.roots.set(el, root)
 
         root.render(
             <StrictMode>
-                <AffinityDashboard fromChar={id}/>
+                <AffinityDashboard fromChar={id} characters={chars}/>
             </StrictMode>
         )
     }

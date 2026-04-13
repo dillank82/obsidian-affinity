@@ -5,7 +5,7 @@ import { Store } from "store"
 import { mapStats } from "utils/mapStats"
 
 type UseAffinityStateInitial = { status: 'initial', toChar: null }
-type UseAffinityStateChosen = { status: 'chosen', toChar: string }
+type UseAffinityStateChosen = { status: 'chosen', toChar: { name: string, id: CharacterID } }
 
 type UseAffinityInitial = UseAffinityStateInitial & { updateAffinity: null }
 type UseAffinityChosen = UseAffinityStateChosen & { updateAffinity: (delta: Partial<Stats>) => void }
@@ -16,18 +16,31 @@ type UseAffinityState = UseAffinityStateChosen | UseAffinityStateInitial
 type UseAffinityReturn = UseAffinity & {
     stats: Stats | null
     labels: StatsLabels | null
-    setToChar: (toChar: CharacterID) => void
-    relOptions: string[]
+    setToChar: (toCharId: CharacterID) => void
+    createRel: (toCharId: CharacterID) => void
+    relOptions: { name: string, id: CharacterID }[]
 }
 
-export const useAffinity = (store: Store, fromChar: CharacterID): UseAffinityReturn => {
+export const useAffinity = (store: Store, fromChar: CharacterID, characters: { name: string, id: CharacterID }[]): UseAffinityReturn => {
     const [state, setState] = useState<UseAffinityState>({ status: 'initial', toChar: null })
     const setToChar = (toChar: CharacterID) => {
         setState({
             status: 'chosen',
-            toChar: toChar
+            toChar: {
+                id: toChar,
+                name: characters.find(char => char.id === toChar)!.name
+            }
         })
     }
+    const createRel = (toChar: CharacterID) => {
+        store.createRelation(fromChar, toChar)
+    }
+
+    const relations = store.relationships[fromChar]
+    const relOptions = Object.keys(relations || {}).map(key => ({
+        id: key,
+        name: characters.find(char => char.id === key)!.name
+    }))
 
     if (state.status === 'initial') {
         return {
@@ -36,25 +49,20 @@ export const useAffinity = (store: Store, fromChar: CharacterID): UseAffinityRet
             stats: null,
             labels: null,
             updateAffinity: null,
-            relOptions: [],
+            relOptions: relOptions,
+            createRel,
             setToChar
         }
     }
 
     const toChar = state.toChar
-    const relations = store.relationships[fromChar]
-    const stats = relations?.[toChar] || null
+    const stats = relations?.[toChar.id] || null
 
-    const relOptions = Object.keys(relations || {})
-
-    const labels = useMemo(() => {
-        if (!stats) return null
-        return mapStats(stats)
-    }, [stats])
+    const labels = stats ? mapStats(stats) : null
 
     const updateAffinity = (delta: Partial<Stats>) => {
-        store.updateRelation(fromChar, toChar, delta)
+        store.updateRelation(fromChar, toChar.id, delta)
     }
 
-    return { status: state.status, toChar, setToChar, stats, labels, updateAffinity, relOptions }
+    return { status: state.status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions }
 }
