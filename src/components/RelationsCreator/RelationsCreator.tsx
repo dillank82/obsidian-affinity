@@ -7,9 +7,10 @@ interface RelationsCreatorProps {
     characters: { name: string, id: CharacterID }[]
     existingRels: { name: string, id: CharacterID }[]
     onChange: (char: string) => void
+    fromCharId: CharacterID
 }
 
-export const RelationsCreator: FC<RelationsCreatorProps> = ({ characters, existingRels, onChange }) => {
+export const RelationsCreator: FC<RelationsCreatorProps> = ({ characters, existingRels, onChange, fromCharId }) => {
     const triggerRef = useRef<HTMLButtonElement>(null)
 
     const showMenu = () => {
@@ -23,7 +24,7 @@ export const RelationsCreator: FC<RelationsCreatorProps> = ({ characters, existi
             )
         }
 
-        characters.forEach((char) => {
+        characters.filter(char => char.id !== fromCharId).forEach((char) => {
             menu.addItem((item) =>
                 item
                     .setTitle(char.name)

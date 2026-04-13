@@ -27,7 +27,7 @@ export const AffinityDashboard = ({ fromChar, characters }: AffinityDashboardPro
 
     return (
         <div className={styles.dashboardContainer}>
-            <Header toChar={toChar} setToChar={setToChar} charOptions={relOptions} createRel={createRel} characters={characters}/>
+            <Header toChar={toChar} fromChar={fromChar} setToChar={setToChar} charOptions={relOptions} createRel={createRel} characters={characters}/>
             <main>
                 {renderContent()}
             </main>
