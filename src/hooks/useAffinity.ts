@@ -6,11 +6,13 @@ import { mapStats } from "utils/mapStats"
 
 type UseAffinityStateInitial = { status: 'initial', toChar: null }
 type UseAffinityStateChosen = { status: 'chosen', toChar: Character }
+type UseAffinityStateNoStats = { status: 'no_stats', toChar: Character }
 
-type UseAffinityInitial = UseAffinityStateInitial & { updateAffinity: null }
-type UseAffinityChosen = UseAffinityStateChosen & { updateAffinity: (delta: Partial<Stats>) => void }
+type UseAffinityInitial = UseAffinityStateInitial & { updateAffinity: null, stats: null, labels: null }
+type UseAffinityChosen = UseAffinityStateChosen & { updateAffinity: (delta: Partial<Stats>) => void, stats: Stats, labels: StatsLabels }
+type UseAffinityNoStats = UseAffinityStateNoStats & { updateAffinity: null, stats: null, labels: null }
 
-type UseAffinity = UseAffinityInitial | UseAffinityChosen
+type UseAffinity = UseAffinityInitial | UseAffinityChosen | UseAffinityNoStats
 type UseAffinityState = UseAffinityStateChosen | UseAffinityStateInitial
 
 type UseAffinityReturn = UseAffinity & {
@@ -42,23 +44,35 @@ export const useAffinity = (store: Store, fromChar: CharacterID, characters: Cha
         name: characters.find(char => char.id === key)!.name
     }))
 
+    const initialReturn = {
+        toChar: null,
+        stats: null,
+        labels: null,
+        updateAffinity: null,
+        relOptions: relOptions,
+        createRel,
+        setToChar
+    }
+
     if (state.status === 'initial') {
         return {
             status: state.status,
-            toChar: null,
-            stats: null,
-            labels: null,
-            updateAffinity: null,
-            relOptions: relOptions,
-            createRel,
-            setToChar
+            ...initialReturn
         }
     }
 
     const toChar = state.toChar
     const stats = relations?.[toChar.id] || null
 
-    const labels = stats ? mapStats(stats) : null
+    if (!stats) {
+        return {
+            ...initialReturn,
+            status: "no_stats",
+            toChar: toChar
+        }
+    }
+
+    const labels = mapStats(stats)
 
     const updateAffinity = (delta: Partial<Stats>) => {
         store.updateRelation(fromChar, toChar.id, delta)
