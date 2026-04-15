@@ -2,6 +2,11 @@ import { Stats } from "./Stats"
 
 export type CharacterID = string
 
+export interface Character {
+    id: CharacterID
+    name: string
+}
+
 export interface Direction {
     fromChar: string
     toChar: string

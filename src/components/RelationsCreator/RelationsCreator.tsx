@@ -1,11 +1,11 @@
 import { Menu } from "obsidian";
 import { FC, useRef } from "react";
 import styles from './RelationsCreator.module.css'
-import { CharacterID } from "interfaces/Realtionships";
+import { Character, CharacterID } from "interfaces/Realtionships";
 
 interface RelationsCreatorProps {
-    characters: { name: string, id: CharacterID }[]
-    existingRels: { name: string, id: CharacterID }[]
+    characters: Character[]
+    existingRels: Character[]
     onChange: (char: string) => void
     fromCharId: CharacterID
 }

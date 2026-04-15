@@ -1,5 +1,5 @@
 import styles from './AffinityDashboard.module.css'
-import { CharacterID } from "interfaces/Realtionships"
+import { Character, CharacterID } from "interfaces/Realtionships"
 import { Header } from "components/Header/Header"
 import { useAffinity } from "hooks/useAffinity"
 import { useStore } from "store"
@@ -8,7 +8,7 @@ import { EmptyState } from 'components/EmptyState/EmptyState'
 
 interface AffinityDashboardProps {
     fromChar: CharacterID
-    characters: { name: string, id: CharacterID }[]
+    characters: Character[]
 }
 
 export const AffinityDashboard = ({ fromChar, characters }: AffinityDashboardProps) => {
