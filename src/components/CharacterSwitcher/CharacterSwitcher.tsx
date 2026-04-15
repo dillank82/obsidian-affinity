@@ -1,11 +1,11 @@
 import { FC, useRef } from "react"
 import { Menu } from "obsidian"
 import styles from './CharacterSwitcher.module.css'
-import { CharacterID } from "interfaces/Realtionships"
+import { Character, CharacterID } from "interfaces/Realtionships"
 
 interface CharacterSwitcherProps {
     currentCharId: CharacterID | null
-    options: { name: string, id: CharacterID }[]
+    options: Character[]
     onChange: (value: string) => void
 }
 

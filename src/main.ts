@@ -1,7 +1,7 @@
 import { debounce, FrontMatterCache, Plugin, TFile } from 'obsidian'
 import { DEFAULT_SETTINGS, PluginSettings } from "./settings"
 import { AffinityProcessor } from 'processors/AffinityProcessor';
-import { CharacterID } from 'interfaces/Realtionships';
+import { Character, CharacterID } from 'interfaces/Realtionships';
 import { useStore } from 'store';
 import { generateId } from 'utils/generateId';
 
@@ -70,7 +70,7 @@ export default class AffinityPlugin extends Plugin {
 		}
 	}
 
-	private async getChars() {
+	private async getChars(): Promise<Character[]> {
 		const allFiles = this.app.vault.getFiles()
 		const charNames = allFiles.map(async file => ({
 			name: file.basename,

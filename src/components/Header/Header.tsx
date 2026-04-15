@@ -2,17 +2,14 @@ import { CharacterSwitcher } from "components/CharacterSwitcher/CharacterSwitche
 import { FC } from "react"
 import styles from './Header.module.css'
 import { RelationsCreator } from "components/RelationsCreator/RelationsCreator"
-import { CharacterID } from "interfaces/Realtionships"
+import { Character, CharacterID } from "interfaces/Realtionships"
 
 interface HeaderProps {
-    toChar: {
-        name: string;
-        id: string;
-    } | null
+    toChar: Character | null
     fromChar: CharacterID
     setToChar: (value: string) => void
-    charOptions: { name: string, id: CharacterID }[]
-    characters: { name: string, id: CharacterID }[]
+    charOptions: Character[]
+    characters: Character[]
     createRel: (charId: CharacterID) => void
 }
 
