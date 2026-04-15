@@ -1,27 +1,9 @@
 import { Character, CharacterID } from "interfaces/Realtionships"
-import { Stats, StatsLabels } from "interfaces/Stats"
-import { useState, useMemo } from "react"
+import { Stats } from "interfaces/Stats"
+import { UseAffinityReturn, UseAffinityState } from "interfaces/useAffinity"
+import { useState } from "react"
 import { Store } from "store"
 import { mapStats } from "utils/mapStats"
-
-type UseAffinityStateInitial = { status: 'initial', toChar: null }
-type UseAffinityStateChosen = { status: 'chosen', toChar: Character }
-type UseAffinityStateNoStats = { status: 'no_stats', toChar: Character }
-
-type UseAffinityInitial = UseAffinityStateInitial & { updateAffinity: null, stats: null, labels: null }
-type UseAffinityChosen = UseAffinityStateChosen & { updateAffinity: (delta: Partial<Stats>) => void, stats: Stats, labels: StatsLabels }
-type UseAffinityNoStats = UseAffinityStateNoStats & { updateAffinity: null, stats: null, labels: null }
-
-type UseAffinity = UseAffinityInitial | UseAffinityChosen | UseAffinityNoStats
-type UseAffinityState = UseAffinityStateChosen | UseAffinityStateInitial
-
-type UseAffinityReturn = UseAffinity & {
-    stats: Stats | null
-    labels: StatsLabels | null
-    setToChar: (toCharId: CharacterID) => void
-    createRel: (toCharId: CharacterID) => void
-    relOptions: Character[]
-}
 
 export const useAffinity = (store: Store, fromChar: CharacterID, characters: Character[]): UseAffinityReturn => {
     const [state, setState] = useState<UseAffinityState>({ status: 'initial', toChar: null })
