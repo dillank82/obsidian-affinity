@@ -18,9 +18,14 @@ export class AffinityProcessor {
         let toCharId: CharacterID | null
         try {
             const raw: unknown = parseYaml(source)
-            const data: MarkdownCodeBlockData = MarkdownCodeBlockDataSchema.parse(raw)
-            id = data.id
-            toCharId = data.toCharId
+            if (!raw) {
+                id = generateId()
+                toCharId = null
+            } else {
+                const data: MarkdownCodeBlockData = MarkdownCodeBlockDataSchema.parse(raw)
+                id = data.id
+                toCharId = data.toCharId
+            }
         } catch {
             id = generateId()
             toCharId = null
