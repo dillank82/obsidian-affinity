@@ -6,9 +6,10 @@ import { Store } from "store"
 import { mapStats } from "utils/mapStats"
 
 export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId: CharacterID | null, characters: Character[]): UseAffinityReturn => {
+    const findCharName = (charId: CharacterID) => characters.find(char => char.id === charId)?.name
     const getInitialToChar = () => {
         if (!initialToCharId) return null
-        const name = characters.find(char => char.id === initialToCharId)?.name
+        const name = findCharName(initialToCharId)
         if (!name) return null
         return {
             id: initialToCharId,
@@ -35,7 +36,7 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
             status: 'chosen',
             toChar: {
                 id: toChar,
-                name: characters.find(char => char.id === toChar)!.name
+                name: findCharName(toChar)!
             }
         })
     }
@@ -46,7 +47,7 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
     const relations = store.relationships[fromChar]
     const relOptions = Object.keys(relations || {}).map(key => ({
         id: key,
-        name: characters.find(char => char.id === key)!.name
+        name: findCharName(key)!
     }))
 
     const initialReturn = {
