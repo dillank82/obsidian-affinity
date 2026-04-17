@@ -5,8 +5,31 @@ import { useState } from "react"
 import { Store } from "store"
 import { mapStats } from "utils/mapStats"
 
-export const useAffinity = (store: Store, fromChar: CharacterID, characters: Character[]): UseAffinityReturn => {
-    const [state, setState] = useState<UseAffinityState>({ status: 'initial', toChar: null })
+export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId: CharacterID | null, characters: Character[]): UseAffinityReturn => {
+    const getInitialToChar = () => {
+        if (!initialToCharId) return null
+        const name = characters.find(char => char.id === initialToCharId)?.name
+        if (!name) return null
+        return {
+            id: initialToCharId,
+            name: name
+        }
+    }
+    const getInitialState = (): UseAffinityState => {
+        const toChar = getInitialToChar()
+        if (!toChar) {
+            return {
+                status: 'initial',
+                toChar
+            }
+        } else {
+            return {
+                status: 'chosen',
+                toChar
+            }
+        }
+    }
+    const [state, setState] = useState<UseAffinityState>(getInitialState())
     const setToChar = (toChar: CharacterID) => {
         setState({
             status: 'chosen',
