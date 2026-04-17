@@ -24,7 +24,7 @@ export class AffinityProcessor {
             } else {
                 const data: MarkdownCodeBlockData = MarkdownCodeBlockDataSchema.parse(raw)
                 id = data.id
-                toCharId = data.toCharId
+                toCharId = data.toCharId || null
             }
         } catch {
             id = generateId()
