@@ -1,6 +1,6 @@
 import { AffinityDashboard } from "components/AffinityDashboard/AffinityDashboard";
 import { Character, CharacterID } from "interfaces/Realtionships";
-import { MarkdownPostProcessorContext } from "obsidian";
+import { MarkdownPostProcessorContext, parseYaml } from "obsidian";
 import { StrictMode } from "react";
 import { createRoot, Root } from "react-dom/client";
 
@@ -11,6 +11,12 @@ export class AffinityProcessor {
         const rootContainer = el.createDiv({ cls: "affinity-container" })
         const root = createRoot(rootContainer)
         this.roots.set(el, root)
+
+        try {
+            const parseYaml(source)
+        } catch (error) {
+            
+        }
 
         root.render(
             <StrictMode>
