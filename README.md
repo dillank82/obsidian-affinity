@@ -1,90 +1,54 @@
-# Obsidian Sample Plugin
+# Affinity
+Obsidian plugin for dynamic relationships tracking. It's primarily intended for TTRPG Game Masters, mainly in D&D-like systems.
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+## Why
+There are many such trackers, but most of them are either overloaded with number or a variety of relationships, or on the contrary, are a simple numerical scale or a single comment.
+This plugin balances complexity and simplicity while maintaining a natural relationship. This is achieved through the use of a three-factor psychological model.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## Tech stack
+Core: Typescript, React
+Testing: Jest, RTL
+State management: Zustand
+Data integrity: Zod
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+## Challenges and Decisions
 
-## First time developing plugins?
+### Synchronization of Zustand State with React Lyfecycle
 
-Quick starting guide for new plugin devs:
+#### Problem
+During early implementation, an issue arose where Zustand store updates weren't causing component re-rendering. Initially, access to the store state was directly by store API, which effectively bypassed React's reactivity system.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+#### Diagnosis
+By accessing the store directly the components were failing to subscribe to state changes. React remained unaware of the mutations, as there was no trigger to initiate a reconciliation process.
 
-## Releasing new releases
+#### Decision
+Store integration was refactored to component use store hook, not API.
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+### Type Safety in Dynamic Hook
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+#### Problem
+The custom hook-orchestrator returned varying structures. Initial implementation had simple interface with optional labels, that forcing to use multi-conditional in main component.
 
-## Adding your plugin to the community plugin list
+#### Decisions
+Implemented Discriminated Unions for the return types of the hook. Status introduced as a discriminator. After that Typescript could infer the shape of data based on the current state with high precision.
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+### Managing Pre-loaded Plugin State
 
-## How to use
+#### Problem
+Plugin needed to persist last selected character ID within a MarkDownCodeBlockProcessor to mantain state across Obsidian reloads.
+This requires a complex methods of note content managing and user may corrupt data in edit mode (last one, by the way, is solved by the graceful degradation approach). But storing this in the global store would have caused:
+1) **State Pollution:** Global business logic being coupled with transient UI layout data.
+2) **Dangling References:** Complexity in tracking and clearing "dead" data from the global store when user deletes a note or code block.
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
+#### Decision
+Last selected character info encapsulated locally as the YAML data inside of MarkDownCodeBlock (instance of plugin).
 
-## Manually installing the plugin
+### UI Components in the Obsidian Ecosystem
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+#### Problem
+Evaluated trade-off between using third-party UI libraries and native Obsidian classes.
+- **The Portal Issue:** Using React Portals for modals/menus from Radix-like libraries often creates "DOM isolation" issues. Obsidian relies on specific DOM structures to manage focus, modal closing, and hotkey capturing. Portals frequently break event propagation and trigger premature "click-outside" handlers or conflicts with the host application's z-index stack.
+- **Consistency:** Native Obsidian UI provides built-in a11y and keyboard navigation that matches the user's workflow perfectly.
 
-## Improve code quality with eslint
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
-
-## API Documentation
-
-See https://docs.obsidian.md
+#### Decisions
+Prioritized native Obsidian API over standard Radix UI implementation
