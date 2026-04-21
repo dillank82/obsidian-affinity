@@ -16,10 +16,7 @@ Data integrity: Zod
 ### Synchronization of Zustand State with React Lyfecycle
 
 #### Problem
-During early implementation, an issue arose where Zustand store updates weren't causing component re-rendering. Initially, access to the store state was directly by store API, which effectively bypassed React's reactivity system.
-
-#### Diagnosis
-By accessing the store directly the components were failing to subscribe to state changes. React remained unaware of the mutations, as there was no trigger to initiate a reconciliation process.
+During early implementation access to the store state was directly by store API. By accessing the store directly the components were failing to subscribe to state changes. React remained unaware of the mutations, as there was no trigger to re-render UI components.
 
 #### Decision
 Store integration was refactored to component use store hook, not API.
