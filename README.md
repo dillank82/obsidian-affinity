@@ -33,12 +33,12 @@ Implemented Discriminated Unions for the return types of the hook. Status introd
 
 #### Problem
 Plugin needed to persist last selected character ID within a MarkDownCodeBlockProcessor to mantain state across Obsidian reloads.
-This requires a complex methods of note content managing and user may corrupt data in edit mode (last one, by the way, is solved by the graceful degradation approach). But storing this in the global store would have caused:
+This requires complex methods of note content managing and preventing issues from manual user edits. But storing this in the global store would have caused:
 1) **State Pollution:** Global business logic being coupled with transient UI layout data.
 2) **Dangling References:** Complexity in tracking and clearing "dead" data from the global store when user deletes a note or code block.
 
 #### Decision
-Last selected character info encapsulated locally as the YAML data inside of MarkDownCodeBlock (instance of plugin).
+Last selected character and code block IDs encapsulated locally as block-level parameters within MarkDown code block (instance of plugin). Implemented Graceful Degradation approach to ensure that plugin will handle malformed blocks gracefully
 
 ### UI Components in the Obsidian Ecosystem
 
