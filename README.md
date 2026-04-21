@@ -1,9 +1,9 @@
 # Affinity
 Obsidian plugin for dynamic relationships tracking. It's primarily intended for TTRPG Game Masters, mainly in D&D-like systems.
 
-## Why
-There are many such trackers, but most of them are either overloaded with number or a variety of relationships, or on the contrary, are a simple numerical scale or a single comment.
-This plugin balances complexity and simplicity while maintaining a natural relationship. This is achieved through the use of a three-factor psychological model.
+## Motivation
+In the context of TTRPGs, relationship tracking often falls into one of two extremes: either unstructured free-form note-taking (which is flexible, but difficult to analyze over long campaigns) or oversimplified, abstract sliders (which are good only for simple game systems, but lack narrative context).
+Affinity bridges this gap by applying a structured psychological model to narrative dynamics. It's designed for long narrative-heavy campaigns where relationships are a dynamic plot element that requires analysis and tracking of changes over time.
 
 ## Tech stack
 Core: Typescript, React
