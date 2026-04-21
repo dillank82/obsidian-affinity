@@ -43,7 +43,7 @@ Last selected character and code block IDs encapsulated locally as block-level p
 ### UI Components in the Obsidian Ecosystem
 
 #### Problem
-Evaluated trade-off between using third-party UI libraries and native Obsidian classes.
+Initially, the menu components were designed using Radix UI, but critical weaknesses of this approach compared to native Obsidian classes were identified:
 - **The Portal Issue:** Using React Portals for modals/menus from Radix-like libraries often creates "DOM isolation" issues. Obsidian relies on specific DOM structures to manage focus, modal closing, and hotkey capturing. Portals frequently break event propagation and trigger premature "click-outside" handlers or conflicts with the host application's z-index stack.
 - **Consistency:** Native Obsidian UI provides built-in a11y and keyboard navigation that matches the user's workflow perfectly.
 
