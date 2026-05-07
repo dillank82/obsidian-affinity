@@ -1,6 +1,7 @@
 import { AffinityDashboard } from "components/AffinityDashboard/AffinityDashboard";
+import { AppProvider } from "context";
 import { Character, CharacterID } from "interfaces/Realtionships";
-import { MarkdownPostProcessorContext, Notice, parseYaml } from "obsidian";
+import { App, MarkdownPostProcessorContext, Notice, parseYaml } from "obsidian";
 import { StrictMode } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { MarkdownCodeBlockData, MarkdownCodeBlockDataSchema } from "schemas/MarkdownCodeBlockData";
@@ -9,7 +10,7 @@ import { generateId } from "utils/generateId";
 export class AffinityProcessor {
     private roots: Map<HTMLElement, Root> = new Map()
 
-    async process(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext, fromCharid: CharacterID, chars: Character[]) {
+    async process(source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext, fromCharid: CharacterID, chars: Character[], app: App) {
         const rootContainer = el.createDiv({ cls: "affinity-container" })
         const root = createRoot(rootContainer)
         this.roots.set(el, root)
@@ -34,7 +35,9 @@ export class AffinityProcessor {
 
         root.render(
             <StrictMode>
-                <AffinityDashboard fromChar={fromCharid} characters={chars} id={id} initialToCharId={toCharId}/>
+                <AppProvider app={app}>
+                    <AffinityDashboard fromChar={fromCharid} characters={chars} id={id} initialToCharId={toCharId}/>
+                </AppProvider>
             </StrictMode>
         )
     }

@@ -25,7 +25,7 @@ export default class AffinityPlugin extends Plugin {
 		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
 			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
 			const charsList = await this.getChars()
-			await this.processor.process(source, el, ctx, id, charsList)
+			await this.processor.process(source, el, ctx, id, charsList, this.app)
 		})
 	}
 
