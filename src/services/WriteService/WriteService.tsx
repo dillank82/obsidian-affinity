@@ -1,6 +1,8 @@
 import { syntaxTree } from "@codemirror/language";
 import { EditorState } from "@codemirror/state";
-import { MarkdownCodeBlockDataSchema } from "schemas/MarkdownCodeBlockData";
+import { Editor, EditorPosition } from "obsidian";
+import { MarkdownCodeBlockData, MarkdownCodeBlockDataSchema } from "schemas/MarkdownCodeBlockData";
+import { dataToMarkdownContent } from "utils/dataToMarkdownContent/dataToMarkdownContent";
 import { parseYamlObsidian } from "utils/obsidianParser";
 
 export class WriteService {
@@ -39,4 +41,9 @@ export class WriteService {
         })
         return ranges
     }
+}
+
+export const updateMarkdownData = (editor: Editor, data: MarkdownCodeBlockData, from: EditorPosition, to: EditorPosition) => {
+    const content = dataToMarkdownContent(data)
+    editor.replaceRange(content, from, to)
 }
