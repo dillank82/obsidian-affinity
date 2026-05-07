@@ -1,6 +1,6 @@
 import { EditorState } from "@codemirror/state"
 import { markdown } from "@codemirror/lang-markdown"
-import { WriteService } from "./WriteService"
+import { findBlockRanges } from "./WriteService"
 import { generateId } from "utils/generateId"
 import { parseYamlObsidian } from "utils/obsidianParser"
 
@@ -33,7 +33,7 @@ describe('findBlockRanges', () => {
             toChar: 'someone'
         }))
 
-        expect(new WriteService(state).findBlockRanges(id)).toStrictEqual({
+        expect(findBlockRanges(state, id)).toStrictEqual({
             from: 5,
             to: doc.length - 7 - 1 // 1 to 7 + \n
         })
@@ -48,7 +48,7 @@ describe('findBlockRanges', () => {
         ].join('\n')
         const state = createState(doc)
 
-        expect(new WriteService(state).findBlockRanges(id)).toBeNull()
+        expect(findBlockRanges(state, id)).toBeNull()
     })
     it('does not count other languages', () => {
         const id = generateId()
@@ -60,6 +60,6 @@ describe('findBlockRanges', () => {
         ].join('\n')
         const state = createState(doc)
 
-        expect(new WriteService(state).findBlockRanges(id)).toBeNull()
+        expect(findBlockRanges(state, id)).toBeNull()
     })
 })
