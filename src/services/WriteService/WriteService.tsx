@@ -5,10 +5,10 @@ import { MarkdownCodeBlockData, MarkdownCodeBlockDataSchema } from "schemas/Mark
 import { dataToMarkdownContent } from "utils/dataToMarkdownContent/dataToMarkdownContent";
 import { parseYamlObsidian } from "utils/obsidianParser";
 
-export const findBlockRanges = (state: EditorState, id: string): { from: number, to: number } | null => {
+export const findBlockRanges = (state: EditorState, id: string): { from: EditorPosition, to: EditorPosition } | null => {
     const tree = syntaxTree(state)
 
-    let ranges: { from: number, to: number } | null = null
+    let ranges: { from: EditorPosition, to: EditorPosition } | null = null
 
     tree.iterate({
         enter: (node) => {
@@ -24,9 +24,17 @@ export const findBlockRanges = (state: EditorState, id: string): { from: number,
                             const rawData = parseYamlObsidian(codeText)
                             const data = MarkdownCodeBlockDataSchema.parse(rawData)
                             if (data.id === id) {
+                                const fromLine = doc.lineAt(node.from)
+                                const toLine = doc.lineAt(node.to)
                                 ranges = {
-                                    from: node.from,
-                                    to: node.to
+                                    from: {
+                                        line: fromLine.number - 1,
+                                        ch: node.from - fromLine.from
+                                    },
+                                    to: {
+                                        line: toLine.number - 1,
+                                        ch: node.to - toLine.from
+                                    }
                                 }
                                 return false
                             }

@@ -22,8 +22,8 @@ describe('findBlockRanges', () => {
         const doc = [
             '1234',
             '```affinity',
-            `id: ${id}`,
-            'toChar: someone',
+            `   id: ${id}`,
+            '   toChar: someone',
             '```',
             '1234567'
         ].join('\n')
@@ -34,8 +34,14 @@ describe('findBlockRanges', () => {
         }))
 
         expect(findBlockRanges(state, id)).toStrictEqual({
-            from: 5,
-            to: doc.length - 7 - 1 // 1 to 7 + \n
+            from: {
+                line: 1,
+                ch: 0
+            },
+            to: {
+                line: 4,
+                ch: 3 // 0-index + half-open intervals in AST nodes
+            }
         })
     })
     it('does not count id without fenced code block', () => {
