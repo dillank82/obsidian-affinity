@@ -1,11 +1,17 @@
+import { EditorView } from "@codemirror/view"
+import { useApp } from "context"
 import { Character, CharacterID } from "interfaces/Realtionships"
 import { Stats } from "interfaces/Stats"
 import { UseAffinityReturn, UseAffinityState } from "interfaces/useAffinity"
+import { MarkdownView, Notice } from "obsidian"
 import { useState } from "react"
+import { findBlockRanges, updateMarkdownData } from "services/WriteService/WriteService"
 import { Store } from "store"
 import { mapStats } from "utils/mapStats"
 
-export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId: CharacterID | null, characters: Character[]): UseAffinityReturn => {
+export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId: CharacterID | null, characters: Character[], codeBlockId: string): UseAffinityReturn => {
+    const app = useApp()
+
     const findCharName = (charId: CharacterID) => characters.find(char => char.id === charId)?.name
     const getInitialToChar = () => {
         if (!initialToCharId) return null
@@ -31,6 +37,34 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
         }
     }
     const [state, setState] = useState<UseAffinityState>(getInitialState())
+
+    const writeToCharChanges = (toCharId: string) => {
+        try {
+            const editor = app.workspace.getActiveViewOfType(MarkdownView)?.editor
+            const editorView = (editor as any).cm as EditorView
+            if (!editor || !editorView) {
+                new Notice('Failed to save character selection. No active editor.')
+                return
+            }
+
+            const state = editorView.state
+            const ranges = findBlockRanges(state, toCharId)
+            if (!ranges) {
+                new Notice('Failed to save character selection. Cannot find current markdown code block range.')
+                return
+            }
+            const { from, to } = ranges
+
+            const data = {
+                id: codeBlockId,
+                toChar: toChar
+            }
+            updateMarkdownData(editor, data, from, to)
+        } catch {
+            new Notice('Unexpected error while trying to save character selection.')
+        }
+    }
+
     const setToChar = (toChar: CharacterID) => {
         setState({
             status: 'chosen',
@@ -39,7 +73,9 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
                 name: findCharName(toChar)!
             }
         })
+        writeToCharChanges(toChar)
     }
+
     const createRel = (toChar: CharacterID) => {
         store.createRelation(fromChar, toChar)
     }

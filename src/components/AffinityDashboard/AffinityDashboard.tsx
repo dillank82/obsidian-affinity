@@ -13,9 +13,9 @@ interface AffinityDashboardProps {
     characters: Character[]
 }
 
-export const AffinityDashboard = ({ fromChar, initialToCharId, characters }: AffinityDashboardProps) => {
+export const AffinityDashboard = ({ fromChar, initialToCharId, characters, id }: AffinityDashboardProps) => {
     const store = useStore()
-    const { status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, initialToCharId, characters)
+    const { status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, initialToCharId, characters, id)
 
     const renderContent = () => {
         switch(status){
