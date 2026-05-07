@@ -1,5 +1,7 @@
 import { syntaxTree } from "@codemirror/language";
 import { EditorState } from "@codemirror/state";
+import { MarkdownCodeBlockDataSchema } from "schemas/MarkdownCodeBlockData";
+import { parseYamlObsidian } from "utils/obsidianParser";
 
 export class WriteService {
     constructor(private editorState: EditorState) { }
@@ -20,8 +22,9 @@ export class WriteService {
                             const codeTextNode = node.node.getChild("CodeText")
                             if (codeTextNode) {
                                 const codeText = doc.sliceString(codeTextNode?.from, codeTextNode?.to)
-                                const idRegex = new RegExp(`^id:\\s*${id}$`, 'm')
-                                if (idRegex.test(codeText.trim())) {
+                                const rawData = parseYamlObsidian(codeText)
+                                const data = MarkdownCodeBlockDataSchema.parse(rawData)
+                                if (data.id === id) {
                                     ranges = {
                                         from: node.from,
                                         to: node.to

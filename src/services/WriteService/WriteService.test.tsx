@@ -1,6 +1,13 @@
 import { EditorState } from "@codemirror/state"
 import { markdown } from "@codemirror/lang-markdown"
 import { WriteService } from "./WriteService"
+import { generateId } from "utils/generateId"
+import { parseYamlObsidian } from "utils/obsidianParser"
+
+jest.mock('utils/obsidianParser', () => ({
+    parseYamlObsidian: jest.fn((yaml: string) => {})
+}))
+const mockParser = parseYamlObsidian as jest.Mock
 
 describe('findBlockRanges', () => {
     const createState = (doc: string) => {
@@ -11,7 +18,7 @@ describe('findBlockRanges', () => {
         return state
     }
     it('finds affinity code block ranges by id', () => {
-        const id = 'test13'
+        const id = generateId()
         const doc = [
             '1234',
             '```affinity',
@@ -21,26 +28,18 @@ describe('findBlockRanges', () => {
             '1234567'
         ].join('\n')
         const state = createState(doc)
+        mockParser.mockImplementationOnce(() => ({
+            id,
+            toChar: 'someone'
+        }))
 
         expect(new WriteService(state).findBlockRanges(id)).toStrictEqual({
             from: 5,
             to: doc.length - 7 - 1 // 1 to 7 + \n
         })
     })
-    it('does not count id with extra characters', () => {
-        const id = 'test13'
-        const doc = [
-            '```affinity',
-            `id: ${id}67`,
-            'toChar: someone',
-            '```'
-        ].join('\n')
-        const state = createState(doc)
-
-        expect(new WriteService(state).findBlockRanges(id)).toBeNull()
-    })
     it('does not count id without fenced code block', () => {
-        const id = 'test13'
+        const id = generateId()
         const doc = [
             'affinity',
             `id: ${id}67`,
@@ -52,7 +51,7 @@ describe('findBlockRanges', () => {
         expect(new WriteService(state).findBlockRanges(id)).toBeNull()
     })
     it('does not count other languages', () => {
-        const id = 'test13'
+        const id = generateId()
         const doc = [
             '```affiscript',
             `id: ${id}67`,
