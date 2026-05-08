@@ -11,7 +11,7 @@ describe('dataToMarkdownContent', () => {
     ).toMatchInlineSnapshot(`
 "\`\`\`affinity
   id: bb357792-c996-40cd-ab9e-ed78ae623ef5
-  toChar: bf5337ad-b689-4d0c-9048-1a44ffbe35e9
+  toCharId: bf5337ad-b689-4d0c-9048-1a44ffbe35e9
 \`\`\`"
 `)
   })
