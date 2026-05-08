@@ -1,4 +1,4 @@
-import { syntaxTree } from "@codemirror/language";
+import { markdownLanguage } from "@codemirror/lang-markdown";
 import { EditorState } from "@codemirror/state";
 import { Editor, EditorPosition } from "obsidian";
 import { MarkdownCodeBlockData, MarkdownCodeBlockDataSchema } from "schemas/MarkdownCodeBlockData";
@@ -6,7 +6,7 @@ import { dataToMarkdownContent } from "utils/dataToMarkdownContent/dataToMarkdow
 import { parseYamlObsidian } from "utils/obsidianParser";
 
 export const findBlockRanges = (state: EditorState, id: string): { from: EditorPosition, to: EditorPosition } | null => {
-    const tree = syntaxTree(state)
+    const tree = markdownLanguage.parser.parse(state.doc.toString())
 
     let ranges: { from: EditorPosition, to: EditorPosition } | null = null
 
