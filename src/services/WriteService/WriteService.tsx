@@ -42,6 +42,7 @@ export const findBlockRanges = (state: EditorState, id: string): { from: EditorP
                     }
                 }
             }
+            return
         }
     })
     return ranges
