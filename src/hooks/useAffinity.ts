@@ -48,16 +48,16 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
             }
 
             const state = editorView.state
-            const ranges = findBlockRanges(state, toCharId)
+            const ranges = findBlockRanges(state, codeBlockId)
             if (!ranges) {
                 new Notice('Failed to save character selection. Cannot find current markdown code block range.')
                 return
             }
             const { from, to } = ranges
-
+            
             const data = {
                 id: codeBlockId,
-                toChar: toChar
+                toCharId: toCharId
             }
             updateMarkdownData(editor, data, from, to)
         } catch {

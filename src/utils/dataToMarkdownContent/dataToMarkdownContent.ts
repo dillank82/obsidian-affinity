@@ -5,7 +5,7 @@ export const dataToMarkdownContent = (data: MarkdownCodeBlockData) => {
         '```affinity',
         `  id: ${data.id}`
     ]
-    if (data.toCharId) content.push(`  toChar: ${data.toCharId}`)
+    if (data.toCharId) content.push(`  toCharId: ${data.toCharId}`)
     content.push('```')
     return content.join('\n')
 }
