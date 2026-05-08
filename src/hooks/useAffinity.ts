@@ -60,8 +60,8 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
                 toCharId: toCharId
             }
             updateMarkdownData(editor, data, from, to)
-        } catch {
-            new Notice('Unexpected error while trying to save character selection.')
+        } catch(err) {
+            new Notice(`Unexpected error while trying to save character selection: ${err}`)
         }
     }
 
