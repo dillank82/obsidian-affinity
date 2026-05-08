@@ -1,6 +1,6 @@
 import { StatChanger } from "components/StatChanger/StatChanger"
 import { Stats } from "interfaces/Stats"
-import { FC, FormEvent, useState } from "react"
+import { FC, SubmitEvent, useState } from "react"
 import { rollDice } from "utils/rollDice"
 import styles from './ChangeAffinityForm.module.css'
 import { AffinityFormState, AffinityFormValue } from "interfaces/ChangeAffinityForm"
@@ -15,7 +15,7 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
         setFormValues(prev => ({...prev, [name]: value}))
     }
 
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault()
 
         const resolveValue = (value: AffinityFormValue): number => {

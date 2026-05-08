@@ -1,5 +1,5 @@
 import { App } from "obsidian";
-import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { createContext, ReactNode, useContext } from "react";
 
 const AppContext = createContext<App | null>(null);
 

@@ -41,6 +41,8 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
     const writeToCharChanges = (toCharId: string) => {
         try {
             const editor = app.workspace.getActiveViewOfType(MarkdownView)?.editor
+            // A necessary hack to gain access to the private CodeMirror API
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
             const editorView = (editor as any).cm as EditorView
             if (!editor || !editorView) {
                 new Notice('Failed to save character selection. No active editor.')
@@ -50,7 +52,7 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
             const state = editorView.state
             const ranges = findBlockRanges(state, codeBlockId)
             if (!ranges) {
-                new Notice('Failed to save character selection. Cannot find current markdown code block range.')
+                new Notice('Failed to save character selection: cannot find current code block range.')
                 return
             }
             const { from, to } = ranges
@@ -61,7 +63,8 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
             }
             updateMarkdownData(editor, data, from, to)
         } catch(err) {
-            new Notice(`Unexpected error while trying to save character selection: ${err}`)
+            const errMsg = err instanceof Error ? err.message : String(err)
+            new Notice(`Unexpected error while trying to save character selection: ${errMsg}.`)
         }
     }
 
