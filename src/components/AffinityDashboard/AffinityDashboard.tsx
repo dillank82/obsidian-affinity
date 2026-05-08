@@ -7,13 +7,15 @@ import { AffinityWorkspace } from 'components/AffinityWorkspace/AffinityWorkspac
 import { EmptyState } from 'components/EmptyState/EmptyState'
 
 interface AffinityDashboardProps {
+    id: string
     fromChar: CharacterID
+    initialToCharId: CharacterID | null
     characters: Character[]
 }
 
-export const AffinityDashboard = ({ fromChar, characters }: AffinityDashboardProps) => {
+export const AffinityDashboard = ({ fromChar, initialToCharId, characters, id }: AffinityDashboardProps) => {
     const store = useStore()
-    const { status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, characters)
+    const { status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, initialToCharId, characters, id)
 
     const renderContent = () => {
         switch(status){
