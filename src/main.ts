@@ -7,8 +7,8 @@ import { generateId } from 'utils/generateId';
 import { addCommands } from 'commands';
 
 export default class AffinityPlugin extends Plugin {
-	settings: PluginSettings
-  	private processor: AffinityProcessor
+	settings: PluginSettings = DEFAULT_SETTINGS
+  	private processor: AffinityProcessor = new AffinityProcessor()
 
 	async onload() {
 		await this.loadSettings();
@@ -23,7 +23,6 @@ export default class AffinityPlugin extends Plugin {
 			}
 			debouncedSave()
 		})
-		this.processor = new AffinityProcessor()
 		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
 			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
 			const charsList = await this.getChars()
