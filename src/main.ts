@@ -4,6 +4,7 @@ import { AffinityProcessor } from 'processors/AffinityProcessor';
 import { Character, CharacterID } from 'interfaces/Realtionships';
 import { useStore } from 'store';
 import { generateId } from 'utils/generateId';
+import { addCommands } from 'commands';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings
@@ -11,6 +12,7 @@ export default class AffinityPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+		addCommands(this)
 
 		const debouncedSave = debounce(async() => { await this.saveSettings() }, 1000)
 		useStore.setState({ relationships: this.settings.relationships })
