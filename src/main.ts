@@ -6,6 +6,7 @@ import { useStore } from 'store';
 import { generateId } from 'utils/generateId';
 import { addCommands } from 'commands';
 import { AffinitySettingTab } from 'AffinitySettingTab';
+import { getFilesByFolder } from 'utils/getFilesByFolder';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS
@@ -74,11 +75,11 @@ export default class AffinityPlugin extends Plugin {
 	}
 
 	private async getChars(): Promise<Character[]> {
-		const allFiles = this.app.vault.getFiles()
-		const charNames = allFiles.map(async file => ({
+		const allFiles = getFilesByFolder(this.app, this.settings.charactersDirectory)
+		const chars = allFiles.map(async file => ({
 			name: file.basename,
 			id: await this.getAffinityId(file)
 		}))
-		return await Promise.all(charNames)
+		return await Promise.all(chars)
 	}
 }
