@@ -1,4 +1,4 @@
-import { debounce, FrontMatterCache, Plugin, TFile } from 'obsidian'
+import { debounce, FrontMatterCache, Plugin, TFile, TFolder } from 'obsidian'
 import { DEFAULT_SETTINGS, PluginSettings } from "./settings"
 import { AffinityProcessor } from 'processors/AffinityProcessor';
 import { Character, CharacterID } from 'interfaces/Realtionships';
@@ -16,6 +16,15 @@ export default class AffinityPlugin extends Plugin {
 		await this.loadSettings();
 		addCommands(this)
 		this.addSettingTab(new AffinitySettingTab(this))
+
+		this.registerEvent(
+        	this.app.vault.on('rename', async (file, oldPath) => {
+            	if (!(file instanceof TFolder)) return
+				if (oldPath !== this.settings.charactersDirectory.path) return
+            	this.settings.charactersDirectory.path = file.path
+				await this.saveSettings()
+        	})
+    	)
 
 		const debouncedSave = debounce(async() => { await this.saveSettings() }, 1000)
 		useStore.setState({ relationships: this.settings.relationships })
