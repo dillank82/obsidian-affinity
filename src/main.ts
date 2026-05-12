@@ -5,6 +5,7 @@ import { Character, CharacterID } from 'interfaces/Realtionships';
 import { useStore } from 'store';
 import { generateId } from 'utils/generateId';
 import { addCommands } from 'commands';
+import { AffinitySettingTab } from 'AffinitySettingTab';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS
@@ -13,6 +14,7 @@ export default class AffinityPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		addCommands(this)
+		this.addSettingTab(new AffinitySettingTab(this))
 
 		const debouncedSave = debounce(async() => { await this.saveSettings() }, 1000)
 		useStore.setState({ relationships: this.settings.relationships })
