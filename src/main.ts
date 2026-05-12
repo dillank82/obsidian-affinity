@@ -1,10 +1,12 @@
-import { debounce, FrontMatterCache, Plugin, TFile } from 'obsidian'
+import { debounce, FrontMatterCache, Plugin, TFile, TFolder } from 'obsidian'
 import { DEFAULT_SETTINGS, PluginSettings } from "./settings"
 import { AffinityProcessor } from 'processors/AffinityProcessor';
 import { Character, CharacterID } from 'interfaces/Realtionships';
 import { useStore } from 'store';
 import { generateId } from 'utils/generateId';
 import { addCommands } from 'commands';
+import { AffinitySettingTab } from 'AffinitySettingTab';
+import { getFilesByFolder } from 'utils/getFilesByFolder';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS
@@ -13,6 +15,16 @@ export default class AffinityPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		addCommands(this)
+		this.addSettingTab(new AffinitySettingTab(this))
+
+		this.registerEvent(
+        	this.app.vault.on('rename', async (file, oldPath) => {
+            	if (!(file instanceof TFolder)) return
+				if (oldPath !== this.settings.charactersDirectory.path) return
+            	this.settings.charactersDirectory.path = file.path
+				await this.saveSettings()
+        	})
+    	)
 
 		const debouncedSave = debounce(async() => { await this.saveSettings() }, 1000)
 		useStore.setState({ relationships: this.settings.relationships })
@@ -72,11 +84,11 @@ export default class AffinityPlugin extends Plugin {
 	}
 
 	private async getChars(): Promise<Character[]> {
-		const allFiles = this.app.vault.getFiles()
-		const charNames = allFiles.map(async file => ({
+		const allFiles = getFilesByFolder(this.app, this.settings.charactersDirectory.path, this.settings.charactersDirectory.includeSubfolders)
+		const chars = allFiles.map(async file => ({
 			name: file.basename,
 			id: await this.getAffinityId(file)
 		}))
-		return await Promise.all(charNames)
+		return await Promise.all(chars)
 	}
 }
