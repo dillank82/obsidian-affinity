@@ -23,12 +23,23 @@ export class AffinitySettingTab extends PluginSettingTab {
             .setName('Characters directory')
             .setDesc('Directory where plugin will initialize notes as characters')
             .addDropdown((dropdown) => {
-                dropdown.addOptions(folderOptions)
-                dropdown.setValue(this.plugin.settings.charactersDirectory)
-                dropdown.onChange(async (value) => {
-                    this.plugin.settings.charactersDirectory = value
-                    await this.plugin.saveSettings()
-                })
+                dropdown
+                    .addOptions(folderOptions)
+                    .setValue(this.plugin.settings.charactersDirectory.path)
+                    .onChange(async (value) => {
+                        this.plugin.settings.charactersDirectory.path = value
+                        await this.plugin.saveSettings()
+                    })
+            })
+        new Setting(containerEl)
+            .setName("Including subfolders content")
+            .addToggle(toggle => {
+                toggle
+                    .setValue(this.plugin.settings.charactersDirectory.includeSubfolders)
+                    .onChange(async (value) => {
+                        this.plugin.settings.charactersDirectory.includeSubfolders = value
+                        await this.plugin.saveSettings()
+                    })
             })
     }
 }

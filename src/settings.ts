@@ -2,10 +2,16 @@ import { Relationships } from "interfaces/Realtionships";
 
 export interface PluginSettings {
 	relationships: Relationships
-	charactersDirectory: string
+	charactersDirectory: {
+		path: string
+		includeSubfolders: boolean
+	}
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
 	relationships: {},
-	charactersDirectory: ''
+	charactersDirectory: {
+		path: '',
+		includeSubfolders: false
+	}
 }

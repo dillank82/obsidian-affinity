@@ -75,7 +75,7 @@ export default class AffinityPlugin extends Plugin {
 	}
 
 	private async getChars(): Promise<Character[]> {
-		const allFiles = getFilesByFolder(this.app, this.settings.charactersDirectory)
+		const allFiles = getFilesByFolder(this.app, this.settings.charactersDirectory.path, this.settings.charactersDirectory.includeSubfolders)
 		const chars = allFiles.map(async file => ({
 			name: file.basename,
 			id: await this.getAffinityId(file)
