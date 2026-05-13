@@ -26,8 +26,12 @@ export default class AffinityPlugin extends Plugin {
         	})
     	)
 
+		const initialChars = await this.getChars()
 		const debouncedSave = debounce(async() => { await this.saveSettings() }, 1000)
-		useStore.setState({ relationships: this.settings.relationships })
+		useStore.setState({ 
+			relationships: this.settings.relationships,
+			chars: initialChars
+		})
 		useStore.subscribe((state) => {
 			this.settings = {
 				...this.settings,
@@ -35,10 +39,10 @@ export default class AffinityPlugin extends Plugin {
 			}
 			debouncedSave()
 		})
+
 		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
 			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
-			const charsList = await this.getChars()
-			await this.processor.process(source, el, ctx, id, charsList, this.app)
+			await this.processor.process(source, el, ctx, id, this.app)
 		})
 	}
 
