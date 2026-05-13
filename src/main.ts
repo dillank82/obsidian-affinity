@@ -10,7 +10,7 @@ import { getFilesByFolder } from 'utils/getFilesByFolder';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS
-  	private processor: AffinityProcessor = new AffinityProcessor()
+	private processor: AffinityProcessor = new AffinityProcessor()
 
 	async onload() {
 		await this.loadSettings();
@@ -18,31 +18,33 @@ export default class AffinityPlugin extends Plugin {
 		this.addSettingTab(new AffinitySettingTab(this))
 
 		this.registerEvent(
-        	this.app.vault.on('rename', async (file, oldPath) => {
-            	if (!(file instanceof TFolder)) return
+			this.app.vault.on('rename', async (file, oldPath) => {
+				if (!(file instanceof TFolder)) return
 				if (oldPath !== this.settings.charactersDirectory.path) return
-            	this.settings.charactersDirectory.path = file.path
+				this.settings.charactersDirectory.path = file.path
 				await this.saveSettings()
-        	})
-    	)
+			})
+		)
 
-		const initialChars = await this.getChars()
-		const debouncedSave = debounce(async() => { await this.saveSettings() }, 1000)
-		useStore.setState({ 
-			relationships: this.settings.relationships,
-			chars: initialChars
+		this.app.workspace.onLayoutReady(async () => {
+			const initialChars = await this.getChars()
+			useStore.setState({
+				relationships: this.settings.relationships,
+				chars: initialChars
+			})
+			this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
+				const id = await this.getAffinityId(this.app.workspace.getActiveFile())
+				await this.processor.process(source, el, ctx, id, this.app)
+			})
 		})
+
+		const debouncedSave = debounce(async () => { await this.saveSettings() }, 1000)
 		useStore.subscribe((state) => {
 			this.settings = {
 				...this.settings,
 				relationships: state.relationships
 			}
 			debouncedSave()
-		})
-
-		this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
-			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
-			await this.processor.process(source, el, ctx, id, this.app)
 		})
 	}
 
@@ -61,7 +63,7 @@ export default class AffinityPlugin extends Plugin {
 	}
 
 	async getAffinityId(file: TFile | null): Promise<CharacterID> {
-		if (!file) throw new Error ('No file is active')
+		if (!file) throw new Error('No file is active')
 		const cache = this.getFrontmatter(file)
 		let id: unknown = cache?.affinityPluginId
 		if (!cache || !id) {
