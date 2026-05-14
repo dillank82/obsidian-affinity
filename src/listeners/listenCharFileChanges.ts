@@ -2,23 +2,21 @@ import AffinityPlugin from "main";
 import { TAbstractFile } from "obsidian";
 import { Store } from "store";
 import { registerVaultEvent } from "./registerVaultEvent";
+import { isInCharDir, isMoved, isRenamed } from "utils/pathUtils/pathUtils";
 
 export const listenCharFileChanges = async (plugin: AffinityPlugin, store: Store) => {
     const dirPath = plugin.settings.charactersDirectory.path
     const includeSubfolders = plugin.settings.charactersDirectory.includeSubfolders
 
-    const inCharDir = (file: TAbstractFile) => file.path === dirPath || (includeSubfolders && file.path.startsWith(dirPath))
-    const isRenamed = (file: TAbstractFile, oldPath: string) => oldPath.substring(oldPath.lastIndexOf("/") + 1) !== file.name
-    const isMoved = (file: TAbstractFile, oldPath: string) => 
-        oldPath.substring(0, oldPath.lastIndexOf("/")) !== file.path.substring(0, file.path.lastIndexOf("/"))
-    const isRenamedOrMoved = (file: TAbstractFile, oldPath: string) => isRenamed(file, oldPath) || isMoved (file,oldPath)
+    const charDirCon = (file: TAbstractFile) => isInCharDir(file.path, dirPath, includeSubfolders)
+    const isRenamedOrMoved = (file: TAbstractFile, oldPath: string) => isRenamed(file.name, oldPath) || isMoved(file.path,oldPath)
 
     const refreshChars = async () => {
         const chars = await plugin.getChars()
         store.setChars(chars)
     }
 
-    registerVaultEvent(plugin, 'create', refreshChars, inCharDir)
-    registerVaultEvent(plugin, 'delete', refreshChars, inCharDir)
+    registerVaultEvent(plugin, 'create', refreshChars, charDirCon)
+    registerVaultEvent(plugin, 'delete', refreshChars, charDirCon)
     registerVaultEvent(plugin, 'rename', refreshChars, isRenamedOrMoved)
 }
