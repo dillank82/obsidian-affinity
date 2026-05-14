@@ -7,6 +7,7 @@ import { generateId } from 'utils/generateId';
 import { addCommands } from 'commands';
 import { AffinitySettingTab } from 'AffinitySettingTab';
 import { getFilesByFolder } from 'utils/getFilesByFolder';
+import { listenCharFileChanges } from 'listeners/listenCharFileChanges';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS
@@ -36,6 +37,8 @@ export default class AffinityPlugin extends Plugin {
 				const id = await this.getAffinityId(this.app.workspace.getActiveFile())
 				await this.processor.process(source, el, ctx, id, this.app)
 			})
+
+			await listenCharFileChanges(this, useStore.getState())
 		})
 
 		const debouncedSave = debounce(async () => { await this.saveSettings() }, 1000)
@@ -89,7 +92,7 @@ export default class AffinityPlugin extends Plugin {
 		}
 	}
 
-	private async getChars(): Promise<Character[]> {
+	async getChars(): Promise<Character[]> {
 		const allFiles = getFilesByFolder(this.app, this.settings.charactersDirectory.path, this.settings.charactersDirectory.includeSubfolders)
 		const chars = allFiles.map(async file => ({
 			name: file.basename,
