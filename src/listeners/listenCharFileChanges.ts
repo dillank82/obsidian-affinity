@@ -9,7 +9,9 @@ export const listenCharFileChanges = async (plugin: AffinityPlugin, store: Store
     const includeSubfolders = plugin.settings.charactersDirectory.includeSubfolders
 
     const charDirCon = (file: TAbstractFile) => isInCharDir(file.path, dirPath, includeSubfolders)
-    const isRenamedOrMoved = (file: TAbstractFile, oldPath: string) => isRenamed(file.name, oldPath) || isMoved(file.path,oldPath)
+    const isRenamedOrMoved = (file: TAbstractFile, oldPath: string) => 
+        (isInCharDir(file.path, dirPath, includeSubfolders) && isRenamed(file.name, oldPath))
+    || ((isInCharDir(file.path, dirPath, includeSubfolders) || (isInCharDir(oldPath, dirPath, includeSubfolders))) && isMoved(file.path,oldPath))
 
     const refreshChars = async () => {
         const chars = await plugin.getChars()
