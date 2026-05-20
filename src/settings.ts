@@ -1,3 +1,4 @@
+import { LogsHistory } from "interfaces/Logs";
 import { Relationships } from "interfaces/Realtionships";
 
 export interface PluginSettings {
@@ -6,6 +7,7 @@ export interface PluginSettings {
 		path: string
 		includeSubfolders: boolean
 	}
+	logsHistory: LogsHistory
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -13,5 +15,6 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 	charactersDirectory: {
 		path: '',
 		includeSubfolders: false
-	}
+	},
+	logsHistory: {}
 }
