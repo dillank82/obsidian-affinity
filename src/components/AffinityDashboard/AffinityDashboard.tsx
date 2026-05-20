@@ -1,5 +1,5 @@
 import styles from './AffinityDashboard.module.css'
-import { Character, CharacterID } from "interfaces/Realtionships"
+import { CharacterID } from "interfaces/Realtionships"
 import { Header } from "components/Header/Header"
 import { useAffinity } from "hooks/useAffinity"
 import { useStore } from "store"
@@ -10,12 +10,11 @@ interface AffinityDashboardProps {
     id: string
     fromChar: CharacterID
     initialToCharId: CharacterID | null
-    characters: Character[]
 }
 
-export const AffinityDashboard = ({ fromChar, initialToCharId, characters, id }: AffinityDashboardProps) => {
+export const AffinityDashboard = ({ fromChar, initialToCharId, id }: AffinityDashboardProps) => {
     const store = useStore()
-    const { status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, initialToCharId, characters, id)
+    const { status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, initialToCharId, id)
 
     const renderContent = () => {
         switch(status){
@@ -27,7 +26,7 @@ export const AffinityDashboard = ({ fromChar, initialToCharId, characters, id }:
 
     return (
         <div className={styles.dashboardContainer}>
-            <Header toChar={toChar} fromChar={fromChar} setToChar={setToChar} charOptions={relOptions} createRel={createRel} characters={characters}/>
+            <Header toChar={toChar} fromChar={fromChar} setToChar={setToChar} charOptions={relOptions} createRel={createRel} characters={store.chars}/>
             <main>
                 {renderContent()}
             </main>

@@ -1,16 +1,17 @@
 import { EditorView } from "@codemirror/view"
 import { useApp } from "context"
-import { Character, CharacterID } from "interfaces/Realtionships"
+import { CharacterID } from "interfaces/Realtionships"
 import { Stats } from "interfaces/Stats"
 import { UseAffinityReturn, UseAffinityState } from "interfaces/useAffinity"
 import { MarkdownView, Notice } from "obsidian"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { findBlockRanges, updateMarkdownData } from "services/WriteService/WriteService"
 import { Store } from "store"
 import { mapStats } from "utils/mapStats"
 
-export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId: CharacterID | null, characters: Character[], codeBlockId: string): UseAffinityReturn => {
+export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId: CharacterID | null, codeBlockId: string): UseAffinityReturn => {
     const app = useApp()
+    const characters = store.chars
 
     const findCharName = (charId: CharacterID) => characters.find(char => char.id === charId)?.name
     const getInitialToChar = () => {
@@ -37,6 +38,15 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
         }
     }
     const [state, setState] = useState<UseAffinityState>(getInitialState())
+
+    useEffect(() => {
+        if (state.status === 'chosen') {
+            const toCharAfterChanges = characters.find(char => char.id === toChar.id)
+            if (toCharAfterChanges && toChar.name !== toCharAfterChanges.name) {
+                setToChar(toChar.id)
+            }
+        }
+    }, [characters])
 
     const writeToCharChanges = (toCharId: string) => {
         try {
@@ -76,7 +86,7 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
                 name: findCharName(toChar)!
             }
         })
-        writeToCharChanges(toChar)
+        if (state.toChar?.id !== toChar) writeToCharChanges(toChar)
     }
 
     const createRel = (toChar: CharacterID) => {
