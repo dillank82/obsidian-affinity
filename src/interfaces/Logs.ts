@@ -9,3 +9,5 @@ export interface Log {
 }
 
 export type LogsHistory = Record<CharacterID, Log[]>
+
+export type HistoryMap = Record<CharacterID, LogsHistory>
