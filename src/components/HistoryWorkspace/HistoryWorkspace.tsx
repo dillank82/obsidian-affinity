@@ -1,6 +1,11 @@
-import { FC } from "react";
+import { Log } from "interfaces/Logs"
+import { FC } from "react"
 
-export const HistoryWorkspace: FC= () => {
+interface HistoryWorkspaceProps {
+    logsHistory: Log[]
+}
+
+export const HistoryWorkspace: FC<HistoryWorkspaceProps> = ({ logsHistory }) => {
     return(
         <></>
     )

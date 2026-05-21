@@ -22,17 +22,16 @@ export const AffinityDashboard = ({ fromChar, initialToCharId, id }: AffinityDas
     const { status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, initialToCharId, id)
 
     const renderContent = () => {
-        switch (currentView) {
-            case 'main':
-                switch (status) {
-                    case 'initial': return <EmptyState />
-                    case 'chosen': return <AffinityWorkspace stats={stats} labels={labels} updateAffinity={updateAffinity} />
-                    case 'no_stats': return <div>No data found for {toChar.name}...</div>
+        switch (status) {
+            case 'initial': return <EmptyState />
+            case 'chosen': 
+                switch(currentView) {
+                    case 'main': return <AffinityWorkspace stats={stats} labels={labels} updateAffinity={updateAffinity} />
+                    case 'history': return <HistoryWorkspace logsHistory={store.historyMap[fromChar]?.[toChar.id] || []}/>
                 }
                 break
-            case 'history': return <HistoryWorkspace />
+            case 'no_stats': return <div>No data found for {toChar.name}...</div>
         }
-
     }
 
     return (
