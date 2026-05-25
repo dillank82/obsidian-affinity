@@ -1,0 +1,27 @@
+.table {
+    width: 100%;
+}
+
+.table th {
+    text-align: center;
+    font-weight: bold;
+}
+.table td {
+    text-align: center;
+}
+
+.headDivider {
+    margin-inline: 0.4em;
+    font-weight: 100;
+    opacity: 0.1;
+}
+
+.changesDivider {
+    margin-inline: 0.3em;
+    font-weight: 100;
+    opacity: 0.1;
+}
+
+.letter {
+    padding-inline: 0.15em;
+}
