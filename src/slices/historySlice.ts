@@ -10,10 +10,13 @@ export interface HistorySlice {
 export const createHistorySlice: StateCreator<HistorySlice> = (set) => ({
     historyMap: {},
     addLog: (fromId, toId, log) => set(state => ({
-        ...state.historyMap,
-        [fromId]: {
-            ...state.historyMap[fromId],
-            [toId]: (state.historyMap[fromId]?.[toId] || []).concat([log])
+        ...state,
+        historyMap: {
+            ...state.historyMap,
+            [fromId]: {
+                ...state.historyMap[fromId],
+                [toId]: [...(state.historyMap[fromId]?.[toId] || []), log]
+            }
         }
     }))
 })

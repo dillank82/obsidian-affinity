@@ -45,7 +45,8 @@ export default class AffinityPlugin extends Plugin {
 		useStore.subscribe((state) => {
 			this.settings = {
 				...this.settings,
-				relationships: state.relationships
+				relationships: state.relationships,
+				logsHistoryMap: state.historyMap
 			}
 			debouncedSave()
 		})
