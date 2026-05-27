@@ -14,46 +14,48 @@ export const HistoryWorkspace: FC<HistoryWorkspaceProps> = ({ logsHistory }) => 
         else return String(value)
     }
 
-    return(
-        <div className={styles.tableWrapper}>
-            <table className={styles.table}>
-                <thead>
-                    <tr>
-                        <th>
-                            <span className={styles.letter}>A</span>
-                            <span className={styles.headDivider}>|</span>
-                            <span className={styles.letter}>R</span>
-                            <span className={styles.headDivider}>|</span>
-                            <span className={styles.letter}>T</span>
-                        </th>
-                        <th>
-                            Cause
-                        </th>
-                        <th>
-                            Timestamp
-                        </th>
+    return (
+        <table className={styles.table}>
+            <thead>
+                <tr>
+                    <th>
+                        A
+                    </th>
+                    <th>
+                        R
+                    </th>
+                    <th>
+                        T
+                    </th>
+                    <th>
+                        Cause
+                    </th>
+                    <th>
+                        Timestamp
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {sortedLogs.map((log) => (
+                    <tr key={log.timestamp}>
+                        <td>
+                            <span>{normalizeChangesValue(log.changes.affection)}</span>
+                        </td>
+                        <td>
+                            <span>{normalizeChangesValue(log.changes.respect)}</span>
+                        </td>
+                        <td>
+                            <span>{normalizeChangesValue(log.changes.trust)}</span>
+                        </td>
+                        <td>
+                            {log.cause || '-'}
+                        </td>
+                        <td>
+                            {log.timestamp}
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    {sortedLogs.map((log) => (
-                        <tr key={log.timestamp}>
-                            <td>
-                                <span>{normalizeChangesValue(log.changes.affection)}</span>
-                                <span className={styles.changesDivider}>|</span>
-                                <span>{normalizeChangesValue(log.changes.respect)}</span>
-                                <span className={styles.changesDivider}>|</span>
-                                <span>{normalizeChangesValue(log.changes.trust)}</span>
-                            </td>
-                            <td>
-                                {log.cause || '-'}
-                            </td>
-                            <td>
-                                {log.timestamp}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+                ))}
+            </tbody>
+        </table>
     )
 }
