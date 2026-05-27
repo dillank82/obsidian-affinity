@@ -1,6 +1,7 @@
 import { WorkspaceView } from "components/AffinityDashboard/AffinityDashboard"
 import { FC } from "react"
 import styles from './HistoryButton.module.css'
+import { ScrollText } from "lucide-react"
 
 interface HistoryButtonProps {
     setCurrentView: (view: WorkspaceView) => void
@@ -18,7 +19,7 @@ export const HistoryButton: FC<HistoryButtonProps> = ({ setCurrentView, currentV
             data-active={isActive}
             
         >
-            <span>H</span>
+            <ScrollText />
         </button>
     )
 }
