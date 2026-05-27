@@ -1,0 +1,9 @@
+.button {
+    background-color: var(--interactive-normal);
+    border: 1px solid var(--background-modifier-border);
+}
+
+.button[data-active="true"] {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}

@@ -43,6 +43,7 @@ export const AffinityDashboard = ({ fromChar, initialToCharId, id }: AffinityDas
                 charOptions={relOptions}
                 createRel={createRel}
                 characters={store.chars}
+                currentView={currentView}
                 setCurrentView={setCurrentView}
             />
             <main>

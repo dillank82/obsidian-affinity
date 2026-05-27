@@ -14,15 +14,16 @@ interface HeaderProps {
     characters: Character[]
     createRel: (charId: CharacterID) => void
     setCurrentView: (view: WorkspaceView) => void
+    currentView: WorkspaceView
 }
 
-export const Header: FC<HeaderProps> = ({ toChar, setToChar, charOptions, characters, createRel, fromChar, setCurrentView }) => {
+export const Header: FC<HeaderProps> = ({ toChar, setToChar, charOptions, characters, createRel, fromChar, setCurrentView, currentView }) => {
     return (
         <header className={styles.header}>
             <h1>{toChar ? `Relation to ${toChar.name}` : 'Affinity'}</h1>
             <CharacterSwitcher currentCharId={toChar?.id || null} onChange={setToChar} options={charOptions} />
             <RelationsCreator fromCharId={fromChar} characters={characters} existingRels={charOptions} onChange={(toChar) => { createRel(toChar); setToChar(toChar) }} />
-            <HistoryButton setCurrentView={setCurrentView}/>
+            <HistoryButton setCurrentView={setCurrentView} currentView={currentView}/>
         </header>
     )
 }
