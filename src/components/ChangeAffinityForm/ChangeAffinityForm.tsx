@@ -1,17 +1,21 @@
 import { StatChanger } from "components/StatChanger/StatChanger"
 import { Stats } from "interfaces/Stats"
-import { FC, SubmitEvent, useState } from "react"
+import { FC, SubmitEvent, useRef, useState } from "react"
 import { rollDice } from "utils/rollDice"
 import styles from './ChangeAffinityForm.module.css'
 import { AffinityFormState, AffinityFormValue } from "interfaces/ChangeAffinityForm"
+import { CauseInput } from "components/CauseInput/CauseInput"
+import { UpdateAffinity } from "interfaces/useAffinity"
 
 interface ChangeAffinityFormProps {
-    updateAffinity: (delta: Partial<Stats>) => void
+    updateAffinity: UpdateAffinity
 }
 
 export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity }) => {
+    const causeInputRef = useRef<HTMLInputElement>(null)
+
     const [formValues, setFormValues] = useState<AffinityFormState>({})
-    const handleChange = (name: string, value: AffinityFormValue) => {
+    const handleValueChange = (name: string, value: AffinityFormValue) => {
         setFormValues(prev => ({...prev, [name]: value}))
     }
 
@@ -28,8 +32,12 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
             respect: resolveValue(formValues.respect),
             trust: resolveValue(formValues.trust)
         }
-        updateAffinity(delta)
+
+        const cause = causeInputRef.current?.value || ''
+
+        updateAffinity(delta, cause)
         setFormValues({})
+        if (causeInputRef.current) causeInputRef.current.value = ''
     }
     return (
         <form
@@ -39,10 +47,11 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
             aria-label="Choose affinity changes"  
         >
             <div className={styles.statChangersContainer}>
-                <StatChanger label="Affection" name="affection" currentValue={formValues.affection} onChange={handleChange}/>
-                <StatChanger label="Respect" name="respect" currentValue={formValues.respect} onChange={handleChange}/>
-                <StatChanger label="Trust" name="trust" currentValue={formValues.trust} onChange={handleChange}/>
+                <StatChanger label="Affection" name="affection" currentValue={formValues.affection} onChange={handleValueChange}/>
+                <StatChanger label="Respect" name="respect" currentValue={formValues.respect} onChange={handleValueChange}/>
+                <StatChanger label="Trust" name="trust" currentValue={formValues.trust} onChange={handleValueChange}/>
             </div>
+            <CauseInput ref={causeInputRef}/>
             <button type="submit" className={styles.button}>Submit</button>
         </form>
     )
