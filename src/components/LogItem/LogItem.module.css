@@ -1,0 +1,60 @@
+.container {
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--background-modifier-border);
+    border-radius: 1.5rem;
+    padding: 1rem;
+    background-color: var(--background-secondary);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.text {
+    text-align: center;
+}
+
+.changesWrapper {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.changesWrapper .changeItem {
+    padding-inline: 0.25rem;
+    margin: 0;
+}
+
+.increased {
+    color: var(--text-accent);
+    cursor: default;
+}
+
+.unchanged {
+    color: var(--text-faint);
+    cursor: default;
+}
+
+.decreased {
+    color: var(--text-error);
+    cursor: default;
+}
+
+.timestamp {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-faint);
+}
+
+.hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

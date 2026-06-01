@@ -131,6 +131,7 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
 
     const updateAffinity = (delta: Partial<Stats>) => {
         store.updateRelation(fromChar, toChar.id, delta)
+        store.addLog(fromChar, toChar.id, { changes: delta, timestamp: new Date().toISOString() })
     }
 
     return { status: state.status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions }

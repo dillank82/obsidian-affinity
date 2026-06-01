@@ -31,7 +31,8 @@ export default class AffinityPlugin extends Plugin {
 			const initialChars = await this.getChars()
 			useStore.setState({
 				relationships: this.settings.relationships,
-				chars: initialChars
+				chars: initialChars,
+				historyMap: this.settings.logsHistoryMap
 			})
 			this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
 				const id = await this.getAffinityId(this.app.workspace.getActiveFile())
@@ -45,7 +46,8 @@ export default class AffinityPlugin extends Plugin {
 		useStore.subscribe((state) => {
 			this.settings = {
 				...this.settings,
-				relationships: state.relationships
+				relationships: state.relationships,
+				logsHistoryMap: state.historyMap
 			}
 			debouncedSave()
 		})
