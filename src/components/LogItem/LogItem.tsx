@@ -34,17 +34,23 @@ export const LogItem: FC<LogItemProps> = ({ affection, respect, trust, timestamp
         <div className={styles.container}>
             <span className={styles.text}>{cause}</span>
 
-            <div className={styles.changesWrapper}>
-                <span className={styles[affection.changeType]} ref={affectionRef}>
-                    {affection.value}
-                </span>
-                <span className={styles[respect.changeType]} ref={respectRef}>
-                    {respect.value}
-                </span>
-                <span className={styles[trust.changeType]} ref={trustRef}>
-                    {trust.value}
-                </span>
-            </div>
+            <ul className={styles.changesWrapper}>
+                <li aria-label={`Affection change: ${affection.value}`}>
+                    <span className={styles[affection.changeType]} ref={affectionRef}>
+                        {affection.value}
+                    </span>
+                </li>
+                <li aria-label={`Respect change: ${respect.value}`}>
+                    <span className={styles[respect.changeType]} ref={respectRef}>
+                        {respect.value}
+                    </span>
+                </li>
+                <li aria-label={`Trust change: ${trust.value}`}>
+                    <span className={styles[trust.changeType]} ref={trustRef}>
+                        {trust.value}
+                    </span>
+                </li>
+            </ul>
 
             <span className={styles.timestamp}>{timestamp}</span>
         </div>
