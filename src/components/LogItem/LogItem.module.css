@@ -20,12 +20,15 @@
 
 .increased {
     color: var(--text-accent);
+    cursor: default;
 }
 .unchanged {
     color: var(--text-faint);
+    cursor: default;
 }
 .decreased {
     color: var(--text-error);
+    cursor: default;
 }
 
 .timestamp {
