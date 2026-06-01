@@ -14,8 +14,16 @@
     text-align: center;
 }
 
-.changesWrapper span {
+.changesWrapper {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.changesWrapper .changeItem {
     padding-inline: 0.25rem;
+    margin: 0;
 }
 
 .increased {
