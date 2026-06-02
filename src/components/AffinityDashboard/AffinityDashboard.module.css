@@ -7,4 +7,5 @@
     background-color: var(--background-primary-alt);
     max-width: 25rem;
     justify-self: center;
+    margin-bottom: 1.5rem;
 }
