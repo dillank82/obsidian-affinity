@@ -19,7 +19,7 @@ interface ChangeAffinityFormProps {
 }
 
 export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity }) => {
-    const [formValues, setFormValues] = useState<AffinityFormState>({})
+    const [formValues, setFormValues] = useState<AffinityFormState>(INITIAL_FORM_STATE)
     const handleValueChange = (name: string, value: AffinityFormValue) => {
         setFormValues(prev => ({...prev, [name]: value}))
     }

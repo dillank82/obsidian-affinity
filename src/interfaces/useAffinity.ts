@@ -1,7 +1,7 @@
 import { Character, CharacterID } from "./Realtionships"
 import { Stats, StatsLabels } from "./Stats"
 
-export type UpdateAffinity = (delta: Partial<Stats>, cause?: string) => void
+export type UpdateAffinity = (delta: Partial<Stats>, cause: string) => void
 
 type InitialState = { status: 'initial', toChar: null }
 type ChosenState = { status: 'chosen', toChar: Character }

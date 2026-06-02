@@ -1,3 +1,3 @@
-export type OptionalStrings<T> = {
-  [K in keyof T]?: string
+export type String<T> = {
+  [K in keyof T]: string
 }
