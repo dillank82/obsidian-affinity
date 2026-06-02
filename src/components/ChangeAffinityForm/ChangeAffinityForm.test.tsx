@@ -25,6 +25,7 @@ jest.mock('utils/rollDice', () => ({
     rollDice: jest.fn()
 }))
 const mockRollDice = rollDice as jest.Mock
+const onError = jest.fn((msg) => { })
 
 describe('ChangeAffinityForm', () => {
     beforeEach(() => {
@@ -33,7 +34,7 @@ describe('ChangeAffinityForm', () => {
     it('should call updateAffinity with values from inputs', async () => {
         const updateAffinity = jest.fn()
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
-        render(<ChangeAffinityForm updateAffinity={updateAffinity} />)
+        render(<ChangeAffinityForm updateAffinity={updateAffinity} onError={onError} />)
 
         const affectionInput = screen.getByLabelText('Affection')
         const respectInput = screen.getByLabelText('Respect')
@@ -61,10 +62,13 @@ describe('ChangeAffinityForm', () => {
     it('should use value from rollDice if input value is "1d4"', async () => {
         const updateAffinity = jest.fn()
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
-        render(<ChangeAffinityForm updateAffinity={updateAffinity} />)
+        render(<ChangeAffinityForm updateAffinity={updateAffinity} onError={onError} />)
 
         const affectionInput = screen.getByLabelText('Affection')
+        const causeInput = screen.getByLabelText('Input changes cause')
+
         fireEvent.change(affectionInput, { target: { value: '1d4' } })
+        await user.type(causeInput, 'Wrote tests')
         mockRollDice.mockImplementationOnce(() => 128)
 
         act(() => {
@@ -76,20 +80,22 @@ describe('ChangeAffinityForm', () => {
         expect(updateAffinity).toHaveBeenCalledTimes(1)
         expect(updateAffinity).toHaveBeenCalledWith(expect.objectContaining({
             affection: 128
-        }), '')
+        }), 'Wrote tests')
     })
     it('should replace other NaN values with 0', async () => {
         const updateAffinity = jest.fn()
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
-        render(<ChangeAffinityForm updateAffinity={updateAffinity} />)
+        render(<ChangeAffinityForm updateAffinity={updateAffinity} onError={onError} />)
 
         const affectionInput = screen.getByLabelText('Affection')
         const respectInput = screen.getByLabelText('Respect')
         const trustInput = screen.getByLabelText('Trust')
-
+        const causeInput = screen.getByLabelText('Input changes cause')
+        
         fireEvent.change(affectionInput, { target: { value: '' } })
         fireEvent.change(respectInput, { target: { value: 'zero' } })
         fireEvent.change(trustInput, { target: { value: true } })
+        await user.type(causeInput, 'Is0')
 
         act(() => {
             jest.advanceTimersByTime(500)
@@ -102,12 +108,44 @@ describe('ChangeAffinityForm', () => {
             affection: 0,
             respect: 0,
             trust: 0
-        }, '')
+        }, 'Is0')
+    })
+    it('should call onError and not call updateAffinity if no cause', async () => {
+        const updateAffinity = jest.fn()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
+        render(<ChangeAffinityForm updateAffinity={updateAffinity} onError={onError} />)
+
+        const affectionInput: HTMLInputElement = screen.getByLabelText('Affection')
+        fireEvent.change(affectionInput, { target: { value: '1' } })
+
+        act(() => {
+            jest.advanceTimersByTime(500)
+        })
+        const submitButton = screen.getByRole('button')
+        await user.click(submitButton)
+        expect(updateAffinity).toHaveBeenCalledTimes(0)
+        expect(onError).toHaveBeenCalledTimes(1)
+    })
+    it('should call onError and not call updateAffinity if no changes', async () => {
+        const updateAffinity = jest.fn()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
+        render(<ChangeAffinityForm updateAffinity={updateAffinity} onError={onError} />)
+
+        const causeInput = screen.getByLabelText('Input changes cause')
+        await user.type(causeInput, 'Cause')
+
+        act(() => {
+            jest.advanceTimersByTime(500)
+        })
+        const submitButton = screen.getByRole('button')
+        await user.click(submitButton)
+        expect(updateAffinity).toHaveBeenCalledTimes(0)
+        expect(onError).toHaveBeenCalledTimes(1)
     })
     it('should clear values after submit', async () => {
         const updateAffinity = jest.fn()
         const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
-        render(<ChangeAffinityForm updateAffinity={updateAffinity} />)
+        render(<ChangeAffinityForm updateAffinity={updateAffinity} onError={onError} />)
 
         const respectInput: HTMLInputElement = screen.getByLabelText('Respect')
         const causeInput = screen.getByLabelText('Input changes cause')
@@ -119,13 +157,10 @@ describe('ChangeAffinityForm', () => {
         })
         const submitButton = screen.getByRole('button')
         await user.click(submitButton)
+        expect(updateAffinity).toHaveBeenCalledTimes(1)
+        expect(onError).toHaveBeenCalledTimes(0)
         await user.click(submitButton)
-
-        expect(updateAffinity).toHaveBeenCalledTimes(2)
-        expect(updateAffinity).toHaveBeenLastCalledWith({
-            affection: 0,
-            respect: 0,
-            trust: 0
-        }, '')
+        expect(updateAffinity).toHaveBeenCalledTimes(1)
+        expect(onError).toHaveBeenCalledTimes(1)
     })
 })
