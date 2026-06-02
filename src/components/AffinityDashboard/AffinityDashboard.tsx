@@ -46,7 +46,7 @@ export const AffinityDashboard = ({ fromChar, initialToCharId, id }: AffinityDas
                 currentView={currentView}
                 setCurrentView={setCurrentView}
             />
-            <main>
+            <main aria-live='polite'>
                 {renderContent()}
             </main>
         </div>
