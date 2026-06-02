@@ -16,16 +16,25 @@ const INITIAL_FORM_STATE: AffinityFormState = {
 
 interface ChangeAffinityFormProps {
     updateAffinity: UpdateAffinity
+    onError: (msg: string) => void
 }
 
-export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity }) => {
+export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity, onError }) => {
     const [formValues, setFormValues] = useState<AffinityFormState>(INITIAL_FORM_STATE)
     const handleValueChange = (name: string, value: AffinityFormValue) => {
-        setFormValues(prev => ({...prev, [name]: value}))
+        setFormValues(prev => ({ ...prev, [name]: value }))
     }
 
     const handleSubmit = (event: SubmitEvent<HTMLFormElement>) => {
         event.preventDefault()
+
+        const isCauseMissing = !formValues.cause.trim()
+        const isNoChanges = !formValues.affection && !formValues.respect && !formValues.trust
+
+        if (isCauseMissing || isNoChanges) {
+            onError('Select at least one change and specify its cause')
+            return
+        }
 
         const resolveValue = (value: AffinityFormValue): number => {
             if (value === '1d4') return rollDice(4)
@@ -37,6 +46,7 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
             respect: resolveValue(formValues.respect),
             trust: resolveValue(formValues.trust)
         }
+
         updateAffinity(delta, formValues.cause)
         setFormValues(INITIAL_FORM_STATE)
     }
@@ -45,14 +55,14 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
             id="change-affinity-form"
             onSubmit={handleSubmit}
             className={styles.formContainer}
-            aria-label="Choose affinity changes"  
+            aria-label="Choose affinity changes"
         >
             <div className={styles.statChangersContainer}>
-                <StatChanger label="Affection" name="affection" currentValue={formValues.affection} onChange={handleValueChange}/>
-                <StatChanger label="Respect" name="respect" currentValue={formValues.respect} onChange={handleValueChange}/>
-                <StatChanger label="Trust" name="trust" currentValue={formValues.trust} onChange={handleValueChange}/>
+                <StatChanger label="Affection" name="affection" currentValue={formValues.affection} onChange={handleValueChange} />
+                <StatChanger label="Respect" name="respect" currentValue={formValues.respect} onChange={handleValueChange} />
+                <StatChanger label="Trust" name="trust" currentValue={formValues.trust} onChange={handleValueChange} />
             </div>
-            <CauseInput cause={formValues.cause} handleChange={handleValueChange}/>
+            <CauseInput cause={formValues.cause} handleChange={handleValueChange} />
             <button type="submit" className={styles.button}>Submit</button>
         </form>
     )

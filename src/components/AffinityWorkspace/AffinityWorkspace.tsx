@@ -5,6 +5,7 @@ import { Stats, StatsLabels } from "interfaces/Stats"
 import { FC } from "react"
 import styles from './AffinityWorkspace.module.css'
 import { UpdateAffinity } from "interfaces/useAffinity"
+import { Notice } from "obsidian"
 
 interface AffinityWorkspaceProps {
     stats: Stats
@@ -22,7 +23,7 @@ export const AffinityWorkspace: FC<AffinityWorkspaceProps> = ({ stats, labels, u
                 <VerticalDivider />
                 <StatItem statValue={stats?.trust || 0} label={labels.trust} statKey="Trust" />
             </ul>
-            <ChangeAffinityForm updateAffinity={updateAffinity} />
+            <ChangeAffinityForm updateAffinity={updateAffinity} onError={(msg) => new Notice(msg)}/>
         </>
     )
 }
