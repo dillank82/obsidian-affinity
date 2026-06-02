@@ -4,11 +4,12 @@ import { VerticalDivider } from "components/VerticalDivider/VerticalDivider"
 import { Stats, StatsLabels } from "interfaces/Stats"
 import { FC } from "react"
 import styles from './AffinityWorkspace.module.css'
+import { UpdateAffinity } from "interfaces/useAffinity"
 
 interface AffinityWorkspaceProps {
     stats: Stats
     labels: StatsLabels
-    updateAffinity: (delta: Partial<Stats>) => void
+    updateAffinity: UpdateAffinity
 }
 
 export const AffinityWorkspace: FC<AffinityWorkspaceProps> = ({ stats, labels, updateAffinity }) => {

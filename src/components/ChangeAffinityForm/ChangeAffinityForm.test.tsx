@@ -1,8 +1,10 @@
 import { rollDice } from "utils/rollDice"
 import { ChangeAffinityForm } from "./ChangeAffinityForm"
-import { fireEvent, render, screen } from "@testing-library/react"
+import { act, fireEvent, render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 import { StatChangerProps } from "components/StatChanger/StatChanger"
+
+jest.useFakeTimers()
 
 jest.mock('components/StatChanger/StatChanger', () => ({
     StatChanger: jest.fn(
@@ -14,7 +16,7 @@ jest.mock('components/StatChanger/StatChanger', () => ({
                     data-testid={`input-${name}`}
                     value={currentValue}
                     onChange={(e) => onChange(name, e.target.value)}
-            />
+                />
             </div>
         )
     )
@@ -30,17 +32,22 @@ describe('ChangeAffinityForm', () => {
     })
     it('should call updateAffinity with values from inputs', async () => {
         const updateAffinity = jest.fn()
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
         render(<ChangeAffinityForm updateAffinity={updateAffinity} />)
 
         const affectionInput = screen.getByLabelText('Affection')
         const respectInput = screen.getByLabelText('Respect')
         const trustInput = screen.getByLabelText('Trust')
+        const causeInput = screen.getByLabelText('Input changes cause')
 
         fireEvent.change(affectionInput, { target: { value: '8' } })
         fireEvent.change(respectInput, { target: { value: '1' } })
         fireEvent.change(trustInput, { target: { value: '2' } })
+        await user.type(causeInput, 'Tried to friend')
 
+        act(() => {
+            jest.advanceTimersByTime(500)
+        })
         const submitButton = screen.getByRole('button')
         await user.click(submitButton)
 
@@ -49,28 +56,31 @@ describe('ChangeAffinityForm', () => {
             affection: 8,
             respect: 1,
             trust: 2
-        })
+        }, 'Tried to friend')
     })
     it('should use value from rollDice if input value is "1d4"', async () => {
         const updateAffinity = jest.fn()
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
         render(<ChangeAffinityForm updateAffinity={updateAffinity} />)
 
         const affectionInput = screen.getByLabelText('Affection')
         fireEvent.change(affectionInput, { target: { value: '1d4' } })
         mockRollDice.mockImplementationOnce(() => 128)
 
+        act(() => {
+            jest.advanceTimersByTime(500)
+        })
         const submitButton = screen.getByRole('button')
         await user.click(submitButton)
 
         expect(updateAffinity).toHaveBeenCalledTimes(1)
         expect(updateAffinity).toHaveBeenCalledWith(expect.objectContaining({
             affection: 128
-        }))
+        }), '')
     })
     it('should replace other NaN values with 0', async () => {
         const updateAffinity = jest.fn()
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
         render(<ChangeAffinityForm updateAffinity={updateAffinity} />)
 
         const affectionInput = screen.getByLabelText('Affection')
@@ -81,6 +91,9 @@ describe('ChangeAffinityForm', () => {
         fireEvent.change(respectInput, { target: { value: 'zero' } })
         fireEvent.change(trustInput, { target: { value: true } })
 
+        act(() => {
+            jest.advanceTimersByTime(500)
+        })
         const submitButton = screen.getByRole('button')
         await user.click(submitButton)
 
@@ -89,16 +102,21 @@ describe('ChangeAffinityForm', () => {
             affection: 0,
             respect: 0,
             trust: 0
-        })
+        }, '')
     })
     it('should clear values after submit', async () => {
         const updateAffinity = jest.fn()
-        const user = userEvent.setup()
+        const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
         render(<ChangeAffinityForm updateAffinity={updateAffinity} />)
 
         const respectInput: HTMLInputElement = screen.getByLabelText('Respect')
+        const causeInput = screen.getByLabelText('Input changes cause')
         fireEvent.change(respectInput, { target: { value: '1' } })
+        await user.type(causeInput, 'Cause')
 
+        act(() => {
+            jest.advanceTimersByTime(500)
+        })
         const submitButton = screen.getByRole('button')
         await user.click(submitButton)
         await user.click(submitButton)
@@ -108,6 +126,6 @@ describe('ChangeAffinityForm', () => {
             affection: 0,
             respect: 0,
             trust: 0
-        })
+        }, '')
     })
 })

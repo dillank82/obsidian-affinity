@@ -1,5 +1,5 @@
 import { StatKey, Stats } from "./Stats"
-import { OptionalStrings } from "./utils"
+import { String } from "./utils"
 
-export type AffinityFormState = OptionalStrings<Stats>
-export type AffinityFormValue = AffinityFormState[StatKey]
+export type AffinityFormState = String<Stats> & { cause: string }
+export type AffinityFormValue = AffinityFormState[StatKey | 'cause']
