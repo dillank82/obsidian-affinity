@@ -17,6 +17,7 @@ export const CauseInput: FC<CauseInputProps> = ({ cause, handleChange }) => {
                 onChange={(e) => handleChange('cause', e.target.value)}
                 placeholder="What causes the changes?"
                 className={styles.input}
+                required
             />
         </>
     )
