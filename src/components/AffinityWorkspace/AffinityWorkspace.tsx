@@ -17,11 +17,17 @@ export const AffinityWorkspace: FC<AffinityWorkspaceProps> = ({ stats, labels, u
     return (
         <>
             <ul className={styles.statsBlock}>
-                <StatItem statValue={stats?.affection || 0} label={labels.affection} statKey="Affection" />
+                <li className={styles.statItemContainer}>
+                    <StatItem statValue={stats?.affection || 0} label={labels.affection} statKey="Affection" />
+                </li>
                 <VerticalDivider />
-                <StatItem statValue={stats?.respect || 0} label={labels.respect} statKey="Respect" />
+                <li className={styles.statItemContainer}>
+                    <StatItem statValue={stats?.respect || 0} label={labels.respect} statKey="Respect" />
+                </li>
                 <VerticalDivider />
-                <StatItem statValue={stats?.trust || 0} label={labels.trust} statKey="Trust" />
+                <li className={styles.statItemContainer}>
+                    <StatItem statValue={stats?.trust || 0} label={labels.trust} statKey="Trust" />
+                </li>
             </ul>
             <ChangeAffinityForm updateAffinity={updateAffinity} onError={(msg) => new Notice(msg)}/>
         </>
