@@ -5,7 +5,7 @@ import { AffinityFormValue } from "interfaces/ChangeAffinityForm"
 
 describe('StatChanger', () => {
     it('should render with label', () => {
-        render(<StatChanger label="testLabel" name='name' onChange={() => { }} currentValue={undefined} />)
+        render(<StatChanger label="testLabel" name='name' onChange={() => { }} currentValue="" />)
         const legend = screen.getByText('testLabel')
         expect(legend).toBeInTheDocument()
     })
@@ -13,7 +13,7 @@ describe('StatChanger', () => {
         const user = userEvent.setup()
         const name = 'testName'
         const onChangeMock = jest.fn<void, [string, AffinityFormValue]>()
-        render(<StatChanger label="testLabel" name={name} onChange={onChangeMock} currentValue={undefined} />)
+        render(<StatChanger label="testLabel" name={name} onChange={onChangeMock} currentValue="" />)
 
         const plusButton = screen.getByText('+1')
         const d4Button = screen.getByText('+1d4')
@@ -24,7 +24,7 @@ describe('StatChanger', () => {
         await user.click(d4Button)
         expect(onChangeMock).toHaveBeenLastCalledWith(name, '1d4')
     })
-    it('should call onChange function with name and undefined when clicked button with current value', async() => {
+    it('should call onChange function with name and empty string when clicked button with current value', async() => {
         const user = userEvent.setup()
         const name = 'testName'
         const onChangeMock = jest.fn<void, [string, AffinityFormValue]>()
@@ -32,10 +32,10 @@ describe('StatChanger', () => {
 
         const plusButton = screen.getByText('+1')
         await user.click(plusButton)
-        expect(onChangeMock).toHaveBeenLastCalledWith(name, undefined)
+        expect(onChangeMock).toHaveBeenLastCalledWith(name, "")
     })
     it('should have active class on button with current value', () => {
-        const { rerender } = render(<StatChanger label="testLabel" name='name' onChange={() => { }} currentValue={undefined} />)
+        const { rerender } = render(<StatChanger label="testLabel" name='name' onChange={() => { }} currentValue="" />)
         const plusButton = screen.getByText('+1')
         const d4Button = screen.getByText('+1d4')
 

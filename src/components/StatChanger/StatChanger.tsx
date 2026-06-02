@@ -11,7 +11,7 @@ export interface StatChangerProps {
 
 export const StatChanger: FC<StatChangerProps> = ({ label, name, onChange, currentValue }) => {
     const handleToggle = (value: string) => {
-        onChange(name, currentValue === value ? undefined : value)
+        onChange(name, currentValue === value ? "" : value)
     }
     return (
         <fieldset className={styles.container}>
