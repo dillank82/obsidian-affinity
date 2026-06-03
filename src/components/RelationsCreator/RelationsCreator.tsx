@@ -1,5 +1,5 @@
 import { Menu } from "obsidian";
-import { FC, useRef } from "react";
+import { FC, useRef, useState } from "react";
 import styles from './RelationsCreator.module.css'
 import { Character, CharacterID } from "interfaces/Realtionships";
 
@@ -11,9 +11,12 @@ interface RelationsCreatorProps {
 }
 
 export const RelationsCreator: FC<RelationsCreatorProps> = ({ characters, existingRels, onChange, fromCharId }) => {
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+
     const triggerRef = useRef<HTMLButtonElement>(null)
 
     const showMenu = () => {
+        setIsOpen(true)
         const menu = new Menu()
 
         if (characters.length === 0) {
@@ -38,6 +41,8 @@ export const RelationsCreator: FC<RelationsCreatorProps> = ({ characters, existi
         if (rect) {
             menu.showAtPosition({ x: rect.left, y: rect.bottom })
         }
+
+        menu.onHide(() => { setIsOpen(false) })
     }
 
     return (
@@ -45,8 +50,11 @@ export const RelationsCreator: FC<RelationsCreatorProps> = ({ characters, existi
             ref={triggerRef} 
             onClick={showMenu}
             className={styles.trigger}
+            aria-label="Create new relation"
+            aria-haspopup={true}
+            aria-expanded={isOpen}
         >
-            <span>+</span>
+            <span aria-hidden={true}>+</span>
         </button>
     )
 }
