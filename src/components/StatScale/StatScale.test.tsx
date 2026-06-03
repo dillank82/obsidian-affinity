@@ -3,7 +3,7 @@ import { StatScale } from "./StatScale"
 
 describe('StatScale', () => {
     it('should correctly generate bar percentage', () => {
-        render(<StatScale value={15}/>)
+        render(<StatScale value={15} labelledBy="testmock"/>)
         const barContainer = screen.getByRole('progressbar')
         const barProgress = barContainer.children[0]
 
@@ -11,7 +11,7 @@ describe('StatScale', () => {
         expect(barProgress).toHaveStyle('height: 75%')
     })
     it('should pass the value to aria-valuenow and have aria-valuemin and -valuemax attributes for screen readers', () => {
-        render(<StatScale value={15}/>)
+        render(<StatScale value={15} labelledBy="testmock"/>)
         const barContainer = screen.getByRole('progressbar')
         
         expect(barContainer).toHaveAttribute('aria-valuemin', '1')
@@ -19,13 +19,13 @@ describe('StatScale', () => {
         expect(barContainer).toHaveAttribute('aria-valuenow', '15')
     })
     it('should clamps value between min and max', () => {
-        const { rerender } = render(<StatScale value={-5} />)
+        const { rerender } = render(<StatScale value={-5} labelledBy="testmock" />)
         const barContainer = screen.getByRole('progressbar')
         const barProgress = barContainer.children[0]
 
         expect(barProgress).toHaveStyle({ height: '5% '})
 
-        rerender(<StatScale value={30} />)
+        rerender(<StatScale value={30} labelledBy="testmock" />)
         expect(barProgress).toHaveStyle({ height: '100%' })
     })
 })

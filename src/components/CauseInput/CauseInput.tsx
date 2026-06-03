@@ -9,14 +9,15 @@ interface CauseInputProps {
 export const CauseInput: FC<CauseInputProps> = ({ cause, handleChange }) => {
     return (
         <>
-            <label id="change-cause-input-label" className={styles.srOnly}>Input changes cause</label>
+            <label htmlFor="change-cause-input" className={styles.srOnly}>Input changes cause</label>
             <input
+                id="change-cause-input"
                 type="text"
                 value={cause}
                 onChange={(e) => handleChange('cause', e.target.value)}
-                aria-labelledby="change-cause-input-label"
                 placeholder="What causes the changes?"
                 className={styles.input}
+                required
             />
         </>
     )

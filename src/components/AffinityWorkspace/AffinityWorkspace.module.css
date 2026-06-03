@@ -6,3 +6,12 @@
     margin-top: 20px;
     height: 12rem;
 }
+
+.statItemContainer {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 3px;
+    margin-inline-start: 0 !important;
+    width: 4.2rem;
+}

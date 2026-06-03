@@ -56,12 +56,14 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
             onSubmit={handleSubmit}
             className={styles.formContainer}
             aria-label="Choose affinity changes"
+            noValidate
         >
-            <div className={styles.statChangersContainer}>
+            <fieldset className={styles.statChangersContainer}>
+                <legend className={styles.srOnly}>Use button groups to choose stats changes</legend>
                 <StatChanger label="Affection" name="affection" currentValue={formValues.affection} onChange={handleValueChange} />
                 <StatChanger label="Respect" name="respect" currentValue={formValues.respect} onChange={handleValueChange} />
                 <StatChanger label="Trust" name="trust" currentValue={formValues.trust} onChange={handleValueChange} />
-            </div>
+            </fieldset>
             <CauseInput cause={formValues.cause} handleChange={handleValueChange} />
             <button type="submit" className={styles.button}>Submit</button>
         </form>

@@ -1,5 +1,5 @@
 import { StatScale } from "components/StatScale/StatScale"
-import { FC } from "react"
+import { FC, useId } from "react"
 import styles from './StatItem.module.css'
 
 interface StatItemProps {
@@ -9,13 +9,14 @@ interface StatItemProps {
 }
 
 export const StatItem: FC<StatItemProps> = ({ statValue, label, statKey }) => {
+    const statNameId = useId()
     return (
-        <li className={styles.container}>
+        <>
             <div className={styles.label}>
-                <span className={styles.statKey}>{statKey}:</span>
+                <span className={styles.statKey} id={statNameId}>{statKey}:</span>
                 <span className={styles.statValue}>{label}</span>
             </div>
-            <StatScale value={statValue} />
-        </li>
+            <StatScale value={statValue} labelledBy={statNameId}/>
+        </>
     )
 }

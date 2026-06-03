@@ -20,10 +20,12 @@ interface HeaderProps {
 export const Header: FC<HeaderProps> = ({ toChar, setToChar, charOptions, characters, createRel, fromChar, setCurrentView, currentView }) => {
     return (
         <header className={styles.header}>
-            <h1>{toChar ? `Relation to ${toChar.name}` : 'Affinity'}</h1>
-            <CharacterSwitcher currentCharId={toChar?.id || null} onChange={setToChar} options={charOptions} />
-            <RelationsCreator fromCharId={fromChar} characters={characters} existingRels={charOptions} onChange={(toChar) => { createRel(toChar); setToChar(toChar) }} />
-            <HistoryButton setCurrentView={setCurrentView} currentView={currentView}/>
+            <span aria-atomic="true" className={styles.currentChar}>{toChar ? `Relation to ${toChar.name}` : 'Affinity'}</span>
+            <nav>
+                <CharacterSwitcher currentCharId={toChar?.id || null} onChange={setToChar} options={charOptions} />
+                <RelationsCreator fromCharId={fromChar} characters={characters} existingRels={charOptions} onChange={(toChar) => { createRel(toChar); setToChar(toChar) }} />
+                <HistoryButton setCurrentView={setCurrentView} currentView={currentView}/>
+            </nav>
         </header>
     )
 }

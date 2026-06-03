@@ -10,3 +10,12 @@
     gap: 1rem;
     justify-content: center;
 }
+
+.currentChar {
+    font-size: 1.75rem;
+    margin-top: 0.67rem;
+    margin-bottom: 0.67rem;
+    margin-left: 0;
+    margin-right: 0;
+    font-weight: bold;
+}

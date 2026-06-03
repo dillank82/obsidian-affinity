@@ -1,6 +1,5 @@
-import { FC, useEffect, useRef } from "react"
+import { FC } from "react"
 import styles from './LogItem.module.css'
-import { setTooltip } from "obsidian"
 
 interface LogItemProps {
     affection: {
@@ -20,43 +19,33 @@ interface LogItemProps {
 }
 
 export const LogItem: FC<LogItemProps> = ({ affection, respect, trust, timestamp, cause }) => {
-    const affectionRef = useRef<HTMLElement>(null)
-    const respectRef = useRef<HTMLElement>(null)
-    const trustRef = useRef<HTMLElement>(null)
-
-    useEffect(() => {
-        if (affectionRef.current) setTooltip(affectionRef.current, 'Affection')
-        if (respectRef.current) setTooltip(respectRef.current, 'Respect')
-        if (trustRef.current) setTooltip(trustRef.current, 'Trust')
-    }, [])
 
     return (
-        <div className={styles.container}>
+        <li className={styles.container}>
             <span className={styles.text}>{cause}</span>
-
-            <div id="affection-label" className={styles.hidden}>{`Affection change: ${affection.value}`}</div>
-            <div id="respect-label" className={styles.hidden}>{`Affection change: ${respect.value}`}</div>
-            <div id="trust-label" className={styles.hidden}>{`Affection change: ${trust.value}`}</div>
 
             <ul className={styles.changesWrapper}>
                 <li className={styles.changeItem}>
-                    <span aria-labelledby="affection-label" className={styles[affection.changeType]} ref={affectionRef}>
+                    <span className={styles.hidden}>{`Affection change: ${affection.changeType === 'unchanged' ? 'none' : affection.value}`}</span>
+                    <span className={styles[affection.changeType]} aria-hidden={true} aria-label="Affection">
                         {affection.value}
                     </span>
                 </li>
-                <li aria-labelledby="respect-label" className={styles.changeItem}>
-                    <span className={styles[respect.changeType]} ref={respectRef}>
+                <li className={styles.changeItem}>
+                    <span className={styles.hidden}>{`Respect change: ${respect.changeType === 'unchanged' ? 'none' : respect.value}`}</span>
+                    <span className={styles[respect.changeType]} aria-hidden={true} aria-label="Respect">
                         {respect.value}
                     </span>
                 </li>
-                <li aria-labelledby="trust-label" className={styles.changeItem}>
-                    <span className={styles[trust.changeType]} ref={trustRef}>
+                <li className={styles.changeItem}>
+                    <span className={styles.hidden}>{`Trust change: ${trust.changeType === 'unchanged' ? 'none' : trust.value}`}</span>
+                    <span className={styles[trust.changeType]} aria-hidden={true} aria-label="Trust">
                         {trust.value}
                     </span>
                 </li>
             </ul>
 
             <span className={styles.timestamp}>{timestamp}</span>
-        </div>
+        </li>
     )
 }

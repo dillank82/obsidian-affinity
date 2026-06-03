@@ -1,4 +1,4 @@
-import { FC, useRef } from "react"
+import { FC, useRef, useState } from "react"
 import { Menu } from "obsidian"
 import styles from './CharacterSwitcher.module.css'
 import { Character, CharacterID } from "interfaces/Realtionships"
@@ -10,9 +10,12 @@ interface CharacterSwitcherProps {
 }
 
 export const CharacterSwitcher: FC<CharacterSwitcherProps> = ({ currentCharId, options, onChange }) => {
+    const [isOpen, setIsOpen] = useState<boolean>(false)
+
     const triggerRef = useRef<HTMLButtonElement>(null)
 
     const showMenu = () => {
+        setIsOpen(true)
         const menu = new Menu()
 
         if (options.length === 0) {
@@ -36,6 +39,8 @@ export const CharacterSwitcher: FC<CharacterSwitcherProps> = ({ currentCharId, o
         if (rect) {
             menu.showAtPosition({ x: rect.left, y: rect.bottom })
         }
+        
+        menu.onHide(() => { setIsOpen(false) })
     }
 
     return (
@@ -43,8 +48,11 @@ export const CharacterSwitcher: FC<CharacterSwitcherProps> = ({ currentCharId, o
             ref={triggerRef} 
             onClick={showMenu}
             className={styles.trigger}
+            aria-label="Select character"
+            aria-haspopup='true'
+            aria-expanded={isOpen}
         >
-            <span>▼</span>
+            <span aria-hidden="true">▼</span>
         </button>
     )
 }

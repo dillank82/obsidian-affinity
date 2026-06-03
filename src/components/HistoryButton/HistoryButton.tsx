@@ -17,9 +17,10 @@ export const HistoryButton: FC<HistoryButtonProps> = ({ setCurrentView, currentV
             onClick={() => { setCurrentView(newView) }}
             className={styles.button}
             data-active={isActive}
-            aria-label={`${isActive ? "Close" : "Open"} history`}
+            aria-label={"Toggle history view"}
+            aria-pressed={isActive}
         >
-            <ScrollText />
+            <ScrollText aria-hidden={true}/>
         </button>
     )
 }

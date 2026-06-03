@@ -23,7 +23,7 @@ export const HistoryWorkspace: FC<HistoryWorkspaceProps> = ({ logsHistory }) => 
     }
 
     return (
-        <div className={styles.container}>
+        <ul className={styles.container}>
             {
                 sortedLogs.map((log) => (
                     <LogItem
@@ -35,6 +35,6 @@ export const HistoryWorkspace: FC<HistoryWorkspaceProps> = ({ logsHistory }) => 
                     />
                 ))
             }
-        </div>
+        </ul>
     )
 }
