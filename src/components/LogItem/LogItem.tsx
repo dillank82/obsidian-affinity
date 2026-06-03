@@ -31,7 +31,7 @@ export const LogItem: FC<LogItemProps> = ({ affection, respect, trust, timestamp
     }, [])
 
     return (
-        <div className={styles.container}>
+        <li className={styles.container}>
             <span className={styles.text}>{cause}</span>
 
             <div id="affection-label" className={styles.hidden}>{`Affection change: ${affection.value}`}</div>
@@ -57,6 +57,6 @@ export const LogItem: FC<LogItemProps> = ({ affection, respect, trust, timestamp
             </ul>
 
             <span className={styles.timestamp}>{timestamp}</span>
-        </div>
+        </li>
     )
 }
