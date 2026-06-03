@@ -21,6 +21,7 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name, onChange, curre
                 <div className={styles.buttonsGroup}>
                     <button
                         type="button"
+                        aria-pressed={currentValue === "-1"}
                         className={`${styles.button} ${currentValue === "-1" ? styles.active : ""}`}
                         onClick={() => handleToggle("-1")}
                     >
@@ -28,6 +29,7 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name, onChange, curre
                     </button>
                     <button
                         type="button"
+                        aria-pressed={currentValue === "1"}
                         className={`${styles.button} ${currentValue === "1" ? styles.active : ""}`}
                         onClick={() => handleToggle("1")}
                     >
@@ -37,6 +39,7 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name, onChange, curre
                 <div className={styles.buttonsGroup}>
                     <button
                         type="button"
+                        aria-pressed={currentValue === "-1d4"}
                         className={`${styles.button} ${currentValue === "-1d4" ? styles.active : ""}`}
                         onClick={() => handleToggle("-1d4")}
                     >
@@ -44,6 +47,7 @@ export const StatChanger: FC<StatChangerProps> = ({ label, name, onChange, curre
                     </button>
                     <button
                         type="button"
+                        aria-pressed={currentValue === "1d4"}
                         className={`${styles.button} ${currentValue === "1d4" ? styles.active : ""}`}
                         onClick={() => handleToggle("1d4")}
                     >
