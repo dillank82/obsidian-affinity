@@ -35,7 +35,12 @@ export const AffinityDashboard = ({ fromChar, initialToCharId, id }: AffinityDas
     }
 
     return (
-        <div className={styles.dashboardContainer}>
+        <div
+            className={styles.dashboardContainer}
+            role='region'
+            aria-roledescription='application'
+            aria-label='Affinity Relationships Tracker'
+        >
             <Header
                 toChar={toChar}
                 fromChar={fromChar}
