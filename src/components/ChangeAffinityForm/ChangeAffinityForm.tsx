@@ -56,6 +56,7 @@ export const ChangeAffinityForm: FC<ChangeAffinityFormProps> = ({ updateAffinity
             onSubmit={handleSubmit}
             className={styles.formContainer}
             aria-label="Choose affinity changes"
+            noValidate
         >
             <fieldset className={styles.statChangersContainer}>
                 <legend className={styles.srOnly}>Use button groups to choose stats changes</legend>
