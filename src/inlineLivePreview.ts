@@ -11,6 +11,8 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: Ch
         return Decoration.none
     },
     update(oldState: DecorationSet, transaction: Transaction): DecorationSet {
+        if (!transaction.docChanged) return oldState
+
         const builder = new RangeSetBuilder<Decoration>()
 
         const tree = markdownLanguage.parser.parse(transaction.state.doc.toString())
