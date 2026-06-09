@@ -29,7 +29,8 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: Ch
                             node.from,
                             node.to + 4, //closing backticks is a separate node
                             Decoration.replace({
-                                widget: new AffinityWidget(containerEl, app, id, fromCharId, toCharId)
+                                widget: new AffinityWidget(containerEl, app, id, fromCharId, toCharId),
+                                block: true
                             })
                         )
                     }
