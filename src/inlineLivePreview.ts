@@ -1,8 +1,9 @@
-import { markdownLanguage } from "@codemirror/lang-markdown"
+import { syntaxTree } from "@codemirror/language"
 import { EditorState, Extension, RangeSetBuilder, StateField, Transaction } from "@codemirror/state"
 import { Decoration, DecorationSet, EditorView } from "@codemirror/view"
 import { CharacterID } from "interfaces/Realtionships"
 import { App } from "obsidian"
+import { getCodeBlockLanguage } from "utils/getCodeBlockLanguage"
 import { validateCodeBlockData } from "utils/validateCodeBlockData"
 import { AffinityWidget } from "widget"
 
@@ -14,28 +15,25 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: Ch
         if (!transaction.docChanged) return oldState
 
         const builder = new RangeSetBuilder<Decoration>()
-
-        const tree = markdownLanguage.parser.parse(transaction.state.doc.toString())
+        const tree = syntaxTree(transaction.state)
 
         tree.iterate({
             enter(node) {
-                if (node.type.name.startsWith('FencedCode')) {
+                if (node.name === 'formatting_formatting-code-block_hmd-codeblock') {
                     const doc = transaction.state.doc
-                    const infoStringNode = node.node.getChild("CodeInfo")
-                    if (infoStringNode) {
-                        const lang = doc.sliceString(infoStringNode.from, infoStringNode.to)
-                        if (lang === "affinity") {
-                            const rawData = doc.sliceString(node.from, node.to)
-                            const { id, toCharId } = validateCodeBlockData(rawData)
-                            builder.add(
-                                node.from,
-                                node.to,
-                                Decoration.replace({
-                                    widget: new AffinityWidget(containerEl, app, id, fromCharId, toCharId)
-                                })
-                            )
-                        }
+                    const rawData = doc.sliceString(node.from, node.to)
+                    const lang = getCodeBlockLanguage(rawData)
+                    if (lang === "affinity") {
+                        const { id, toCharId } = validateCodeBlockData(rawData)
+                        builder.add(
+                            node.from,
+                            node.to + 4, //closing backticks is a separate node
+                            Decoration.replace({
+                                widget: new AffinityWidget(containerEl, app, id, fromCharId, toCharId)
+                            })
+                        )
                     }
+
                 }
             }
         })

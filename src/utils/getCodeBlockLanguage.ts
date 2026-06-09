@@ -1,0 +1,1 @@
+export const getCodeBlockLanguage = (block: string) => block.split('\n')[0]?.slice(3)
