@@ -12,7 +12,7 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: Ch
         return Decoration.none
     },
     update(oldState: DecorationSet, transaction: Transaction): DecorationSet {
-        if (!transaction.docChanged) return oldState
+        if (!transaction.docChanged && oldState !== Decoration.none) return oldState
 
         const builder = new RangeSetBuilder<Decoration>()
         const tree = syntaxTree(transaction.state)
