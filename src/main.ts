@@ -8,6 +8,7 @@ import { addCommands } from 'commands';
 import { AffinitySettingTab } from 'AffinitySettingTab';
 import { getFilesByFolder } from 'utils/getFilesByFolder';
 import { listenCharFileChanges } from 'listeners/listenCharFileChanges';
+import { affinityField } from 'inlineLivePreview';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS
@@ -34,10 +35,11 @@ export default class AffinityPlugin extends Plugin {
 				chars: initialChars,
 				historyMap: this.settings.logsHistoryMap
 			})
+			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
 			this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
-				const id = await this.getAffinityId(this.app.workspace.getActiveFile())
 				await this.processor.process(source, el, ctx, id, this.app)
 			})
+			this.registerEditorExtension(affinityField(this.app.workspace.containerEl, this.app, id))
 
 			await listenCharFileChanges(this, useStore.getState())
 		})
