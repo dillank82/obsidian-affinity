@@ -17,24 +17,25 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: Ch
         const builder = new RangeSetBuilder<Decoration>()
         const tree = syntaxTree(transaction.state)
 
+        let from: number
+
         tree.iterate({
             enter(node) {
-                if (node.name === 'formatting_formatting-code-block_hmd-codeblock') {
-                    const doc = transaction.state.doc
-                    const rawData = doc.sliceString(node.from, node.to)
-                    const lang = getCodeBlockLanguage(rawData)
-                    if (lang === "affinity") {
-                        const { id, toCharId } = validateCodeBlockData(rawData)
-                        builder.add(
-                            node.from,
-                            node.to + 4, //closing backticks is a separate node
-                            Decoration.replace({
-                                widget: new AffinityWidget(containerEl, app, id, fromCharId, toCharId),
-                                block: true
-                            })
-                        )
-                    }
-
+                const doc = transaction.state.doc
+                if (node.name.includes('HyperMD-codeblock-begin')) {
+                    const lang = getCodeBlockLanguage(doc.sliceString(node.from, node.to))
+                    if (lang === "affinity") from = node.from
+                } else if (node.name.includes('HyperMD-codeblock-end')) {
+                    const rawData = doc.sliceString(from, node.to)
+                    const { id, toCharId } = validateCodeBlockData(rawData)
+                    builder.add(
+                        from,
+                        node.to,
+                        Decoration.replace({
+                            widget: new AffinityWidget(containerEl, app, id, fromCharId, toCharId),
+                            block: true
+                        })
+                    )
                 }
             }
         })
