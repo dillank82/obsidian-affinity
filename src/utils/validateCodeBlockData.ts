@@ -3,7 +3,7 @@ import { MarkdownCodeBlockData, MarkdownCodeBlockDataSchema } from "schemas/Mark
 import { generateId } from "./generateId"
 import { CharacterID } from "interfaces/Realtionships"
 
-export const validateCodeBlockData = (stringData: string, onError?: () => void) => {
+export const validateCodeBlockData = (stringData: string, onError?: (err: unknown) => void) => {
     let id: string
     let toCharId: CharacterID | null
     try {
@@ -16,10 +16,10 @@ export const validateCodeBlockData = (stringData: string, onError?: () => void) 
             id = data.id
             toCharId = data.toCharId || null
         }
-    } catch {
+    } catch (err) {
         id = generateId()
         toCharId = null
-        if (onError) onError()
+        if (onError) onError(err)
     }
     return { id, toCharId }
 }

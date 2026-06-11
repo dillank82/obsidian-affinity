@@ -27,7 +27,7 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: Ch
                     if (lang === "affinity") from = node.from
                 } else if (node.name.includes('HyperMD-codeblock-end')) {
                     const rawData = doc.sliceString(from, node.to)
-                    const { id, toCharId } = validateCodeBlockData(rawData)
+                    const { id, toCharId } = validateCodeBlockData(rawData, console.error)
                     builder.add(
                         from,
                         node.to,
