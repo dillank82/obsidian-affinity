@@ -35,11 +35,11 @@ export default class AffinityPlugin extends Plugin {
 				chars: initialChars,
 				historyMap: this.settings.logsHistoryMap
 			})
-			const id = await this.getAffinityId(this.app.workspace.getActiveFile())
+			const getId = async() => await this.getAffinityId(this.app.workspace.getActiveFile())
 			this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
-				await this.processor.process(source, el, ctx, id, this.app)
+				await this.processor.process(source, el, ctx, await getId(), this.app)
 			})
-			this.registerEditorExtension(affinityField(this.app.workspace.containerEl, this.app, id))
+			this.registerEditorExtension(affinityField(this.app.workspace.containerEl, this.app, await getId()))
 
 			await listenCharFileChanges(this, useStore.getState())
 		})
