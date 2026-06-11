@@ -24,7 +24,11 @@ export class AffinityWidget extends WidgetType {
     }
 
     eq(widget: AffinityWidget): boolean {
-        return widget.id === this.id
+        return (
+            widget.id === this.id
+            && widget.fromCharId === this.fromCharId
+            && widget.initialToCharId === this.initialToCharId
+        )
     }
 
     toDOM(view: EditorView): HTMLElement {
