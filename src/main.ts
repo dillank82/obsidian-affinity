@@ -35,11 +35,11 @@ export default class AffinityPlugin extends Plugin {
 				chars: initialChars,
 				historyMap: this.settings.logsHistoryMap
 			})
-			const getId = async() => await this.getAffinityId(this.app.workspace.getActiveFile())
+			const getId = () => this.getAffinityId(this.app.workspace.getActiveFile())
 			this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
-				await this.processor.process(source, el, ctx, await getId(), this.app)
+				await this.processor.process(source, el, ctx, getId(), this.app)
 			})
-			this.registerEditorExtension(affinityField(this.app.workspace.containerEl, this.app, await getId()))
+			this.registerEditorExtension(affinityField(this.app.workspace.containerEl, this.app, getId))
 
 			await listenCharFileChanges(this, useStore.getState())
 		})
@@ -69,13 +69,11 @@ export default class AffinityPlugin extends Plugin {
 		return cache || null
 	}
 
-	async getAffinityId(file: TFile | null): Promise<CharacterID> {
+	getAffinityId(file: TFile | null): CharacterID {
 		if (!file) throw new Error('No file is active')
 		const cache = this.getFrontmatter(file)
 		let id: unknown = cache?.affinityPluginId
-		if (!cache || !id) {
-			id = await this.giveAffinityId(file)
-		}
+		if (!cache || !id) throw new Error("Can't get character id from metadata cache")
 		if (typeof id !== 'string') throw new Error('Frontmatter data is corrupted')
 		return id
 	}
@@ -100,7 +98,7 @@ export default class AffinityPlugin extends Plugin {
 		const allFiles = getFilesByFolder(this.app, this.settings.charactersDirectory.path, this.settings.charactersDirectory.includeSubfolders)
 		const chars = allFiles.map(async file => ({
 			name: file.basename,
-			id: await this.getAffinityId(file)
+			id: this.getAffinityId(file)
 		}))
 		return await Promise.all(chars)
 	}

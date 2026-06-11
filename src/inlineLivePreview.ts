@@ -8,7 +8,7 @@ import { getCodeBlockLanguage } from "utils/getCodeBlockLanguage"
 import { validateCodeBlockData } from "utils/validateCodeBlockData"
 import { AffinityWidget } from "widget"
 
-export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: CharacterID) => StateField.define<DecorationSet>({
+export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: () => CharacterID) => StateField.define<DecorationSet>({
     create(state: EditorState): DecorationSet {
         return Decoration.none
     },
@@ -34,7 +34,7 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: Ch
                         from,
                         node.to,
                         Decoration.replace({
-                            widget: new AffinityWidget(containerEl, app, id, fromCharId, toCharId),
+                            widget: new AffinityWidget(containerEl, app, id, fromCharId(), toCharId),
                             block: true
                         })
                     )
