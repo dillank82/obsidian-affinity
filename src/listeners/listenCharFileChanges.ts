@@ -1,5 +1,5 @@
 import AffinityPlugin from "main";
-import { TAbstractFile } from "obsidian";
+import { TAbstractFile, TFile } from "obsidian";
 import { Store } from "store";
 import { registerVaultEvent } from "./registerVaultEvent";
 import { isInCharDir, isMoved, isRenamed } from "utils/pathUtils/pathUtils";
@@ -23,7 +23,14 @@ export const listenCharFileChanges = async (plugin: AffinityPlugin, store: Store
         store.setChars(chars)
     }
 
+    const giveId = async (file: TAbstractFile) => {
+        if (file instanceof TFile) await plugin.giveAffinityId(file)
+    }
+
     registerVaultEvent(plugin, 'create', refreshChars, charDirCon)
     registerVaultEvent(plugin, 'delete', refreshChars, charDirCon)
     registerVaultEvent(plugin, 'rename', refreshChars, isRenamedOrMoved)
+
+    registerVaultEvent(plugin, 'create', giveId, charDirCon)
+    registerVaultEvent(plugin, 'rename', giveId, isMovedInCon)
 }

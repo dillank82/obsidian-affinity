@@ -78,7 +78,7 @@ export default class AffinityPlugin extends Plugin {
 		return id
 	}
 
-	private async giveAffinityId(file: TFile): Promise<CharacterID> {
+	async giveAffinityId(file: TFile): Promise<CharacterID> {
 		const id = generateId()
 		await this.updateMetadata(file, { affinityPluginId: id })
 		return id
