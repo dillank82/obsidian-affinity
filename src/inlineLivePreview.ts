@@ -5,7 +5,7 @@ import { CharacterID } from "interfaces/Realtionships"
 import { App, parseYaml } from "obsidian"
 import { extractCodeBlockData } from "utils/codeBlockUtils/extractCodeBlockData"
 import { getCodeBlockLanguage } from "utils/codeBlockUtils/getCodeBlockLanguage"
-import { validateCodeBlockData } from "utils/codeBlockUtils/validateCodeBlockData"
+import { validateCodeBlockData } from "utils/codeBlockUtils/validateCodeBlockData/validateCodeBlockData"
 import { AffinityWidget } from "widget"
 
 export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: () => CharacterID) => StateField.define<DecorationSet>({
