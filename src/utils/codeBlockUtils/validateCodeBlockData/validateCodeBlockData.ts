@@ -15,10 +15,10 @@ export const validateCodeBlockData = (stringData: string, yamlParser: (yaml: str
             id = data.id
             toCharId = data.toCharId || null
         }
-    } catch (err) {
+    } catch (err: unknown) {
         id = generateId()
         toCharId = null
-        if (onError) onError(err)
+        if (onError) onError(err instanceof Error ? err.message : err)
     }
     return { id, toCharId }
 }
