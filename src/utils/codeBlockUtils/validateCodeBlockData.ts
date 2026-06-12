@@ -1,7 +1,7 @@
 import { parseYaml } from "obsidian"
 import { MarkdownCodeBlockData, MarkdownCodeBlockDataSchema } from "schemas/MarkdownCodeBlockData"
-import { generateId } from "./generateId"
 import { CharacterID } from "interfaces/Realtionships"
+import { generateId } from "utils/generateId"
 
 export const validateCodeBlockData = (stringData: string, onError?: (err: unknown) => void) => {
     let id: string

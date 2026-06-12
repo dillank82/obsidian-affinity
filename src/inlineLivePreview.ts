@@ -3,9 +3,9 @@ import { EditorState, Extension, RangeSetBuilder, StateField, Transaction } from
 import { Decoration, DecorationSet, EditorView } from "@codemirror/view"
 import { CharacterID } from "interfaces/Realtionships"
 import { App } from "obsidian"
-import { extractCodeBlockData } from "utils/extractCodeBlockData"
-import { getCodeBlockLanguage } from "utils/getCodeBlockLanguage"
-import { validateCodeBlockData } from "utils/validateCodeBlockData"
+import { extractCodeBlockData } from "utils/codeBlockUtils/extractCodeBlockData"
+import { getCodeBlockLanguage } from "utils/codeBlockUtils/getCodeBlockLanguage"
+import { validateCodeBlockData } from "utils/codeBlockUtils/validateCodeBlockData"
 import { AffinityWidget } from "widget"
 
 export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: () => CharacterID) => StateField.define<DecorationSet>({
