@@ -12,7 +12,7 @@ describe('extractCodeBlockData', () => {
     it('should return empty string for empty string input', () => {
         expect(extractCodeBlockData('')).toBe('')
     })
-    it.skip('should correctly handle Windows line breaks (CRLF)', () => {
+    it('should correctly handle Windows line breaks (CRLF)', () => {
         const codeBlock = ['```', '  testData', '  another line', '```'].join('\r\n')
         const expected = ['  testData', '  another line'].join('\n')
         expect(extractCodeBlockData(codeBlock)).toBe(expected)
