@@ -19,7 +19,7 @@ describe('getCodeBlockLanguage', () => {
     it('should return empty string fot empty string input', () => {
         expect(getCodeBlockLanguage('')).toBe('')
     })
-    it.skip('should handle spaces after language', () => {
+    it('should handle spaces after language', () => {
         const codeBlock = createCodeBlock ('```affinitytest   ', '  data_yunow', '```')
         expect(getCodeBlockLanguage(codeBlock)).toBe('affinitytest')
     })
