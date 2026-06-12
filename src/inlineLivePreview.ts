@@ -3,7 +3,7 @@ import { EditorState, Extension, RangeSetBuilder, StateField, Transaction } from
 import { Decoration, DecorationSet, EditorView } from "@codemirror/view"
 import { CharacterID } from "interfaces/Realtionships"
 import { App, parseYaml } from "obsidian"
-import { extractCodeBlockData } from "utils/codeBlockUtils/extractCodeBlockData"
+import { extractCodeBlockData } from "utils/codeBlockUtils/extractCodeBlockData/extractCodeBlockData"
 import { getCodeBlockLanguage } from "utils/codeBlockUtils/getCodeBlockLanguage"
 import { validateCodeBlockData } from "utils/codeBlockUtils/validateCodeBlockData/validateCodeBlockData"
 import { AffinityWidget } from "widget"
