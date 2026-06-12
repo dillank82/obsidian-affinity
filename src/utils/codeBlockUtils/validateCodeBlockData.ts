@@ -1,13 +1,12 @@
-import { parseYaml } from "obsidian"
 import { MarkdownCodeBlockData, MarkdownCodeBlockDataSchema } from "schemas/MarkdownCodeBlockData"
 import { CharacterID } from "interfaces/Realtionships"
 import { generateId } from "utils/generateId"
 
-export const validateCodeBlockData = (stringData: string, onError?: (err: unknown) => void) => {
+export const validateCodeBlockData = (stringData: string, yamlParser: (yaml: string) => unknown, onError?: (err: unknown) => void) => {
     let id: string
     let toCharId: CharacterID | null
     try {
-        const raw: unknown = parseYaml(stringData)
+        const raw: unknown = yamlParser(stringData)
         if (!raw) {
             id = generateId()
             toCharId = null

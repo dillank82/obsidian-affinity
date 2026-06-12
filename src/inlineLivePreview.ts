@@ -2,7 +2,7 @@ import { syntaxTree } from "@codemirror/language"
 import { EditorState, Extension, RangeSetBuilder, StateField, Transaction } from "@codemirror/state"
 import { Decoration, DecorationSet, EditorView } from "@codemirror/view"
 import { CharacterID } from "interfaces/Realtionships"
-import { App } from "obsidian"
+import { App, parseYaml } from "obsidian"
 import { extractCodeBlockData } from "utils/codeBlockUtils/extractCodeBlockData"
 import { getCodeBlockLanguage } from "utils/codeBlockUtils/getCodeBlockLanguage"
 import { validateCodeBlockData } from "utils/codeBlockUtils/validateCodeBlockData"
@@ -29,7 +29,7 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: ()
                 } else if (node.name.includes('HyperMD-codeblock-end')) {
                     const codeBlock = doc.sliceString(from, node.to)
                     const rawData = extractCodeBlockData(codeBlock)
-                    const { id, toCharId } = validateCodeBlockData(rawData, console.error)
+                    const { id, toCharId } = validateCodeBlockData(rawData, parseYaml, console.error)
                     builder.add(
                         from,
                         node.to,
