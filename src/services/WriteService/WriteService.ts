@@ -52,3 +52,7 @@ export const updateMarkdownData = (editor: Editor, data: MarkdownCodeBlockData, 
     const content = dataToMarkdownContent(data)
     editor.replaceRange(content, from, to)
 }
+
+export const deleteMarkdownContent = (editor: Editor, from: EditorPosition, to: EditorPosition) => {
+    editor.replaceRange('', from, to)
+}
