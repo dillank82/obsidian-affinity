@@ -14,7 +14,7 @@ export const addCommands = (plugin: AffinityPlugin) => {
                 return
             }
 
-            const codeBlock = dataToMarkdownContent({ id: generateId() })
+            const codeBlock = dataToMarkdownContent({ id: generateId(), toCharId: null })
             editor.replaceSelection(codeBlock)
         }
     })

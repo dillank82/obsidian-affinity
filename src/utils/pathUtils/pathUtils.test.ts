@@ -13,6 +13,9 @@ describe('isInCharDir', () => {
     it('should return false for partial dir path match', () => {
         expect(isInCharDir('chars2/good/file', 'chars', true)).toBe(false)
     })
+    it('should return false for files in different directories', () => {
+        expect(isInCharDir('others/not_a_hero.md', 'characters', false)).toBe(false)
+    })
 })
 
 describe('isRenamed', () => {

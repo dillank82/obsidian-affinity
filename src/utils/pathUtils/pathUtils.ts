@@ -1,5 +1,5 @@
 export const isInCharDir = (filePath: string, dirPath: string, includeSubfolders: boolean) => 
-    !filePath.slice(dirPath.length + 1).includes('/') || (includeSubfolders && filePath.startsWith(dirPath + "/"))
+    filePath.startsWith(dirPath + "/") && (!filePath.slice(dirPath.length + 1).includes('/') || includeSubfolders)
 
 export const isRenamed = (fileName: string, oldPath: string) => oldPath.substring(oldPath.lastIndexOf("/") + 1) !== fileName
 

@@ -17,7 +17,7 @@ describe('dataToMarkdownContent', () => {
   })
 
   it('should correctly handle missing toChar', () => {
-    expect(dataToMarkdownContent({ id: 'bb357792-c996-40cd-ab9e-ed78ae623ef5' })).toMatchInlineSnapshot(`
+    expect(dataToMarkdownContent({ id: 'bb357792-c996-40cd-ab9e-ed78ae623ef5', toCharId: null })).toMatchInlineSnapshot(`
 "\`\`\`affinity
   id: bb357792-c996-40cd-ab9e-ed78ae623ef5
 \`\`\`"
