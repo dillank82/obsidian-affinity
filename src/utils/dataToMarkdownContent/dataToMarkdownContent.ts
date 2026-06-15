@@ -7,5 +7,5 @@ export const dataToMarkdownContent = (data: MarkdownCodeBlockData) => {
     ]
     if (data.toCharId) content.push(`  toCharId: ${data.toCharId}`)
     content.push('```')
-    return content.join('\n')
+    return content.join('\n') + '\n'
 }
