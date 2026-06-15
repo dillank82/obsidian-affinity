@@ -3,7 +3,6 @@ import { useApp } from "context"
 import { MarkdownView, Notice } from "obsidian"
 import { FC } from "react"
 import { deleteMarkdownContent, findBlockRanges } from "services/WriteService/WriteService"
-import styles from './DeleteButton.module.css'
 import { X } from "lucide-react"
 
 interface DeleteButtonProps {
@@ -42,7 +41,6 @@ export const DeleteButton: FC<DeleteButtonProps> = ({ codeBlockId }) => {
     return (
         <button
             onClick={deleteWidget}
-            className={styles.trigger}
             aria-label="Delete widget"
         >
             <X aria-hidden/>
