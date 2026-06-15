@@ -12,7 +12,8 @@ describe('dataToMarkdownContent', () => {
 "\`\`\`affinity
   id: bb357792-c996-40cd-ab9e-ed78ae623ef5
   toCharId: bf5337ad-b689-4d0c-9048-1a44ffbe35e9
-\`\`\`"
+\`\`\`
+"
 `)
   })
 
@@ -20,7 +21,8 @@ describe('dataToMarkdownContent', () => {
     expect(dataToMarkdownContent({ id: 'bb357792-c996-40cd-ab9e-ed78ae623ef5', toCharId: null })).toMatchInlineSnapshot(`
 "\`\`\`affinity
   id: bb357792-c996-40cd-ab9e-ed78ae623ef5
-\`\`\`"
+\`\`\`
+"
 `)
   })
 })
