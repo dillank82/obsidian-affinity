@@ -18,7 +18,7 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: ()
         const builder = new RangeSetBuilder<Decoration>()
         const tree = syntaxTree(transaction.state)
 
-        let from: number
+        let from: number | null
 
         tree.iterate({
             enter(node) {
@@ -26,7 +26,9 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: ()
                 if (node.name.includes('HyperMD-codeblock-begin')) {
                     const lang = getCodeBlockLanguage(doc.sliceString(node.from, node.to))
                     if (lang === "affinity") from = node.from
+                    else from = null
                 } else if (node.name.includes('HyperMD-codeblock-end')) {
+                    if (from === null) return
                     const codeBlock = doc.sliceString(from, node.to)
                     const rawData = extractCodeBlockData(codeBlock)
                     const { id, toCharId } = validateCodeBlockData(rawData, parseYaml, console.error)
@@ -38,6 +40,7 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: ()
                             block: true
                         })
                     )
+                    from = null
                 }
             }
         })
