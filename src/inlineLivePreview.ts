@@ -10,10 +10,10 @@ import { AffinityWidget } from "widget"
 
 export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: () => CharacterID) => StateField.define<DecorationSet>({
     create(state: EditorState): DecorationSet {
-        return Decoration.none
+        return buildDecorations(state, containerEl, app, fromCharId)
     },
     update(oldState: DecorationSet, transaction: Transaction): DecorationSet {
-        if (!transaction.docChanged && oldState !== Decoration.none) return oldState
+        if (!transaction.docChanged) return oldState
         return buildDecorations(transaction.state, containerEl, app, fromCharId)
     },
     provide(field: StateField<DecorationSet>): Extension {
