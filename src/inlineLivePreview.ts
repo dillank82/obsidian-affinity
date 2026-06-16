@@ -45,6 +45,9 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: ()
         return builder.finish()
     },
     provide(field: StateField<DecorationSet>): Extension {
-        return EditorView.decorations.from(field)
+        return [
+            EditorView.decorations.from(field),
+            EditorView.atomicRanges.of(view => view.state.field(field))
+        ]
     }
 })
