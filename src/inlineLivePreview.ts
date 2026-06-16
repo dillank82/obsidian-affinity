@@ -14,7 +14,7 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: ()
     },
     update(oldState: DecorationSet, transaction: Transaction): DecorationSet {
         if (!transaction.docChanged && oldState !== Decoration.none) return oldState
-        return buildDecorations(transaction, containerEl, app, fromCharId)
+        return buildDecorations(transaction.state, containerEl, app, fromCharId)
     },
     provide(field: StateField<DecorationSet>): Extension {
         return [
@@ -24,15 +24,15 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: ()
     }
 })
 
-const buildDecorations = (transaction: Transaction, containerEl: HTMLElement, app: App, fromCharId: () => CharacterID): DecorationSet => {
+const buildDecorations = (state: EditorState, containerEl: HTMLElement, app: App, fromCharId: () => CharacterID): DecorationSet => {
     const builder = new RangeSetBuilder<Decoration>()
-    const tree = syntaxTree(transaction.state)
+    const tree = syntaxTree(state)
 
     let from: number | null
 
     tree.iterate({
         enter(node) {
-            const doc = transaction.state.doc
+            const doc = state.doc
             if (node.name.includes('HyperMD-codeblock-begin')) {
                 const lang = getCodeBlockLanguage(doc.sliceString(node.from, node.to))
                 if (lang === "affinity") from = node.from
