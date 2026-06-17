@@ -7,28 +7,11 @@ import { AffinityWidget } from "widget"
 
 export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: () => CharacterID) => StateField.define<DecorationSet>({
     create(state: EditorState): DecorationSet {
-        return Decoration.none
+        return buildDecorations(state, containerEl, app, fromCharId)
     },
     update(oldState: DecorationSet, transaction: Transaction): DecorationSet {
-        if (!transaction.docChanged && oldState !== Decoration.none) return oldState
-
-        const builder = new RangeSetBuilder<Decoration>()
-
-        const addWidget = (data: AffinityNodeData) => {
-            const { from, to, id, toCharId } = data
-            builder.add(
-                from,
-                to,
-                Decoration.replace({
-                    widget: new AffinityWidget(containerEl, app, id, fromCharId(), toCharId),
-                    block: true
-                })
-            )
-        }
-
-        iterateAffinityBlocks(transaction.state, addWidget)
-
-        return builder.finish()
+        if (!transaction.docChanged) return oldState
+        return buildDecorations(transaction.state, containerEl, app, fromCharId)
     },
     provide(field: StateField<DecorationSet>): Extension {
         return [
@@ -37,3 +20,21 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: ()
         ]
     }
 })
+
+const buildDecorations = (state: EditorState, containerEl: HTMLElement, app: App, fromCharId: () => CharacterID): DecorationSet => {
+    const builder = new RangeSetBuilder<Decoration>()
+    const addWidget = (data: AffinityNodeData) => {
+        const { from, to, id, toCharId } = data
+        builder.add(
+            from,
+            to,
+            Decoration.replace({
+                widget: new AffinityWidget(containerEl, app, id, fromCharId(), toCharId),
+                block: true
+            })
+        )
+    }
+    
+    iterateAffinityBlocks(state, addWidget)
+    return builder.finish()
+}
