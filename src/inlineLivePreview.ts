@@ -23,21 +23,18 @@ export const affinityField = (containerEl: HTMLElement, app: App, fromCharId: ()
 
 const buildDecorations = (state: EditorState, containerEl: HTMLElement, app: App, fromCharId: () => CharacterID): DecorationSet => {
     const builder = new RangeSetBuilder<Decoration>()
-    const tree = syntaxTree(state)
-
-        const addWidget = (data: AffinityNodeData) => {
-            const { from, to, id, toCharId } = data
-            builder.add(
-                from,
-                to,
-                Decoration.replace({
-                    widget: new AffinityWidget(containerEl, app, id, fromCharId(), toCharId),
-                    block: true
-                })
-            )
-        }
-
-        iterateAffinityBlocks(transaction.state, addWidget)
-
+    const addWidget = (data: AffinityNodeData) => {
+        const { from, to, id, toCharId } = data
+        builder.add(
+            from,
+            to,
+            Decoration.replace({
+                widget: new AffinityWidget(containerEl, app, id, fromCharId(), toCharId),
+                block: true
+            })
+        )
+    }
+    
+    iterateAffinityBlocks(state, addWidget)
     return builder.finish()
 }
