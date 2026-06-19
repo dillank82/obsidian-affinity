@@ -27,7 +27,8 @@ export const AffinityDashboard = ({ fromChar, initialToCharId, id, pos, filePath
     const container = useRef<HTMLDivElement>(null)
     useEffect(() => {
         widgetRegistry.register(id, { el: container.current!, filePath, pos })
-    })
+        return () => { widgetRegistry.unregister(id) }
+    }, [])
 
     const renderContent = () => {
         switch (status) {
