@@ -13,14 +13,27 @@ export class AffinityWidget extends WidgetType {
     private id: string
     private fromCharId: CharacterID
     private initialToCharId: CharacterID | null
+    position: number
+    filePath: string
 
-    constructor(containerEl: HTMLElement, app: App, id: string, fromCharId: CharacterID, initialToCharId: CharacterID | null) {
+
+    constructor(
+        containerEl: HTMLElement,
+        app: App,
+        id: string,
+        fromCharId: CharacterID,
+        initialToCharId: CharacterID | null,
+        position: number,
+        filePath: string
+    ) {
         super()
         this.id = id
         this.fromCharId = fromCharId
         this.initialToCharId = initialToCharId
         this.container = containerEl
         this.app = app
+        this.position = position
+        this.filePath = filePath
     }
 
     eq(widget: AffinityWidget): boolean {
@@ -37,7 +50,13 @@ export class AffinityWidget extends WidgetType {
         this.root.render(
             <StrictMode>
                 <AppProvider app={this.app}>
-                    <AffinityDashboard id={this.id} fromChar={this.fromCharId} initialToCharId={this.initialToCharId} />
+                    <AffinityDashboard
+                        id={this.id}
+                        fromChar={this.fromCharId}
+                        initialToCharId={this.initialToCharId}
+                        pos={this.position}
+                        filePath={this.filePath}
+                    />
                 </AppProvider>
             </StrictMode>
         )

@@ -33,10 +33,13 @@ export class AffinityProcessor {
             new Notice ('Unable to restore character selection. Markdown data is corrupted.')
         }
 
+        const sectionInfo = ctx.getSectionInfo(el)
+        const pos = sectionInfo?.lineStart || 0
+
         root.render(
             <StrictMode>
                 <AppProvider app={app}>
-                    <AffinityDashboard fromChar={fromCharid} id={id} initialToCharId={toCharId}/>
+                    <AffinityDashboard fromChar={fromCharid} id={id} initialToCharId={toCharId} pos={pos} filePath={ctx.sourcePath}/>
                 </AppProvider>
             </StrictMode>
         )

@@ -29,7 +29,7 @@ const buildDecorations = (state: EditorState, containerEl: HTMLElement, app: App
             from,
             to,
             Decoration.replace({
-                widget: new AffinityWidget(containerEl, app, id, fromCharId(), toCharId),
+                widget: new AffinityWidget(containerEl, app, id, fromCharId(), toCharId, from, app.workspace.getActiveFile()!.path),
                 block: true
             })
         )

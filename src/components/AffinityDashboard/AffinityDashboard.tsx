@@ -5,21 +5,29 @@ import { useAffinity } from "hooks/useAffinity"
 import { useStore } from "store"
 import { AffinityWorkspace } from 'components/AffinityWorkspace/AffinityWorkspace'
 import { EmptyState } from 'components/EmptyState/EmptyState'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { HistoryWorkspace } from 'components/HistoryWorkspace/HistoryWorkspace'
+import { widgetRegistry } from 'widgetFocusRegistry'
 
 interface AffinityDashboardProps {
     id: string
     fromChar: CharacterID
     initialToCharId: CharacterID | null
+    pos: number
+    filePath: string
 }
 
 export type WorkspaceView = 'main' | 'history'
 
-export const AffinityDashboard = ({ fromChar, initialToCharId, id }: AffinityDashboardProps) => {
+export const AffinityDashboard = ({ fromChar, initialToCharId, id, pos, filePath }: AffinityDashboardProps) => {
     const [currentView, setCurrentView] = useState<WorkspaceView>('main')
     const store = useStore()
     const { status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, initialToCharId, id)
+
+    const container = useRef<HTMLDivElement>(null)
+    useEffect(() => {
+        widgetRegistry.register(id, { el: container.current!, filePath, pos })
+    })
 
     const renderContent = () => {
         switch (status) {
@@ -36,10 +44,12 @@ export const AffinityDashboard = ({ fromChar, initialToCharId, id }: AffinityDas
 
     return (
         <div
+            ref={container}
             className={styles.dashboardContainer}
             role='region'
             aria-roledescription='application'
             aria-label='Affinity Relationships Tracker'
+            tabIndex={-1}
         >
             <Header
                 toChar={toChar}
