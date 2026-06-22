@@ -21,7 +21,7 @@ export const addCommands = (plugin: AffinityPlugin) => {
     })
 
     plugin.addCommand({
-        id: 'focus-nexxt-widget',
+        id: 'focus-next-widget',
         name: 'Focus widget (in order)',
         checkCallback: (checking) => {
             const view = plugin.app.workspace.getActiveViewOfType(MarkdownView)
