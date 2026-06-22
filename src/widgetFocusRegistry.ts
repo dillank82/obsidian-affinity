@@ -15,7 +15,7 @@ export const widgetRegistry = {
 
   focusNext: (filePath: string) => {
     const list = [...registry.values()]
-      .filter(item => item.filePath == filePath)
+      .filter(item => item.filePath == filePath && item.el.isConnected)
       .sort((a, b) => a.pos - b.pos)
 
     console.log('[widgetRegistry.focusNext]', {
