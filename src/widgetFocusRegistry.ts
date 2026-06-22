@@ -44,6 +44,7 @@ const focusWithRetry = (filePath: string, attempt: number = 0) => {
       targetId: [...registry.entries()].find(([, v]) => v === target)?.[0],
       targetPos: target?.pos,
       elConnected: target?.el.isConnected,
+      el: target?.el
     })
 
     target?.el.scrollIntoView({ block: 'center', behavior: 'smooth' })
