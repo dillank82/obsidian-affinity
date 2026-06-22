@@ -24,6 +24,8 @@ export const widgetRegistry = {
 
         const target = list[currentIndex]
         target?.el.scrollIntoView({ block: 'center', behavior: 'smooth' })
-        target?.el.focus()
+        requestAnimationFrame(() => {
+          target?.el.focus()
+        })
     }
 }
