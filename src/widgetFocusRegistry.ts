@@ -16,7 +16,7 @@ export const widgetRegistry = {
     focusNext: (filePath: string) => {
         const list = [...registry.values()]
             .filter(item => item.filePath == filePath)
-            .sort((a, b) => a.pos = b.pos)
+            .sort((a, b) => a.pos - b.pos)
         if (list.length === 0) return
 
         currentIndex = filePath === currentFile ? (currentIndex + 1) % list.length : 0
