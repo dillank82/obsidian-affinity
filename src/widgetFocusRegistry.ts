@@ -41,8 +41,6 @@ export const widgetRegistry = {
     })
 
     target?.el.scrollIntoView({ block: 'center', behavior: 'smooth' })
-    requestAnimationFrame(() => {
-      target?.el.focus()
-    })
+    target?.el.focus()
   }
 }
