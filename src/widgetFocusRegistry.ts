@@ -18,7 +18,7 @@ export const widgetRegistry = {
 
 const focusWithRetry = (filePath: string, attempt: number = 0) => {
   const list = [...registry.values()]
-    .filter(item => item.filePath == filePath && item.el.isConnected && isVisible(item.el))
+    .filter(item => item.filePath === filePath && item.el.isConnected && isVisible(item.el))
     .sort((a, b) => a.pos - b.pos)
 
   if (list.length === 0) {
