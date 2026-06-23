@@ -31,6 +31,8 @@ const focusWithRetry = (filePath: string, attempt: number = 0) => {
 
   const target = list[currentIndex]
   target?.el.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  target?.el.setAttribute('data-focused', 'true')
+  target?.el.addEventListener('blur', () => { target.el.removeAttribute('data-focused') }, { once: true })
   target?.el.focus()
 }
 

@@ -9,6 +9,6 @@
     justify-self: center;
     margin-block: 1.5rem;
 }
-.dashboardContainer:focus-visible {
+.dashboardContainer[data-focused="true"] {
     box-shadow: 0 0 0 2px var(--background-modifier-border-focus);
 }
