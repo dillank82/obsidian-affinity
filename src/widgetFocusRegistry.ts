@@ -21,15 +21,6 @@ const focusWithRetry = (filePath: string, attempt: number = 0) => {
   .filter(item => item.filePath == filePath && item.el.isConnected && isVisible(item.el))
   .sort((a, b) => a.pos - b.pos)
   
-  console.log('[widgetRegistry.focusNext]', {
-    filePath,
-    currentFile,
-    currentIndex,
-    registrySize: registry.size,
-    allFilePaths: [...registry.values()].map(i => i.filePath),
-    filteredCount: list.length,
-  })
-  
   if (list.length === 0) {
     if (attempt < 5) setTimeout(() => focusWithRetry(filePath, attempt + 1), 100)
       return
@@ -39,14 +30,6 @@ const focusWithRetry = (filePath: string, attempt: number = 0) => {
   currentFile = filePath
   
   const target = list[currentIndex]
-  
-  console.log('[widgetRegistry.focusNext] target', {
-    targetId: [...registry.entries()].find(([, v]) => v === target)?.[0],
-    targetPos: target?.pos,
-    elConnected: target?.el.isConnected,
-    el: target?.el
-  })
-  
   target?.el.scrollIntoView({ block: 'center', behavior: 'smooth' })
   target?.el.focus()
 }
