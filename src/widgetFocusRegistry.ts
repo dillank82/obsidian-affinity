@@ -67,7 +67,7 @@ const focusSource = (filePath: string, editor: EditorView, attempt: number = 0) 
       .sort((a, b) => a.pos - b.pos)
 
     if (list.length === 0) {
-      if (attempt < 5) setTimeout(() => focusPreview(filePath, attempt + 1), 100)
+      if (attempt < 5) setTimeout(() => focusSource(filePath, editor, attempt + 1), 100)
       return
     }
     const target = list[currentIndex]
