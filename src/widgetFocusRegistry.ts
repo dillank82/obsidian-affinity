@@ -1,3 +1,7 @@
+import { EditorView } from "@codemirror/view"
+import { MarkdownViewModeType, Notice } from "obsidian"
+import { iterateAffinityBlocks } from "utils/iterateAffinityBlocks"
+
 interface WidgetItem {
   el: HTMLElement
   filePath: string
@@ -13,16 +17,19 @@ export const widgetRegistry = {
   register: (id: string, item: WidgetItem) => registry.set(id, item),
   unregister: (id: string) => registry.delete(id),
 
-  focusNext: (filePath: string) => focusWithRetry(filePath)
+  focusNext: (filePath: string, editor: EditorView, mode: MarkdownViewModeType) => {
+    if (mode === 'preview') focusPreview(filePath)
+    if (mode === 'source') focusSource(filePath, editor)
+  }
 }
 
-const focusWithRetry = (filePath: string, attempt: number = 0) => {
+const focusPreview = (filePath: string, attempt: number = 0) => {
   const list = [...registry.values()]
     .filter(item => item.filePath === filePath && item.el.isConnected && isVisible(item.el))
     .sort((a, b) => a.pos - b.pos)
- 
+
   if (list.length === 0) {
-    if (attempt < 5) setTimeout(() => focusWithRetry(filePath, attempt + 1), 100)
+    if (attempt < 5) setTimeout(() => focusPreview(filePath, attempt + 1), 100)
     return
   }
 
@@ -30,6 +37,42 @@ const focusWithRetry = (filePath: string, attempt: number = 0) => {
 
   const target = list[currentIndex]
   applyFocus(target?.el)
+}
+
+const focusSource = (filePath: string, editor: EditorView, attempt: number = 0) => {
+  const allPositions: number[] = []
+  iterateAffinityBlocks(editor.state, ({ from }) => allPositions.push(from))
+
+  if (allPositions.length === 0) {
+    if (attempt < 5) setTimeout(() => focusSource(filePath, editor, attempt + 1), 100)
+    return
+  }
+
+  handleCycle(filePath, allPositions.length)
+
+  const targetPos = allPositions[currentIndex]
+
+  if (!targetPos) {
+    new Notice('Error: focus target position is undefined')
+    return
+  }
+
+  editor.dispatch({
+    effects: EditorView.scrollIntoView(targetPos, { y: 'end' })
+  })
+
+  requestAnimationFrame(() => {
+    const list = [...registry.values()]
+      .filter(item => item.filePath === filePath && item.el.isConnected && isVisible(item.el))
+      .sort((a, b) => a.pos - b.pos)
+
+    if (list.length === 0) {
+      if (attempt < 5) setTimeout(() => focusPreview(filePath, attempt + 1), 100)
+      return
+    }
+    const target = list[currentIndex]
+    applyFocus(target?.el)
+  })
 }
 
 const isVisible = (el: HTMLElement): boolean => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length)

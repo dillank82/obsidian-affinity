@@ -37,7 +37,7 @@ export const addCommands = (plugin: AffinityPlugin) => {
             iterateAffinityBlocks(editorView.state, () => { if (!docHasWidget) docHasWidget = true })
             if (!docHasWidget) return false
 
-            if (!checking) widgetRegistry.focusNext(view.file!.path)
+            if (!checking) widgetRegistry.focusNext(view.file!.path, editorView, view.getMode())
             return true
         }
     })
