@@ -26,8 +26,7 @@ const focusWithRetry = (filePath: string, attempt: number = 0) => {
     return
   }
 
-  currentIndex = filePath === currentFile ? (currentIndex + 1) % list.length : 0
-  currentFile = filePath
+  handleCycle(filePath, list.length)
 
   const target = list[currentIndex]
   applyFocus(target?.el)
@@ -41,4 +40,9 @@ const applyFocus = (el: HTMLElement | undefined) => {
   el.setAttribute('data-focused', 'true')
   el.addEventListener('blur', () => { el.removeAttribute('data-focused') }, { once: true })
   el.focus()
+}
+
+const handleCycle = (filePath: string, listLength: number) => {
+  currentIndex = filePath === currentFile ? (currentIndex + 1) % listLength : 0
+  currentFile = filePath
 }
