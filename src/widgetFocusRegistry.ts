@@ -20,7 +20,7 @@ const focusWithRetry = (filePath: string, attempt: number = 0) => {
   const list = [...registry.values()]
     .filter(item => item.filePath === filePath && item.el.isConnected && isVisible(item.el))
     .sort((a, b) => a.pos - b.pos)
-
+ 
   if (list.length === 0) {
     if (attempt < 5) setTimeout(() => focusWithRetry(filePath, attempt + 1), 100)
     return
@@ -30,10 +30,15 @@ const focusWithRetry = (filePath: string, attempt: number = 0) => {
   currentFile = filePath
 
   const target = list[currentIndex]
-  target?.el.scrollIntoView({ block: 'center', behavior: 'smooth' })
-  target?.el.setAttribute('data-focused', 'true')
-  target?.el.addEventListener('blur', () => { target.el.removeAttribute('data-focused') }, { once: true })
-  target?.el.focus()
+  applyFocus(target?.el)
 }
 
 const isVisible = (el: HTMLElement): boolean => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length)
+
+const applyFocus = (el: HTMLElement | undefined) => {
+  if (!el) return
+  el.scrollIntoView({ block: 'center', behavior: 'smooth' })
+  el.setAttribute('data-focused', 'true')
+  el.addEventListener('blur', () => { el.removeAttribute('data-focused') }, { once: true })
+  el.focus()
+}
