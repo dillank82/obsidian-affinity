@@ -1,5 +1,5 @@
 import { EditorState } from "@codemirror/state";
-import { Editor, EditorPosition } from "obsidian";
+import { App, Editor, EditorPosition, Notice } from "obsidian";
 import { MarkdownCodeBlockData } from "schemas/MarkdownCodeBlockData";
 import { dataToMarkdownContent } from "utils/dataToMarkdownContent/dataToMarkdownContent";
 import { AffinityNodeData, iterateAffinityBlocks } from "utils/iterateAffinityBlocks";
@@ -38,4 +38,45 @@ export const updateMarkdownData = (editor: Editor, data: MarkdownCodeBlockData, 
 
 export const deleteMarkdownContent = (editor: Editor, from: EditorPosition, to: EditorPosition) => {
     editor.replaceRange('', from, to)
+}
+
+export const appVaultWriter = {
+    findBlockRanges: (id: string, doc: string): { from: number, to: number} | null => {
+        const lines = doc.split('\n')
+
+        const fromIndex = lines.findIndex(l => l.includes(id))
+        if (fromIndex === -1) return null
+
+        const from = lines.slice(0, fromIndex).lastIndexOf('```affinity')
+        const to = lines.indexOf('```', from + 1)
+
+        return { from, to }
+    },
+    updateMarkdownData: async (app: App, ranges: { from: number, to: number }, newData: MarkdownCodeBlockData): Promise<void> => {
+        const file = app.workspace.getActiveFile()
+        if (!file) {
+            new Notice('Failed to write changes: no active file')
+            return
+        }
+        await app.vault.process(file, (data) => {
+            const lines = data.split('\n')
+            const { from, to } = ranges
+            const contnet = dataToMarkdownContent(newData)
+            lines.splice(from, to - from + 1, ...contnet.split('\n'))
+            return lines.join('\n')
+        })
+    },
+    deleteMarkdownContent: async (app: App, ranges: { from: number, to: number }): Promise<void> => {
+        const file = app.workspace.getActiveFile()
+        if (!file) {
+            new Notice('Failed to delete: no active file')
+            return
+        }
+        await app.vault.process(file, (data) => {
+            const lines = data.split('\n')
+            const { from, to } = ranges
+            lines.splice(from, to - from + 1)
+            return lines.join('\n')
+        })
+    }
 }
