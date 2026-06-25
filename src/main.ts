@@ -1,4 +1,4 @@
-import { debounce, FrontMatterCache, Plugin, TFile, TFolder } from 'obsidian'
+import { debounce, FrontMatterCache, Notice, parseYaml, Plugin, TFile, TFolder } from 'obsidian'
 import { DEFAULT_SETTINGS, PluginSettings } from "./settings"
 import { AffinityProcessor } from 'processors/AffinityProcessor';
 import { Character, CharacterID } from 'interfaces/Realtionships';
@@ -9,6 +9,9 @@ import { AffinitySettingTab } from 'AffinitySettingTab';
 import { getFilesByFolder } from 'utils/getFilesByFolder';
 import { listenCharFileChanges } from 'listeners/listenCharFileChanges';
 import { affinityField } from 'inlineLivePreview';
+import { WidgetPreviewMode } from 'widgetPreviewMode';
+import { extractCodeBlockData } from 'utils/codeBlockUtils/extractCodeBlockData/extractCodeBlockData';
+import { validateCodeBlockData } from 'utils/codeBlockUtils/validateCodeBlockData/validateCodeBlockData';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS
@@ -36,8 +39,23 @@ export default class AffinityPlugin extends Plugin {
 				historyMap: this.settings.logsHistoryMap
 			})
 			const getId = () => this.getAffinityId(this.app.workspace.getActiveFile())
-			this.registerMarkdownCodeBlockProcessor('affinity', async (source, el, ctx) => {
-				await this.processor.process(source, el, ctx, getId(), this.app)
+			this.registerMarkdownPostProcessor((el, ctx) => {
+				const codeBlocks: NodeListOf<HTMLElement> = el.querySelectorAll('.el-pre pre .language-affinity')
+				codeBlocks.forEach(codeBl => {
+					const info = ctx.getSectionInfo(codeBl)
+					if (!info) return
+
+					const lines = info.text.split('\n')
+					const source = lines.slice(info.lineStart, info.lineEnd + 1).join('\n')
+					const rawData: string = extractCodeBlockData(source)
+					const { id, toCharId } = validateCodeBlockData(rawData, parseYaml, (err) => { new Notice(err instanceof Error ? err.message : String(err)) })
+
+					const elPre = codeBl.parentElement?.parentElement
+					if (elPre) {
+						const child = new WidgetPreviewMode(elPre, this.app, id, getId(), toCharId)
+						ctx.addChild(child)
+					}
+				})
 			})
 			this.registerEditorExtension(affinityField(this.app.workspace.containerEl, this.app, getId))
 
