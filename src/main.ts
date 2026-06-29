@@ -9,7 +9,7 @@ import { AffinitySettingTab } from 'AffinitySettingTab';
 import { getFilesByFolder } from 'utils/getFilesByFolder';
 import { listenCharFileChanges } from 'listeners/listenCharFileChanges';
 import { affinityField } from 'inlineLivePreview';
-import { WidgetPreviewMode } from 'widgetPreviewMode';
+import { WidgetPreviewMode } from 'WidgetPreviewMode';
 import { extractCodeBlockData } from 'utils/codeBlockUtils/extractCodeBlockData/extractCodeBlockData';
 import { validateCodeBlockData } from 'utils/codeBlockUtils/validateCodeBlockData/validateCodeBlockData';
 
