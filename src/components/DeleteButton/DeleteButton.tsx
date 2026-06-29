@@ -1,7 +1,7 @@
 import { EditorView } from "@codemirror/view"
 import { useApp } from "context"
 import { MarkdownView, Notice } from "obsidian"
-import { FC } from "react"
+import { FC, useState } from "react"
 import { appVaultWriter, editorWriter } from "services/WriteService/WriteService"
 import { X } from "lucide-react"
 
@@ -11,7 +11,11 @@ interface DeleteButtonProps {
 
 export const DeleteButton: FC<DeleteButtonProps> = ({ codeBlockId }) => {
     const app = useApp()
+
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+
     const deleteWidget = async () => {
+        setIsLoading(true)
         try {
             const view = app.workspace.getActiveViewOfType(MarkdownView)
             if (!view) {
@@ -57,11 +61,17 @@ export const DeleteButton: FC<DeleteButtonProps> = ({ codeBlockId }) => {
         } catch (err: unknown) {
             const errMsg = err instanceof Error ? err.message : String(err)
             new Notice(`Failed to delete widget: ${errMsg}.`)
+        } finally {
+            setIsLoading(false)
         }
     }
 
     return (
         <button
+            disabled={isLoading}
+            aria-disabled={isLoading}
+            // promise handled with loading state and error catching
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onClick={deleteWidget}
             aria-label="Delete widget"
         >
