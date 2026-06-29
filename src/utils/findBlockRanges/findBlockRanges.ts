@@ -29,7 +29,7 @@ export const findBlockRangesEditor = (state: EditorState, id: string): { from: E
     return ranges
 }
 
-export const findBlockRangesApp = (id: string, doc: string): { from: number, to: number } | null => {
+export const findBlockRangesApp = (doc: string, id: string): { from: number, to: number } | null => {
     const lines = doc.split('\n')
 
     const fromIndex = lines.findIndex(l => l.includes(id))
