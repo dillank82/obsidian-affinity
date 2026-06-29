@@ -4,44 +4,44 @@ import { MarkdownCodeBlockData } from "schemas/MarkdownCodeBlockData";
 import { dataToMarkdownContent } from "utils/dataToMarkdownContent/dataToMarkdownContent";
 import { AffinityNodeData, iterateAffinityBlocks } from "utils/iterateAffinityBlocks";
 
-export const findBlockRanges = (state: EditorState, id: string): { from: EditorPosition, to: EditorPosition } | null => {
-    let ranges: { from: EditorPosition, to: EditorPosition } | null = null
-    const setRanges = (data: AffinityNodeData) => {
-        const foundedId = data.id
-        if (id === foundedId) {
-            const { from, to } = data
-            const fromLine = state.doc.lineAt(from)
-            const toLine = state.doc.lineAt(to)
-            ranges = {
-                from: {
-                    line: fromLine.number - 1,
-                    ch: from - fromLine.from
-                },
-                to: {
-                    line: toLine.number - 1,
-                    ch: to - toLine.from
+export const editorWriter = {
+    findBlockRanges: (state: EditorState, id: string): { from: EditorPosition, to: EditorPosition } | null => {
+        let ranges: { from: EditorPosition, to: EditorPosition } | null = null
+        const setRanges = (data: AffinityNodeData) => {
+            const foundedId = data.id
+            if (id === foundedId) {
+                const { from, to } = data
+                const fromLine = state.doc.lineAt(from)
+                const toLine = state.doc.lineAt(to)
+                ranges = {
+                    from: {
+                        line: fromLine.number - 1,
+                        ch: from - fromLine.from
+                    },
+                    to: {
+                        line: toLine.number - 1,
+                        ch: to - toLine.from
+
+                    }
 
                 }
-
             }
         }
+
+        iterateAffinityBlocks(state, setRanges)
+        return ranges
+    },
+    updateMarkdownData: (editor: Editor, data: MarkdownCodeBlockData, from: EditorPosition, to: EditorPosition) => {
+        const content = dataToMarkdownContent(data)
+        editor.replaceRange(content, from, to)
+    },
+    deleteMarkdownContent: (editor: Editor, from: EditorPosition, to: EditorPosition) => {
+        editor.replaceRange('', from, to)
     }
-
-    iterateAffinityBlocks(state, setRanges)
-    return ranges
-}
-
-export const updateMarkdownData = (editor: Editor, data: MarkdownCodeBlockData, from: EditorPosition, to: EditorPosition) => {
-    const content = dataToMarkdownContent(data)
-    editor.replaceRange(content, from, to)
-}
-
-export const deleteMarkdownContent = (editor: Editor, from: EditorPosition, to: EditorPosition) => {
-    editor.replaceRange('', from, to)
 }
 
 export const appVaultWriter = {
-    findBlockRanges: (id: string, doc: string): { from: number, to: number} | null => {
+    findBlockRanges: (id: string, doc: string): { from: number, to: number } | null => {
         const lines = doc.split('\n')
 
         const fromIndex = lines.findIndex(l => l.includes(id))
