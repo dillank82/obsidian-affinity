@@ -10,7 +10,7 @@ import { DeleteButton } from "components/DeleteButton/DeleteButton"
 interface HeaderProps {
     toChar: Character | null
     fromChar: CharacterID
-    setToChar: (value: string) => void
+    setToChar: (value: string) => Promise<void>
     charOptions: Character[]
     characters: Character[]
     createRel: (charId: CharacterID) => void
@@ -25,7 +25,7 @@ export const Header: FC<HeaderProps> = ({ toChar, setToChar, charOptions, charac
             <span aria-atomic="true" className={styles.currentChar}>{toChar ? `Relation to ${toChar.name}` : 'Affinity'}</span>
             <nav>
                 <CharacterSwitcher currentCharId={toChar?.id || null} onChange={setToChar} options={charOptions} />
-                <RelationsCreator fromCharId={fromChar} characters={characters} existingRels={charOptions} onChange={(toChar) => { createRel(toChar); setToChar(toChar) }} />
+                <RelationsCreator fromCharId={fromChar} characters={characters} existingRels={charOptions} onChange={async (toChar) => { createRel(toChar); await setToChar(toChar) }} />
                 <HistoryButton setCurrentView={setCurrentView} currentView={currentView}/>
                 <DeleteButton codeBlockId={codeBlockId}/>
             </nav>

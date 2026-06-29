@@ -27,7 +27,7 @@ type StatusReturn = InitialReturn | ChosenReturn | NoStatsReturn
 export type UseAffinityState = ChosenState | InitialState
 
 export type UseAffinityReturn = StatusReturn & {
-    setToChar: (toCharId: CharacterID) => void
+    setToChar: (toCharId: CharacterID) => Promise<void>
     createRel: (toCharId: CharacterID) => void
     relOptions: Character[]
 }

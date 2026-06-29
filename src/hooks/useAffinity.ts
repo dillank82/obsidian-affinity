@@ -5,7 +5,7 @@ import { Stats } from "interfaces/Stats"
 import { UseAffinityReturn, UseAffinityState } from "interfaces/useAffinity"
 import { MarkdownView, Notice } from "obsidian"
 import { useEffect, useState } from "react"
-import { findBlockRanges, updateMarkdownData } from "services/WriteService/WriteService"
+import { appVaultWriter, editorWriter } from "services/WriteService/WriteService"
 import { Store } from "store"
 import { mapStats } from "utils/mapStats"
 
@@ -43,14 +43,21 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
         if (state.status === 'chosen') {
             const toCharAfterChanges = characters.find(char => char.id === toChar.id)
             if (toCharAfterChanges && toChar.name !== toCharAfterChanges.name) {
-                setToChar(toChar.id)
+                setToChar(toChar.id).catch((err) => {
+                    new Notice(`${err instanceof Error ? err.message : String(err)}`)
+                })
             }
         }
     }, [characters])
 
-    const writeToCharChanges = (toCharId: string) => {
+    const writeToCharChanges = async (toCharId: string) => {
         try {
-            const editor = app.workspace.getActiveViewOfType(MarkdownView)?.editor
+            const view = app.workspace.getActiveViewOfType(MarkdownView)
+            if (!view) {
+                new Notice('Failed to save character selection. No active view.')
+                return
+            }
+            const editor = view?.editor
             // A necessary hack to gain access to the private CodeMirror API
             // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
             const editorView = (editor as any).cm as EditorView
@@ -59,26 +66,45 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
                 return
             }
 
-            const state = editorView.state
-            const ranges = findBlockRanges(state, codeBlockId)
-            if (!ranges) {
-                new Notice('Failed to save character selection: cannot find current code block range.')
-                return
-            }
-            const { from, to } = ranges
-            
             const data = {
                 id: codeBlockId,
                 toCharId: toCharId
             }
-            updateMarkdownData(editor, data, from, to)
-        } catch(err) {
+            const viewMode = view.getMode()
+
+            switch (viewMode) {
+                case "source": {
+                    const ranges = editorWriter.findBlockRanges(editorView.state, codeBlockId)
+                    if (!ranges) {
+                        new Notice('Failed to save character selection: cannot find current code block range.')
+                        return
+                    }
+                    const { from, to } = ranges
+                    editorWriter.updateMarkdownData(editor, data, from, to)
+                    break
+                }
+                case "preview": {
+                    const file = app.workspace.getActiveFile()
+                    if (!file) {
+                        new Notice('Failed to save character selection: no active file.')
+                        return
+                    }
+                    const ranges = appVaultWriter.findBlockRanges(await app.vault.read(file), codeBlockId)
+                    if (!ranges) {
+                        new Notice('Failed to save character selection: cannot find current code block range.')
+                        return
+                    }
+                    await appVaultWriter.updateMarkdownData(app, ranges, data)
+                    break
+                }
+            }
+        } catch (err) {
             const errMsg = err instanceof Error ? err.message : String(err)
             new Notice(`Unexpected error while trying to save character selection: ${errMsg}.`)
         }
     }
 
-    const setToChar = (toChar: CharacterID) => {
+    const setToChar = async (toChar: CharacterID) => {
         setState({
             status: 'chosen',
             toChar: {
@@ -86,7 +112,7 @@ export const useAffinity = (store: Store, fromChar: CharacterID, initialToCharId
                 name: findCharName(toChar)!
             }
         })
-        if (state.toChar?.id !== toChar) writeToCharChanges(toChar)
+        if (state.toChar?.id !== toChar) await writeToCharChanges(toChar)
     }
 
     const createRel = (toChar: CharacterID) => {

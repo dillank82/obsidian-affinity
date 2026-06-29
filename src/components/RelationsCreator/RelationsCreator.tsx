@@ -6,7 +6,7 @@ import { Character, CharacterID } from "interfaces/Realtionships";
 interface RelationsCreatorProps {
     characters: Character[]
     existingRels: Character[]
-    onChange: (char: string) => void
+    onChange: (char: string) => Promise<void>
     fromCharId: CharacterID
 }
 
@@ -33,7 +33,7 @@ export const RelationsCreator: FC<RelationsCreatorProps> = ({ characters, existi
                 item
                     .setTitle(char.name)
                     .setChecked(created).setDisabled(created)
-                    .onClick(() => onChange(char.id))
+                    .onClick(async () => await onChange(char.id))
             )
         })
 

@@ -6,7 +6,7 @@ import { Character, CharacterID } from "interfaces/Realtionships"
 interface CharacterSwitcherProps {
     currentCharId: CharacterID | null
     options: Character[]
-    onChange: (value: string) => void
+    onChange: (value: string) => Promise<void>
 }
 
 export const CharacterSwitcher: FC<CharacterSwitcherProps> = ({ currentCharId, options, onChange }) => {
@@ -31,7 +31,7 @@ export const CharacterSwitcher: FC<CharacterSwitcherProps> = ({ currentCharId, o
                 item
                     .setTitle(option.name)
                     .setChecked(option.id === currentCharId)
-                    .onClick(() => onChange(option.id))
+                    .onClick(async () => await onChange(option.id))
             )
         })
 
