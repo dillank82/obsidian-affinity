@@ -12,9 +12,11 @@ import { affinityField } from 'inlineLivePreview';
 import { WidgetPreviewMode } from 'WidgetPreviewMode';
 import { extractCodeBlockData } from 'utils/codeBlockUtils/extractCodeBlockData/extractCodeBlockData';
 import { validateCodeBlockData } from 'utils/codeBlockUtils/validateCodeBlockData/validateCodeBlockData';
+import { listenIdByPathChanges } from 'listeners/listenIdByPathChanges';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS
+	idByPath: Map<string, CharacterID> = new Map()
 	private processor: AffinityProcessor = new AffinityProcessor()
 
 	async onload() {
@@ -22,6 +24,7 @@ export default class AffinityPlugin extends Plugin {
 		addCommands(this)
 		this.addSettingTab(new AffinitySettingTab(this))
 
+		
 		this.registerEvent(
 			this.app.vault.on('rename', async (file, oldPath) => {
 				if (!(file instanceof TFolder)) return
@@ -30,7 +33,7 @@ export default class AffinityPlugin extends Plugin {
 				await this.saveSettings()
 			})
 		)
-
+		
 		this.app.workspace.onLayoutReady(async () => {
 			const initialChars = await this.getChars()
 			useStore.setState({
@@ -38,7 +41,6 @@ export default class AffinityPlugin extends Plugin {
 				chars: initialChars,
 				historyMap: this.settings.logsHistoryMap
 			})
-			const getId = () => this.getAffinityId(this.app.workspace.getActiveFile())
 			this.registerMarkdownPostProcessor((el, ctx) => {
 				const codeBlocks: NodeListOf<HTMLElement> = el.querySelectorAll('.el-pre pre .language-affinity')
 				codeBlocks.forEach(codeBl => {
@@ -52,13 +54,19 @@ export default class AffinityPlugin extends Plugin {
 
 					const elPre = codeBl.parentElement?.parentElement
 					if (elPre) {
-						const child = new WidgetPreviewMode(elPre, this.app, id, getId(), toCharId)
+						const file = this.app.vault.getAbstractFileByPath(ctx.sourcePath)
+						if (!(file instanceof TFile)) return
+						const fromCharId = this.getAffinityIdCached(file)
+						if (!fromCharId) return
+						const child = new WidgetPreviewMode(elPre, this.app, id, fromCharId, toCharId)
 						ctx.addChild(child)
 					}
 				})
 			})
-			this.registerEditorExtension(affinityField(this.app.workspace.containerEl, this.app, getId))
+			//stub
+			this.registerEditorExtension(affinityField(this.app.workspace.containerEl, this.app, () => ''))
 
+			listenIdByPathChanges(this)
 			await listenCharFileChanges(this, useStore.getState())
 		})
 
@@ -102,6 +110,15 @@ export default class AffinityPlugin extends Plugin {
 		return id
 	}
 
+	getAffinityIdCached(file: TFile): CharacterID {
+		const cached = this.idByPath.get(file.path)
+		if (cached) return cached
+
+		const id = this.getAffinityId(file)
+		this.idByPath.set(file.path, id)
+		return id
+	}
+
 	private async updateMetadata(file: TFile, data: unknown) {
 		try {
 			await this.app.fileManager.processFrontMatter(file, (frontmatter) => {
@@ -114,10 +131,11 @@ export default class AffinityPlugin extends Plugin {
 
 	async getChars(): Promise<Character[]> {
 		const allFiles = getFilesByFolder(this.app, this.settings.charactersDirectory.path, this.settings.charactersDirectory.includeSubfolders)
-		const chars = allFiles.map(async file => ({
-			name: file.basename,
-			id: this.getAffinityId(file)
-		}))
+		const chars = allFiles.map(async file => {
+			const id = this.getAffinityId(file)
+			this.idByPath.set(file.path, id)
+			return { name: file.basename, id }
+		})
 		return await Promise.all(chars)
 	}
 }
