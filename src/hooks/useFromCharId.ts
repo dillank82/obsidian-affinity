@@ -1,6 +1,7 @@
 import { useApp } from 'context';
 import { TFile } from 'obsidian';
 import { useSyncExternalStore } from 'react';
+import { getAffinityId } from 'utils/getAffinityId';
 
 export const useFromCharId = (file: TFile) => {
     const app = useApp()
@@ -14,14 +15,7 @@ export const useFromCharId = (file: TFile) => {
         }
     }
 
-    const getSnapshot = (): string | null => {
-        const cache = app.metadataCache.getFileCache(file)
-        const frontmatter = cache?.frontmatter
-        if (!frontmatter) return null
-        const id: unknown = frontmatter.affinityPluginId
-        if (!(typeof id === 'string')) return null
-        return id
-    }
+    const getSnapshot = (): string => getAffinityId(file, app)
 
     return useSyncExternalStore(subscribe, getSnapshot)
 }

@@ -1,4 +1,4 @@
-import { debounce, FrontMatterCache, Notice, parseYaml, Plugin, TFile, TFolder } from 'obsidian'
+import { debounce, Notice, parseYaml, Plugin, TFile, TFolder } from 'obsidian'
 import { DEFAULT_SETTINGS, PluginSettings } from "./settings"
 import { AffinityProcessor } from 'processors/AffinityProcessor';
 import { Character, CharacterID } from 'interfaces/Realtionships';
@@ -12,6 +12,7 @@ import { affinityField } from 'inlineLivePreview';
 import { WidgetPreviewMode } from 'WidgetPreviewMode';
 import { extractCodeBlockData } from 'utils/codeBlockUtils/extractCodeBlockData/extractCodeBlockData';
 import { validateCodeBlockData } from 'utils/codeBlockUtils/validateCodeBlockData/validateCodeBlockData';
+import { getAffinityId } from 'utils/getAffinityId';
 
 export default class AffinityPlugin extends Plugin {
 	settings: PluginSettings = DEFAULT_SETTINGS
@@ -82,21 +83,6 @@ export default class AffinityPlugin extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-	private getFrontmatter(file: TFile | null): FrontMatterCache | null {
-		if (!file) return null
-		const cache = this.app.metadataCache.getFileCache(file)?.frontmatter
-		return cache || null
-	}
-
-	getAffinityId(file: TFile | null): CharacterID {
-		if (!file) throw new Error('No file is active')
-		const cache = this.getFrontmatter(file)
-		let id: unknown = cache?.affinityPluginId
-		if (!cache || !id) throw new Error("Can't get character id from metadata cache")
-		if (typeof id !== 'string') throw new Error('Frontmatter data is corrupted')
-		return id
-	}
-
 	async giveAffinityId(file: TFile): Promise<CharacterID> {
 		const id = generateId()
 		await this.updateMetadata(file, { affinityPluginId: id })
@@ -117,7 +103,7 @@ export default class AffinityPlugin extends Plugin {
 		const allFiles = getFilesByFolder(this.app, this.settings.charactersDirectory.path, this.settings.charactersDirectory.includeSubfolders)
 		const chars = allFiles.map(async file => ({
 			name: file.basename,
-			id: this.getAffinityId(file)
+			id: getAffinityId(file, this.app)
 		}))
 		return await Promise.all(chars)
 	}
