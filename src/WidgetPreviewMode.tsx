@@ -9,14 +9,12 @@ export class WidgetPreviewMode extends MarkdownRenderChild {
     private el: HTMLElement
     private root: Root | null = null
     private id: string
-    private fromCharId: CharacterID
     private initialToCharId: CharacterID | null
     private app: App
-    constructor(el: HTMLElement, app: App, id: string, fromCharId: CharacterID, initialToCharId: CharacterID | null) {
+    constructor(el: HTMLElement, app: App, id: string, initialToCharId: CharacterID | null) {
         super(el)
         this.el = el
         this.id = id
-        this.fromCharId = fromCharId
         this.initialToCharId = initialToCharId
         this.app = app
     }
@@ -28,7 +26,7 @@ export class WidgetPreviewMode extends MarkdownRenderChild {
         this.root.render(
             <StrictMode>
                 <AppProvider app={this.app}>
-                    <AffinityDashboard id={this.id} fromChar={this.fromCharId} initialToCharId={this.initialToCharId} />
+                    <AffinityDashboard id={this.id} initialToCharId={this.initialToCharId} />
                 </AppProvider>
             </StrictMode>
         )

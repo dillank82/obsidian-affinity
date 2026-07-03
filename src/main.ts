@@ -52,7 +52,7 @@ export default class AffinityPlugin extends Plugin {
 
 					const elPre = codeBl.parentElement?.parentElement
 					if (elPre) {
-						const child = new WidgetPreviewMode(elPre, this.app, id, getId(), toCharId)
+						const child = new WidgetPreviewMode(elPre, this.app, id, toCharId)
 						ctx.addChild(child)
 					}
 				})

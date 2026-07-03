@@ -7,16 +7,19 @@ import { AffinityWorkspace } from 'components/AffinityWorkspace/AffinityWorkspac
 import { EmptyState } from 'components/EmptyState/EmptyState'
 import { useState } from 'react'
 import { HistoryWorkspace } from 'components/HistoryWorkspace/HistoryWorkspace'
+import { useFromCharId } from 'hooks/useFromCharId'
+import { useApp } from 'context'
 
 interface AffinityDashboardProps {
     id: string
-    fromChar: CharacterID
     initialToCharId: CharacterID | null
 }
 
 export type WorkspaceView = 'main' | 'history'
 
-export const AffinityDashboard = ({ fromChar, initialToCharId, id }: AffinityDashboardProps) => {
+export const AffinityDashboard = ({ initialToCharId, id }: AffinityDashboardProps) => {
+    const app = useApp()
+    const fromChar = useFromCharId(app.workspace.getActiveFile()) || ''
     const [currentView, setCurrentView] = useState<WorkspaceView>('main')
     const store = useStore()
     const { status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, initialToCharId, id)
