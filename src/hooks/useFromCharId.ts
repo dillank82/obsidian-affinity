@@ -2,8 +2,7 @@ import { useApp } from 'context';
 import { TFile } from 'obsidian';
 import { useSyncExternalStore } from 'react';
 
-export const useFromCharId = (file: TFile | null) => {
-    if (!file) return null
+export const useFromCharId = (file: TFile) => {
     const app = useApp()
     const subscribe = (callback: () => void) => {
         const eventRef = app.metadataCache.on('changed', (f) => {
