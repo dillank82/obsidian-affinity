@@ -38,7 +38,6 @@ export default class AffinityPlugin extends Plugin {
 				chars: initialChars,
 				historyMap: this.settings.logsHistoryMap
 			})
-			const getId = () => this.getAffinityId(this.app.workspace.getActiveFile())
 			this.registerMarkdownPostProcessor((el, ctx) => {
 				const codeBlocks: NodeListOf<HTMLElement> = el.querySelectorAll('.el-pre pre .language-affinity')
 				codeBlocks.forEach(codeBl => {
@@ -52,12 +51,14 @@ export default class AffinityPlugin extends Plugin {
 
 					const elPre = codeBl.parentElement?.parentElement
 					if (elPre) {
-						const child = new WidgetPreviewMode(elPre, this.app, id, toCharId)
+						const file = this.app.vault.getFileByPath(ctx.sourcePath)
+						if (!file) throw new Error ("Unexpected rendering error: currently active file cannot be accessed")
+						const child = new WidgetPreviewMode(elPre, this.app, id, toCharId, file)
 						ctx.addChild(child)
 					}
 				})
 			})
-			this.registerEditorExtension(affinityField(this.app.workspace.containerEl, this.app, getId))
+			this.registerEditorExtension(affinityField(this.app.workspace.containerEl, this.app))
 
 			await listenCharFileChanges(this, useStore.getState())
 		})

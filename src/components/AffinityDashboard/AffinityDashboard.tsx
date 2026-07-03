@@ -8,18 +8,18 @@ import { EmptyState } from 'components/EmptyState/EmptyState'
 import { useState } from 'react'
 import { HistoryWorkspace } from 'components/HistoryWorkspace/HistoryWorkspace'
 import { useFromCharId } from 'hooks/useFromCharId'
-import { useApp } from 'context'
+import { TFile } from 'obsidian'
 
 interface AffinityDashboardProps {
+    file: TFile
     id: string
     initialToCharId: CharacterID | null
 }
 
 export type WorkspaceView = 'main' | 'history'
 
-export const AffinityDashboard = ({ initialToCharId, id }: AffinityDashboardProps) => {
-    const app = useApp()
-    const fromChar = useFromCharId(app.workspace.getActiveFile()) || ''
+export const AffinityDashboard = ({ file, initialToCharId, id }: AffinityDashboardProps) => {
+    const fromChar = useFromCharId(file)
     const [currentView, setCurrentView] = useState<WorkspaceView>('main')
     const store = useStore()
     const { status, toChar, setToChar, stats, labels, updateAffinity, createRel, relOptions } = useAffinity(store, fromChar, initialToCharId, id)

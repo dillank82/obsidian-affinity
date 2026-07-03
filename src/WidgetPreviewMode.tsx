@@ -1,7 +1,7 @@
 import { AffinityDashboard } from "components/AffinityDashboard/AffinityDashboard"
 import { AppProvider } from "context"
 import { CharacterID } from "interfaces/Realtionships"
-import { App, MarkdownRenderChild } from "obsidian"
+import { App, MarkdownRenderChild, TFile } from "obsidian"
 import { StrictMode } from "react"
 import { createRoot, Root } from "react-dom/client"
 
@@ -11,12 +11,14 @@ export class WidgetPreviewMode extends MarkdownRenderChild {
     private id: string
     private initialToCharId: CharacterID | null
     private app: App
-    constructor(el: HTMLElement, app: App, id: string, initialToCharId: CharacterID | null) {
+    private file: TFile
+    constructor(el: HTMLElement, app: App, id: string, initialToCharId: CharacterID | null, file: TFile) {
         super(el)
         this.el = el
         this.id = id
         this.initialToCharId = initialToCharId
         this.app = app
+        this.file = file
     }
 
     onload(): void {
@@ -26,7 +28,7 @@ export class WidgetPreviewMode extends MarkdownRenderChild {
         this.root.render(
             <StrictMode>
                 <AppProvider app={this.app}>
-                    <AffinityDashboard id={this.id} initialToCharId={this.initialToCharId} />
+                    <AffinityDashboard id={this.id} initialToCharId={this.initialToCharId} file={this.file}/>
                 </AppProvider>
             </StrictMode>
         )

@@ -2,7 +2,7 @@ import { EditorView, WidgetType } from "@codemirror/view";
 import { AffinityDashboard } from "components/AffinityDashboard/AffinityDashboard";
 import { AppProvider } from "context";
 import { CharacterID } from "interfaces/Realtionships";
-import { App } from "obsidian";
+import { App, TFile } from "obsidian";
 import { StrictMode } from "react";
 import { createRoot, Root } from "react-dom/client";
 
@@ -11,22 +11,22 @@ export class AffinityWidget extends WidgetType {
     private container: HTMLElement
     private app: App
     private id: string
-    private fromCharId: CharacterID
     private initialToCharId: CharacterID | null
+    private file: TFile
 
-    constructor(containerEl: HTMLElement, app: App, id: string, fromCharId: CharacterID, initialToCharId: CharacterID | null) {
+    constructor(containerEl: HTMLElement, app: App, id: string, initialToCharId: CharacterID | null, file: TFile) {
         super()
         this.id = id
-        this.fromCharId = fromCharId
         this.initialToCharId = initialToCharId
         this.container = containerEl
         this.app = app
+        this.file = file
     }
 
     eq(widget: AffinityWidget): boolean {
         return (
             widget.id === this.id
-            && widget.fromCharId === this.fromCharId
+            && widget.file.path === this.file.path
             && widget.initialToCharId === this.initialToCharId
         )
     }
@@ -37,7 +37,7 @@ export class AffinityWidget extends WidgetType {
         this.root.render(
             <StrictMode>
                 <AppProvider app={this.app}>
-                    <AffinityDashboard id={this.id} fromChar={this.fromCharId} initialToCharId={this.initialToCharId} />
+                    <AffinityDashboard id={this.id} initialToCharId={this.initialToCharId} file={this.file}/>
                 </AppProvider>
             </StrictMode>
         )
