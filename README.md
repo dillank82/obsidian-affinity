@@ -1,6 +1,10 @@
 # Affinity
 Obsidian plugin for dynamic relationships tracking. It's primarily intended for TTRPG Game Masters, mainly in D&D-like systems.
 
+## Preview
+<img width="1920" height="1037" alt="image" src="https://github.com/user-attachments/assets/ed12ba26-3fbd-4fb3-9ad9-260e8e2e0211" />
+<img width="1920" height="1041" alt="image" src="https://github.com/user-attachments/assets/7e0e2591-d27e-45c1-84e6-31adb5172bd4" />
+
 ## Status
 The project is paused mid-refactor on a dedicated branch. At the point of pausing, one test was failing; the cause is understood but not yet addressed. The main branch remains in a stable, tested state and reflects the architecture and decisions described below. Remaining work toward a beta release is tracked in the TODO list.
 
